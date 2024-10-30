@@ -11,15 +11,14 @@
         "react-helmet-async": "^1.0.7",
         "react-icons": "^4.1.0",
         "react-router-dom": "^6.6.2",
-        "react-scripts": "^5.0.1",
+        "react-scripts": "^3.0.1",
         "react-transition-group": "^4.4.2",
         "typewriter-effect": "^2.18.2",
         "web-vitals": "^3.1.1",
         "yarn": "^1.22.22"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
+        "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",        "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "predeploy": "yarn build && cp build/index.html build/404.html",
@@ -42,5 +41,9 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    }
+    },
+    "devDependencies": {
+        "gh-pages": "^6.2.0"
+    },
+    "homepage": "https://GaneshAdimalupu.github.io/Ganesh-react-portfolio"
 }
