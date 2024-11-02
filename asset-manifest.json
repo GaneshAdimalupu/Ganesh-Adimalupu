@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.css": "/Ganesh-Adimalupu/static/css/main.38a4c9c3.chunk.css",
-    "main.js": "/Ganesh-Adimalupu/static/js/main.a9c46754.chunk.js",
+    "main.css": "/Ganesh-Adimalupu/static/css/main.45872930.chunk.css",
+    "main.js": "/Ganesh-Adimalupu/static/js/main.856a96b3.chunk.js",
     "runtime~main.js": "/Ganesh-Adimalupu/static/js/runtime~main.b1ee5820.js",
     "static/css/2.27d55f80.chunk.css": "/Ganesh-Adimalupu/static/css/2.27d55f80.chunk.css",
-    "static/js/2.8ef2a99a.chunk.js": "/Ganesh-Adimalupu/static/js/2.8ef2a99a.chunk.js",
+    "static/js/2.fce85b75.chunk.js": "/Ganesh-Adimalupu/static/js/2.fce85b75.chunk.js",
     "index.html": "/Ganesh-Adimalupu/index.html",
-    "precache-manifest.d2f9b35709446f4f470e31e1b2bf28c4.js": "/Ganesh-Adimalupu/precache-manifest.d2f9b35709446f4f470e31e1b2bf28c4.js",
+    "precache-manifest.ab124962160aba7597ae8a1bed6d055d.js": "/Ganesh-Adimalupu/precache-manifest.ab124962160aba7597ae8a1bed6d055d.js",
     "service-worker.js": "/Ganesh-Adimalupu/service-worker.js",
-    "static/media/profile.jpeg": "/Ganesh-Adimalupu/static/media/profile.44d56ea3.jpeg"
+    "static/media/background.svg": "/Ganesh-Adimalupu/static/media/background.db90d068.svg",
+    "static/media/profile.svg": "/Ganesh-Adimalupu/static/media/profile.40803fca.svg"
   }
 }
