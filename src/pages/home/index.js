@@ -4,7 +4,8 @@ import { Helmet, HelmetProvider } from "react-helmet-async";
 import Typewriter from "typewriter-effect";
 import { introdata, meta } from "../../content_option";
 import { Link } from "react-router-dom";
-import profileImage from "../../assets/images/profile.jpeg"; // Import the image
+import profileImage from "../../assets/images/profile.svg";
+import backgroundImage from "../../assets/images/background.svg"; // Import the background SVG
 
 export const Home = () => {
   return (
@@ -18,7 +19,13 @@ export const Home = () => {
         <div className="intro_sec d-block d-lg-flex align-items-center ">
           <div
             className="h_bg-image order-1 order-lg-2 h-100 "
-            style={{ backgroundImage: `url(${profileImage})` }} // Use the imported image
+            style={{  backgroundImage: ` url(${profileImage}),url(${backgroundImage})`,
+            backgroundSize: "contain", 
+            backgroundPosition: "center", 
+            backgroundRepeat: "no-repeat", 
+            width: '500px', 
+            height:'500px' 
+             } }
           ></div>
           <div className="text order-2 order-lg-1 h-100 d-lg-flex justify-content-center">
             <div className="align-self-center ">

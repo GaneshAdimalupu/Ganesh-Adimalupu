@@ -12,7 +12,6 @@ const introdata = {
         third: "I develop mobile apps",
     },
     description: "I'm passionate about creating impactful software and leveraging technology for innovative solutions.",
-   // your_img_url: "https://images.unsplash.com/photo-1514790193030-c89d266d5a9d",
 };
 
 const dataabout = {
