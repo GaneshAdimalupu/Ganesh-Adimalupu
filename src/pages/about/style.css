@@ -1,100 +1,139 @@
-.sec_sp {
-    margin-bottom: calc(3rem + 5.128vw)
+/* About Page Styles */
+
+/* Education Section */
+.education-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.table td,
-.table th {
-    color: var(--text-color);
+.education-item {
+  position: relative;
+  padding-left: 2rem;
+  padding-bottom: 1rem;
+  border-left: 2px solid var(--text-color-3);
 }
 
-.t_border {
-    border-color: var(--text-color) !important;
+.education-item:last-child {
+  padding-bottom: 0;
 }
 
-.progress-title {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 15px 0 20px;
-    font-family: 'Raleway';
+.education-item::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--text-color-3);
+  left: -7px;
+  top: 6px;
 }
 
-.progress {
-    height: 5px;
-    background: var(--secondary);
-    border-radius: 0;
-    box-shadow: none;
-    margin-bottom: 30px;
-    overflow: visible;
+.education-item h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text-color);
 }
 
-.progress .progress-bar {
-    position: relative;
-    background: var(--text-color);
-    animation: animate-positive 2s;
-    overflow: visible;
-    opacity: 0.9;
+.institution {
+  margin-bottom: 0.3rem;
+  font-style: italic;
+  color: var(--text-color);
+  opacity: 0.9;
 }
 
-.progress .progress-value {
-    position: absolute;
-    top: -30px;
-    right: 8px;
-    font-size: 17px;
-    font-weight: bold;
-    font-style: italic;
-    color: var(--text-color);
+.edu-date {
+  font-size: 0.9rem;
+  color: var(--text-color-3);
+  font-weight: 500;
 }
 
-@-webkit-keyframes animate-positive {
-    0% {
-        width: 0%;
-    }
+/* Certifications Section */
+.certifications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
 }
 
-@keyframes animate-positive {
-    0% {
-        width: 0%;
-    }
+.certification-item {
+  background: var(--primary-color);
+  border: 1px solid rgba(var(--text-color-rgb), 0.1);
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.section-title {
-    font-size: 45px;
+.certification-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.certification-item h5 {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.certification-item p {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+/* Services Section */
+.service_ {
+  transition: transform 0.3s ease;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: var(--primary-color);
+  margin-bottom: 1rem;
+  border-bottom: 3px solid var(--text-color-3);
+}
+
+.service_:hover {
+  transform: translateX(5px);
 }
 
 .service__title {
-    padding: 8px 0;
-    border-bottom: solid 2px var(--secondary-color);
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
 }
 
-.service-section .service-category-title {
-    padding-bottom: 4px;
+.service__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: var(--text-color-3);
 }
 
-
-/*! CSS Used keyframes */
-
-@-webkit-keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 100%, 0);
-        transform: translate3d(0, 100%, 0);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-    }
-}
-
+/* Animation for entry */
 @keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        -webkit-transform: translate3d(0, 100%, 0);
-        transform: translate3d(0, 100%, 0);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: translateZ(0);
-        transform: translateZ(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .certifications-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .education-item {
+    padding-left: 1.5rem;
+  }
+
+  .service_ {
+    padding: 1rem;
+  }
 }
