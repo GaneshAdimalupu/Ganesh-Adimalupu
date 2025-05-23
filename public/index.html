@@ -2,36 +2,259 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="author" content="ADIMALUPU GANESH" />
-    <meta
-      name="description"
-      content="Adimalupu Ganesh's portfolio showcasing React projects and skills"
-    />
-    <meta
-      name="keywords"
-      content="portfolio, React, developer, projects, JavaScript, web development"
-    />
 
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;1,400;1,500&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Essential Mobile Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0c0c0c" />
+    <meta name="color-scheme" content="dark light" />
 
-    <title>Adimalupu Ganesh's Portfolio</title>
-    <!-- Add a title for your page -->
+    <!-- Apple/iOS Specific Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Ganesh Portfolio" />
+    <meta name="apple-touch-fullscreen" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Android/Chrome Specific -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Ganesh Adimalupu" />
+
+    <!-- Microsoft Specific -->
+    <meta name="msapplication-TileColor" content="#0c0c0c" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Security & Performance -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- SEO Meta Tags -->
+    <title>Ganesh Adimalupu - Machine Learning Engineer | AI Specialist Portfolio</title>
+    <meta name="description" content="AI/ML Specialist with expertise in Python, Deep Learning, NLP, and Data Engineering. Creating intelligent solutions for real-world problems. View my portfolio of machine learning projects and AI innovations." />
+    <meta name="keywords" content="Ganesh Adimalupu, Machine Learning Engineer, AI Specialist, Python Developer, Deep Learning, NLP, Data Science, Artificial Intelligence, Portfolio, TensorFlow, Keras, Neural Networks, Data Engineering" />
+    <meta name="author" content="Ganesh Adimalupu" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ganeshadimalupu.github.io/Ganesh-Adimalupu/" />
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Ganesh Adimalupu Portfolio" />
+    <meta property="og:title" content="Ganesh Adimalupu - Machine Learning Engineer | AI Specialist" />
+    <meta property="og:description" content="AI/ML Specialist with expertise in Python, Deep Learning, NLP, and Data Engineering. Creating intelligent solutions for real-world problems." />
+    <meta property="og:url" content="https://ganeshadimalupu.github.io/Ganesh-Adimalupu/" />
+    <meta property="og:image" content="https://ganeshadimalupu.github.io/Ganesh-Adimalupu/preview.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Ganesh Adimalupu - Machine Learning Engineer Portfolio" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@GaneshAdimalupu" />
+    <meta name="twitter:creator" content="@GaneshAdimalupu" />
+    <meta name="twitter:title" content="Ganesh Adimalupu - Machine Learning Engineer | AI Specialist" />
+    <meta name="twitter:description" content="AI/ML Specialist with expertise in Python, Deep Learning, NLP, and Data Engineering. Creating intelligent solutions for real-world problems." />
+    <meta name="twitter:image" content="https://ganeshadimalupu.github.io/Ganesh-Adimalupu/preview.png" />
+    <meta name="twitter:image:alt" content="Ganesh Adimalupu Portfolio Preview" />
+
+    <!-- LinkedIn Specific -->
+    <meta property="linkedin:owner" content="ganesh-adimalupu-62b407239" />
+
+    <!-- Icons and Favicons -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="%PUBLIC_URL%/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="%PUBLIC_URL%/apple-touch-icon-60x60.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="%PUBLIC_URL%/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="%PUBLIC_URL%/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="%PUBLIC_URL%/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="%PUBLIC_URL%/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="%PUBLIC_URL%/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="%PUBLIC_URL%/apple-touch-icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon-180x180.png" />
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Preconnect to External Resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Marcellus&display=swap" rel="stylesheet" />
+
+    <!-- DNS Prefetch for Performance -->
+    <link rel="dns-prefetch" href="//github.com" />
+    <link rel="dns-prefetch" href="//linkedin.com" />
+    <link rel="dns-prefetch" href="//twitter.com" />
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Ganesh Adimalupu",
+      "jobTitle": "Machine Learning Engineer",
+      "description": "AI/ML Specialist with expertise in Python, Deep Learning, NLP, and Data Engineering",
+      "url": "https://ganeshadimalupu.github.io/Ganesh-Adimalupu/",
+      "image": "https://ganeshadimalupu.github.io/Ganesh-Adimalupu/preview.png",
+      "sameAs": [
+        "https://github.com/GaneshAdimalupu",
+        "https://linkedin.com/in/ganesh-adimalupu-62b407239",
+        "https://twitter.com/GaneshAdimalupu"
+      ],
+      "knowsAbout": [
+        "Machine Learning",
+        "Artificial Intelligence",
+        "Python Programming",
+        "Deep Learning",
+        "Natural Language Processing",
+        "Data Science",
+        "TensorFlow",
+        "Neural Networks"
+      ],
+      "alumniOf": {
+        "@type": "EducationalOrganization",
+        "name": "St Thomas Institution of Science and Technology"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Thiruvananthapuram",
+        "addressRegion": "Kerala",
+        "addressCountry": "India"
+      }
+    }
+    </script>
+
+    <!-- Critical CSS Inlining (Optional) -->
+    <style>
+      /* Critical above-the-fold styles */
+      body {
+        margin: 0;
+        font-family: 'Raleway', sans-serif;
+        background-color: #0c0c0c;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      /* Loading screen styles */
+      .initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #0c0c0c;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+      }
+
+      .loader-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: #00c7ff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Hide loader when React loads */
+      .loaded .initial-loader {
+        display: none;
+      }
+    </style>
   </head>
 
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- No Script Message -->
+    <noscript>
+      <div style="text-align: center; padding: 50px; background: #0c0c0c; color: #fff; font-family: Arial, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>This portfolio requires JavaScript to run. Please enable JavaScript in your browser and refresh the page.</p>
+        <p>You can also visit my profiles directly:</p>
+        <p>
+          <a href="https://github.com/GaneshAdimalupu" style="color: #00c7ff; margin: 0 10px;">GitHub</a>
+          <a href="https://linkedin.com/in/ganesh-adimalupu-62b407239" style="color: #00c7ff; margin: 0 10px;">LinkedIn</a>
+        </p>
+      </div>
+    </noscript>
+
+    <!-- Initial Loading Screen -->
+    <div class="initial-loader">
+      <div class="loader-spinner"></div>
+    </div>
+
+    <!-- React Root -->
     <div id="root"></div>
+
+    <!-- Service Worker Registration (Fixed) -->
+    <script>
+      // Register service worker for offline functionality
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // Check if we're in production (GitHub Pages)
+          const isProduction = window.location.hostname === 'ganeshadimalupu.github.io' ||
+                               window.location.hostname.includes('github.io');
+
+          if (isProduction) {
+            navigator.serviceWorker.register('/Ganesh-Adimalupu/service-worker.js')
+              .then((registration) => {
+                console.log('SW registered: ', registration);
+              })
+              .catch((registrationError) => {
+                console.log('SW registration failed: ', registrationError);
+              });
+          }
+        });
+      }
+    </script>
+
+    <!-- Performance Monitoring -->
+    <script>
+      // Performance monitoring
+      window.addEventListener('load', () => {
+        // Mark app as loaded
+        document.body.classList.add('loaded');
+
+        // Log performance metrics (development only)
+        if (window.location.hostname === 'localhost') {
+          if ('performance' in window) {
+            // Wait a bit for navigation timing to be available
+            setTimeout(() => {
+              try {
+                const perfData = performance.getEntriesByType('navigation')[0];
+                if (perfData && perfData.loadEventEnd > 0 && perfData.loadEventStart > 0) {
+                  const loadTime = Math.round(perfData.loadEventEnd - perfData.loadEventStart);
+                  if (loadTime > 0) {
+                    console.log('Page Load Time:', loadTime + 'ms');
+                  }
+                }
+              } catch (e) {
+                console.log('Performance monitoring not available');
+              }
+            }, 100);
+          }
+        }
+      });
+
+      // Mobile viewport height fix
+      function setViewportHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      }
+
+      setViewportHeight();
+      window.addEventListener('resize', setViewportHeight);
+      window.addEventListener('orientationchange', setViewportHeight);
+    </script>
   </body>
 </html>
