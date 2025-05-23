@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Ganesh-Adimalupu/static/css/main.8376122f.css",
-    "main.js": "/Ganesh-Adimalupu/static/js/main.1c71676e.js",
+    "main.css": "/Ganesh-Adimalupu/static/css/main.ab4a15fc.css",
+    "main.js": "/Ganesh-Adimalupu/static/js/main.d714f9fb.js",
     "static/css/979.37973d81.chunk.css": "/Ganesh-Adimalupu/static/css/979.37973d81.chunk.css",
     "static/js/979.5694211c.chunk.js": "/Ganesh-Adimalupu/static/js/979.5694211c.chunk.js",
     "static/css/292.c9d69877.chunk.css": "/Ganesh-Adimalupu/static/css/292.c9d69877.chunk.css",
@@ -22,7 +22,7 @@
     "index.html": "/Ganesh-Adimalupu/index.html"
   },
   "entrypoints": [
-    "static/css/main.8376122f.css",
-    "static/js/main.1c71676e.js"
+    "static/css/main.ab4a15fc.css",
+    "static/js/main.d714f9fb.js"
   ]
 }
