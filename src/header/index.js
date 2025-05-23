@@ -1,14 +1,14 @@
-// FILE: src/header/index.js
+// FILE: src/header/index.js - FINAL WORKING VERSION
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import "./style.css";
 import { VscGrabber, VscClose } from "react-icons/vsc";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { logotext, socialprofils } from "../content_option";
 import Themetoggle from "../components/themetoggle";
 
-// Custom hooks
+// Custom hooks for mobile optimization
 const useMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(false);
   const [screenSize, setScreenSize] = useState('desktop');
@@ -16,7 +16,8 @@ const useMobile = (breakpoint = 768) => {
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
-      setIsMobile(width <= breakpoint);
+      const mobile = width <= breakpoint;
+      setIsMobile(mobile);
 
       if (width <= 576) setScreenSize('mobile-small');
       else if (width <= 768) setScreenSize('mobile');
@@ -35,17 +36,18 @@ const useMobile = (breakpoint = 768) => {
 const useScrollDirection = () => {
   const [scrollDirection, setScrollDirection] = useState('up');
   const [isAtTop, setIsAtTop] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     let lastScrollY = window.pageYOffset;
     let ticking = false;
 
     const updateScrollDirection = () => {
-      const scrollY = window.pageYOffset;
-      const direction = scrollY > lastScrollY ? 'down' : 'up';
-      const atTop = scrollY < 10;
+      const currentScrollY = window.pageYOffset;
+      const direction = currentScrollY > lastScrollY ? 'down' : 'up';
+      const atTop = currentScrollY < 10;
 
-      if (direction !== scrollDirection && Math.abs(scrollY - lastScrollY) > 10) {
+      if (direction !== scrollDirection && Math.abs(currentScrollY - lastScrollY) > 10) {
         setScrollDirection(direction);
       }
 
@@ -53,7 +55,8 @@ const useScrollDirection = () => {
         setIsAtTop(atTop);
       }
 
-      lastScrollY = scrollY > 0 ? scrollY : 0;
+      setScrollY(currentScrollY);
+      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
       ticking = false;
     };
 
@@ -64,101 +67,66 @@ const useScrollDirection = () => {
       }
     };
 
-    window.addEventListener('scroll', requestTick);
+    window.addEventListener('scroll', requestTick, { passive: true });
     return () => window.removeEventListener('scroll', requestTick);
   }, [scrollDirection, isAtTop]);
 
-  return { scrollDirection, isAtTop };
+  return { scrollDirection, isAtTop, scrollY };
 };
 
 // Enhanced Menu Item Component
 const MenuItem = React.memo(({
   to,
   children,
-  onClick,
+  onNavigate,
   isActive,
-  index,
-  isMobile
+  index
 }) => {
-  const itemVariants = useMemo(() => ({
-    hidden: {
-      opacity: 0,
-      x: isMobile ? -50 : -30,
-      y: isMobile ? 0 : 10
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        delay: index * 0.1,
-        ease: "easeOut"
-      }
-    },
-    exit: {
-      opacity: 0,
-      x: isMobile ? -30 : -20,
-      transition: {
-        duration: 0.3,
-        delay: (4 - index) * 0.05
-      }
-    }
-  }), [index, isMobile]);
+  const navigate = useNavigate();
+
+  const handleClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Close menu and navigate
+    onNavigate(() => {
+      navigate(to);
+    });
+  }, [navigate, to, onNavigate]);
 
   return (
     <motion.li
       className="menu_item"
-      variants={itemVariants}
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      transition={{
+        duration: 0.3,
+        delay: index * 0.1,
+        ease: "easeOut"
+      }}
     >
-      <Link
-        onClick={onClick}
-        to={to}
+      <a
+        href={to}
+        onClick={handleClick}
         className={`menu_link ${isActive ? 'active' : ''}`}
+        role="menuitem"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick(e);
+          }
+        }}
       >
         <span className="menu_text">{children}</span>
-        <motion.div
-          className="menu_indicator"
-          initial={false}
-          animate={{
-            scaleX: isActive ? 1 : 0,
-            opacity: isActive ? 1 : 0
-          }}
-          transition={{ duration: 0.3 }}
-        />
-      </Link>
+      </a>
     </motion.li>
   );
 });
 
 // Enhanced Social Links Component
-const SocialLinks = React.memo(({ isMobile }) => {
-  const socialVariants = useMemo(() => ({
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.5
-      }
-    },
-    exit: {
-      opacity: 0,
-      y: 20,
-      transition: { duration: 0.3 }
-    }
-  }), []);
-
-  const linkVariants = useMemo(() => ({
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.3 }
-    }
-  }), []);
-
+const SocialLinks = React.memo(() => {
   const socialLinks = useMemo(() => [
     { key: 'github', url: socialprofils.github, label: 'GitHub' },
     { key: 'linkedin', url: socialprofils.linkedin, label: 'LinkedIn' },
@@ -169,23 +137,24 @@ const SocialLinks = React.memo(({ isMobile }) => {
   return (
     <motion.div
       className="menu_social"
-      variants={socialVariants}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      transition={{ duration: 0.3, delay: 0.4 }}
     >
-      <motion.h4 variants={linkVariants}>Connect With Me</motion.h4>
+      <h4>Connect With Me</h4>
       <div className="social_links">
-        {socialLinks.map((link) => (
+        {socialLinks.map((link, index) => (
           <motion.a
             key={link.key}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
             className="social_link"
-            variants={linkVariants}
-            whileHover={!isMobile ? {
-              scale: 1.1,
-              y: -2,
-              transition: { duration: 0.2 }
-            } : undefined}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 + index * 0.1 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             aria-label={link.label}
           >
@@ -202,8 +171,9 @@ const Headermain = () => {
   const [isActive, setActive] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { isMobile, screenSize } = useMobile();
-  const { scrollDirection, isAtTop } = useScrollDirection();
+  const { scrollDirection, isAtTop, scrollY } = useScrollDirection();
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Menu items configuration
   const menuItems = useMemo(() => [
@@ -222,7 +192,12 @@ const Headermain = () => {
   }, [location.pathname]);
 
   // Handle menu toggle
-  const handleToggle = useCallback(() => {
+  const handleToggle = useCallback((e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     setActive(prev => {
       const newState = !prev;
 
@@ -235,17 +210,40 @@ const Headermain = () => {
         if (isMobile) {
           document.body.style.position = "fixed";
           document.body.style.width = "100%";
+          document.body.style.top = `-${scrollY}px`;
         }
       } else {
         document.body.classList.remove("menu-open");
         document.body.style.overflow = "";
         document.body.style.position = "";
         document.body.style.width = "";
+
+        // Restore scroll position on iOS
+        if (isMobile && scrollY) {
+          document.body.style.top = "";
+          window.scrollTo(0, scrollY);
+        }
       }
 
       return newState;
     });
-  }, [isMobile]);
+  }, [isMobile, scrollY]);
+
+  // Handle menu navigation
+  const handleNavigation = useCallback((navigationCallback) => {
+    // Close menu first
+    setActive(false);
+    document.body.classList.remove("menu-open");
+    document.body.style.overflow = "";
+    document.body.style.position = "";
+    document.body.style.width = "";
+    document.body.style.top = "";
+
+    // Navigate after menu animation completes
+    setTimeout(() => {
+      navigationCallback();
+    }, 300);
+  }, []);
 
   // Close menu on route change
   useEffect(() => {
@@ -255,10 +253,11 @@ const Headermain = () => {
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
+      document.body.style.top = "";
     }
-  }, [location.pathname, isActive]);
+  }, [location.pathname]);
 
-  // Handle escape key
+  // Handle escape key and outside clicks
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape' && isActive) {
@@ -266,8 +265,23 @@ const Headermain = () => {
       }
     };
 
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
+    const handleOutsideClick = (e) => {
+      if (isActive &&
+          !e.target.closest('.site__navigation') &&
+          !e.target.closest('.menu__button')) {
+        handleToggle();
+      }
+    };
+
+    if (isActive) {
+      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('click', handleOutsideClick);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('click', handleOutsideClick);
+    };
   }, [isActive, handleToggle]);
 
   // Mount effect
@@ -275,93 +289,33 @@ const Headermain = () => {
     setMounted(true);
   }, []);
 
-  // Header animation variants
-  const headerVariants = useMemo(() => ({
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut"
-      }
-    },
-    hidden: {
-      y: -100,
-      opacity: 0.8,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut"
-      }
-    }
-  }), []);
-
-  // Menu overlay variants
-  const overlayVariants = useMemo(() => ({
-    hidden: {
-      opacity: 0,
-      transition: {
-        duration: 0.3,
-        when: "afterChildren"
-      }
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        when: "beforeChildren"
-      }
-    }
-  }), []);
-
-  // Menu container variants
-  const menuVariants = useMemo(() => ({
-    hidden: {
-      x: "100%",
-      transition: {
-        duration: 0.4,
-        ease: "easeInOut",
-        when: "afterChildren"
-      }
-    },
-    visible: {
-      x: 0,
-      transition: {
-        duration: 0.4,
-        ease: "easeInOut",
-        when: "beforeChildren",
-        staggerChildren: 0.1,
-        delayChildren: 0.1
-      }
-    }
-  }), []);
-
-  const menuContentVariants = useMemo(() => ({
-    hidden: {
-      opacity: 0,
-      transition: {
-        staggerChildren: 0.05,
-        staggerDirection: -1
-      }
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  }), []);
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove("menu-open");
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.top = "";
+    };
+  }, []);
 
   if (!mounted) return null;
+
+  // Calculate header state
+  const shouldHideHeader = scrollDirection === 'down' && !isAtTop && !isActive && scrollY > 100;
 
   return (
     <>
       {/* Header */}
       <motion.header
         className={`site__header ${!isAtTop ? 'scrolled' : ''} ${screenSize}`}
-        variants={headerVariants}
-        initial="visible"
-        animate={scrollDirection === 'down' && !isAtTop && !isActive ? "hidden" : "visible"}
+        initial={{ y: -100 }}
+        animate={{
+          y: shouldHideHeader ? -100 : 0,
+          opacity: shouldHideHeader ? 0.8 : 1
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
         <div className="header__container">
           <motion.div
@@ -370,12 +324,9 @@ const Headermain = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Link className="navbar-brand" to="/">
+            <Link className="navbar-brand" to="/" aria-label="Home">
               <motion.span
-                whileHover={!isMobile ? {
-                  scale: 1.05,
-                  transition: { duration: 0.2 }
-                } : undefined}
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {logotext}
@@ -394,10 +345,12 @@ const Headermain = () => {
             <motion.button
               className={`menu__button ${isActive ? 'active' : ''}`}
               onClick={handleToggle}
-              whileHover={!isMobile ? { scale: 1.1 } : undefined}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               aria-label={isActive ? 'Close menu' : 'Open menu'}
               aria-expanded={isActive}
+              aria-controls="navigation-menu"
+              type="button"
             >
               <motion.div
                 animate={{ rotate: isActive ? 180 : 0 }}
@@ -411,89 +364,84 @@ const Headermain = () => {
       </motion.header>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isActive && (
           <motion.div
             className="site__navigation"
-            variants={overlayVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="navigation-menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
           >
             {/* Background Overlay */}
-            <motion.div
+            <div
               className="menu__backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
               onClick={handleToggle}
             />
 
             {/* Menu Content */}
             <motion.div
               className="menu__container"
-              variants={menuVariants}
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{
+                duration: 0.4,
+                ease: "easeInOut",
+                type: "tween"
+              }}
             >
               <div className="menu__wrapper">
-                <motion.div
-                  className="menu__content"
-                  variants={menuContentVariants}
-                >
+                <div className="menu__content" id="navigation-menu">
                   {/* Menu Header */}
                   <motion.div
                     className="menu__header"
-                    variants={{
-                      hidden: { opacity: 0, y: -20 },
-                      visible: { opacity: 1, y: 0 }
-                    }}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
                   >
                     <h3>Navigation</h3>
                     <p>Explore my work and get in touch</p>
                   </motion.div>
 
                   {/* Menu Items */}
-                  <motion.nav
+                  <nav
                     className="menu__nav"
-                    variants={{
-                      hidden: { opacity: 0 },
-                      visible: { opacity: 1 }
-                    }}
+                    role="navigation"
+                    aria-label="Main navigation"
                   >
-                    <ul className="menu__list">
+                    <ul className="menu__list" role="menubar">
                       {menuItems.map((item, index) => (
                         <MenuItem
                           key={item.to}
                           to={item.to}
-                          onClick={handleToggle}
+                          onNavigate={handleNavigation}
                           isActive={isActiveRoute(item)}
                           index={index}
-                          isMobile={isMobile}
                         >
                           {item.label}
                         </MenuItem>
                       ))}
                     </ul>
-                  </motion.nav>
+                  </nav>
 
                   {/* Social Links */}
-                  <SocialLinks isMobile={isMobile} />
+                  <SocialLinks />
 
                   {/* Menu Footer */}
                   <motion.div
                     className="menu__footer"
-                    variants={{
-                      hidden: { opacity: 0, y: 20 },
-                      visible: {
-                        opacity: 1,
-                        y: 0,
-                        transition: { delay: 0.6 }
-                      }
-                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
                   >
                     <p className="copyright">© 2024 {logotext}. All rights reserved.</p>
                     <p className="location">Thiruvananthapuram, Kerala, India</p>
                   </motion.div>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           </motion.div>
