@@ -5,6 +5,9 @@ on:
     branches:
       - main  # This triggers the workflow on push to the main branch
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -30,4 +33,3 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./build  # This points to your build directory
         publish_branch: gh-pages  # This is where your site is published
-
