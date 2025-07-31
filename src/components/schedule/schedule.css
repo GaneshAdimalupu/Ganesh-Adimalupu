@@ -1,4 +1,4 @@
-/* components/schedule/schedule.css */
+/* components/schedule/schedule.css - ENHANCED VERSION */
 
 .section {
   padding: 5rem 2rem;
@@ -42,6 +42,106 @@
   margin: 0 auto 3rem;
   color: #b8c5d1;
   line-height: 1.8;
+}
+
+/* Enhanced Status Bar */
+.status-bar {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(0, 205, 254, 0.1) 0%, rgba(0, 205, 254, 0.05) 100%);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 205, 254, 0.2);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #b8c5d1;
+  font-size: 0.9rem;
+}
+
+.status-icon {
+  font-size: 1rem;
+}
+
+/* Enhanced Error/Success Messages */
+.error-message, .success-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  position: relative;
+  animation: slideInFromTop 0.3s ease;
+}
+
+.error-message {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #ef4444;
+}
+
+.success-message {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+.error-icon, .success-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.error-text, .success-text {
+  flex: 1;
+  white-space: pre-line;
+}
+
+.success-details {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.error-close, .success-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.error-close:hover {
+  background: rgba(220, 38, 38, 0.2);
+}
+
+.success-close:hover {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .schedule-content {
@@ -113,6 +213,21 @@
   font-size: 1.5rem;
   color: #ffffff;
   margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Enhanced Loading Spinner */
+.loading-spinner {
+  font-size: 1rem;
+  animation: spin 1s linear infinite;
+  color: #00CDFE;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Calendar */
@@ -216,7 +331,7 @@
   box-shadow: 0 5px 15px rgba(0, 205, 254, 0.3);
 }
 
-/* Time Slots */
+/* Enhanced Time Slots */
 .time-slots {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -233,9 +348,10 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
+  position: relative;
 }
 
-.time-slot:hover {
+.time-slot:hover:not(.booked):not(.loading) {
   border-color: rgba(0, 205, 254, 0.4);
   transform: translateY(-2px);
 }
@@ -246,6 +362,32 @@
   box-shadow: 0 8px 20px rgba(0, 205, 254, 0.3);
 }
 
+.time-slot.booked {
+  background: rgba(255, 255, 255, 0.02);
+  color: #777;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.time-slot.loading {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.time-slot.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0, 205, 254, 0.3);
+  border-top: 2px solid #00CDFE;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  transform: translateY(-50%);
+}
+
 .select-date-first {
   color: #b8c5d1;
   text-align: center;
@@ -253,7 +395,7 @@
   padding: 2rem;
 }
 
-/* Booking Form */
+/* Enhanced Booking Form */
 .booking-form {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   backdrop-filter: blur(15px);
@@ -261,17 +403,6 @@
   border-radius: 20px;
   padding: 2rem;
   animation: slideIn 0.5s ease;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .booking-form h3 {
@@ -306,6 +437,13 @@
   backdrop-filter: blur(10px);
 }
 
+.form-group input:disabled,
+.form-group textarea:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .form-group input::placeholder,
 .form-group textarea::placeholder {
   color: #b8c5d1;
@@ -330,7 +468,7 @@
   min-height: 100px;
 }
 
-/* Booking Summary */
+/* Enhanced Booking Summary */
 .booking-summary {
   background: rgba(0, 205, 254, 0.1);
   border: 1px solid rgba(0, 205, 254, 0.3);
@@ -357,6 +495,7 @@
   color: #b8c5d1;
 }
 
+/* Enhanced CTA Button with Loading States */
 .cta-button {
   background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
   color: white;
@@ -370,6 +509,30 @@
   width: 100%;
   position: relative;
   overflow: hidden;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cta-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.cta-button.loading {
+  background: linear-gradient(135deg, rgba(0, 205, 254, 0.8) 0%, rgba(0, 153, 204, 0.8) 100%);
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  font-size: 1.2rem;
 }
 
 .cta-button::before {
@@ -383,20 +546,61 @@
   transition: left 0.5s;
 }
 
-.cta-button:hover::before {
+.cta-button:hover:not(:disabled)::before {
   left: 100%;
 }
 
-.cta-button:hover {
+.cta-button:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: 0 10px 30px rgba(0, 205, 254, 0.4);
   background: linear-gradient(135deg, #33d6ff 0%, #00CDFE 100%);
 }
 
-/* Mobile Responsive */
+/* Enhanced Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Mobile Responsive - Enhanced */
 @media (max-width: 768px) {
   .section {
     padding: 3rem 1rem;
+  }
+
+  .section h2 {
+    font-size: 2rem;
+  }
+
+  .status-bar {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .error-message, .success-message {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
   }
 
   .meeting-type-grid {
@@ -423,7 +627,7 @@
 
 @media (max-width: 480px) {
   .section h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .calendar {
@@ -432,5 +636,13 @@
 
   .booking-form {
     padding: 1.5rem;
+  }
+
+  .status-item {
+    font-size: 0.8rem;
+  }
+
+  .loading-content {
+    font-size: 0.9rem;
   }
 }
