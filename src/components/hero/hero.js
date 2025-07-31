@@ -1,7 +1,7 @@
 // components/hero/hero.js
 import React from 'react';
 import './hero.css';
-import profileImage from '../../assets/images/profile.svg';
+import profileImage from '../../assets/images/profile.webp';
 
 const Hero = () => {
   const scrollToSection = (sectionId) => {

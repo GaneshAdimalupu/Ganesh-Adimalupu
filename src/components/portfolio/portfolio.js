@@ -14,7 +14,7 @@ import faceRecognitionImage from '../../assets/images/face recog.jpeg';
 
 
 // Supporting images for gallery
-import profileSVG from '../../assets/images/profile.svg';
+import profileSVG from '../../assets/images/profile.webp';
 import logoSTIST from '../../assets/images/logoSTIST.png';
 
 const Portfolio = () => {
