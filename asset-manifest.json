@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/static/css/main.336eca2c.css",
-    "main.js": "/static/js/main.c4e7cb7c.js",
+    "main.js": "/static/js/main.5db62fde.js",
     "static/media/logoSTIST.png": "/static/media/logoSTIST.b9c8b06f623c435b33ff.png",
-    "static/media/profile.svg": "/static/media/profile.b331a86e244d54d92bdfe953b62bf3d8.svg",
     "static/media/best pap cer.jpg": "/static/media/best pap cer.fe321cf5c72030e7fddc.jpg",
     "static/media/sneha deepa.png": "/static/media/sneha deepa.9dd8c0cea383b04cf0e3.png",
     "static/media/portfolio.png": "/static/media/portfolio.c319da7532ef3f585e5b.png",
+    "static/media/profile.webp": "/static/media/profile.fb71b79b2b65fd8dcbc1.webp",
     "index.html": "/index.html"
   },
   "entrypoints": [
     "static/css/main.336eca2c.css",
-    "static/js/main.c4e7cb7c.js"
+    "static/js/main.5db62fde.js"
   ]
 }
