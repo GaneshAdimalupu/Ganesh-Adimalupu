@@ -1,41 +1,75 @@
 /* components/hero/hero.css */
 
 .hero {
+  position: relative;
   height: 100vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #0f0f23 0%, #00CDFE 100%);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: linear-gradient(135deg, #0f0f23 0%, #00CDFE 100%);
-  color: white;
-  padding: 0 2rem;
+  overflow: hidden;
+}
+
+.parallax-bg {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, #00CDFE10 0%, transparent 70%);
+  animation: floatBackground 30s linear infinite;
+  z-index: 0;
+}
+
+@keyframes floatBackground {
+  from {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    transform: translate(0, 0) rotate(360deg);
+  }
 }
 
 .hero-content {
+  position: relative;
+  z-index: 2;
   max-width: 800px;
+  width: 100%;
+  padding: 1rem;
 }
 
 .profile-photo {
-  width: 200px;
-  height: 200px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 2rem;
+  margin: 0 auto 1.5rem;
   border: 4px solid white;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.profile-photo:hover {
+  transform: scale(1.05);
 }
 
 .hero h1 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  animation: fadeInUp 1s ease;
+  font-size: 2.5rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.2;
 }
 
-.hero p {
+.highlight {
+  color: #00CDFE;
+}
+
+.typing-text {
   font-size: 1.2rem;
   margin-bottom: 2rem;
-  opacity: 0.9;
-  animation: fadeInUp 1s ease 0.3s both;
+  min-height: 2rem;
 }
 
 .hero-buttons {
@@ -43,25 +77,23 @@
   gap: 1rem;
   justify-content: center;
   flex-wrap: wrap;
-  animation: fadeInUp 1s ease 0.6s both;
 }
 
 .cta-button {
-  display: inline-block;
-  padding: 12px 30px;
+  padding: 12px 28px;
   border-radius: 50px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
+  font-weight: 600;
   font-size: 1rem;
+  cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
+  border: none;
+  display: inline-block;
 }
 
 .cta-button.primary {
   background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
   color: white;
-  border: none;
 }
 
 .cta-button.primary:hover {
@@ -83,39 +115,34 @@
   box-shadow: 0 10px 30px rgba(0, 205, 254, 0.3);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ===== Responsive Design ===== */
 
-/* Mobile Styles */
 @media (max-width: 768px) {
+  .hero {
+    padding: 3rem 1rem;
+  }
+
+  .profile-photo {
+    width: 140px;
+    height: 140px;
+  }
+
   .hero h1 {
     font-size: 2rem;
   }
 
-  .hero p {
+  .typing-text {
     font-size: 1rem;
   }
 
-  .profile-photo {
-    width: 150px;
-    height: 150px;
+  .cta-button {
+    width: 100%;
+    max-width: 250px;
   }
 
   .hero-buttons {
     flex-direction: column;
-    align-items: center;
-  }
-
-  .cta-button {
-    width: 200px;
+    gap: 0.75rem;
   }
 }
 
@@ -124,8 +151,17 @@
     font-size: 1.5rem;
   }
 
+  .typing-text {
+    font-size: 0.95rem;
+  }
+
   .profile-photo {
     width: 120px;
     height: 120px;
+  }
+
+  .cta-button {
+    font-size: 0.95rem;
+    padding: 10px 24px;
   }
 }
