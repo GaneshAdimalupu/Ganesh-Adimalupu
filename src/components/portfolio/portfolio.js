@@ -1,19 +1,13 @@
-// components/portfolio/portfolio.js
-import React, { useState } from 'react';
+// components/portfolio/portfolio.js - COMPLETE WITH FIXED MODAL
+import React, { useState, useEffect } from 'react';
 import './portfolio.css';
 
-// NOTE: You must add images for the new projects below!
+// Import your images
 import bestPaperCert from '../../assets/images/best pap cer.jpg';
 import portfolioImage from '../../assets/images/portfolio.png';
 import digit from '../../assets/images/digit.png';
 import snehaDeepaImage from '../../assets/images/sneha deepa.png';
 import faceRecognitionImage from '../../assets/images/face recog.jpeg';
-
-//const faceRecognitionImage = 'https://placehold.co/600x400/1e293b/ffffff?text=Face+Recognition+Platform';
-
-
-
-// Supporting images for gallery
 import profileSVG from '../../assets/images/profile.webp';
 import logoSTIST from '../../assets/images/logoSTIST.png';
 
@@ -21,9 +15,8 @@ const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
 
-  // --- EXPANDED LIST OF YOUR BEST PROJECTS ---
+  // Your projects data
   const projects = [
-    // --- Tier 1 Projects ---
     {
       id: 1,
       title: 'Be My Chef - Smart Food Recommendation System',
@@ -61,12 +54,11 @@ const Portfolio = () => {
       featured: false,
       achievements: ['🎨 Modern UI/UX', '📱 Fully Responsive', '⚡ Fast Performance', '🌙 Dark Theme'],
     },
-// --- Tier X Projects --- (update Tier as appropriate)
     {
-      id: 4, // Assign a unique ID
+      id: 4,
       title: 'Sneha Deepa Hospital Website',
       description: 'A comprehensive hospital management system web application built with modern web technologies. Features include patient registration, appointment scheduling, doctor management, and digital record keeping.',
-      image: snehaDeepaImage, // Replace with your actual project image variable
+      image: snehaDeepaImage,
       category: 'web-dev',
       technologies: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'CSS Modules'],
       githubRepo: 'https://github.com/GaneshAdimalupu/sneha-deepa-hospital',
@@ -78,13 +70,12 @@ const Portfolio = () => {
         '🔒 Secure Authentication'
       ],
     },
-    // --- Tier X Projects ---
     {
-      id: 6, // Assign a unique ID
+      id: 5,
       title: 'Face Recognition Evaluation Platform',
       description: 'A robust evaluation platform for benchmarking face recognition models. Provides tools for dataset management, result visualization, and model comparison to streamline research and development.',
-      image: faceRecognitionImage, // Replace with your actual project image variable
-      category: 'machine-learning',
+      image: faceRecognitionImage,
+      category: 'ai-ml',
       technologies: ['Python', 'OpenCV', 'scikit-learn', 'NumPy', 'Matplotlib'],
       githubRepo: 'https://github.com/GaneshAdimalupu/face-recognition-evaluation',
       featured: false,
@@ -95,8 +86,8 @@ const Portfolio = () => {
         '📈 Performance Metrics & Comparison'
       ],
     },
+  ];
 
-];
   const categories = [
     { key: 'all', label: 'All', icon: '🎯' },
     { key: 'ai-ml', label: 'AI/ML', icon: '🤖' },
@@ -107,19 +98,83 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
+  // FIXED Modal Functions
   const openModal = (project) => {
     setSelectedProject(project);
+    // Prevent body scrolling and save current scroll position
+    const scrollY = window.scrollY;
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.classList.add('modal-open');
   };
 
   const closeModal = () => {
+    // Restore body scrolling and scroll position
+    const scrollY = document.body.style.top;
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.classList.remove('modal-open');
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
+
     setSelectedProject(null);
-    document.body.style.overflow = 'unset';
   };
 
-  // PASTE THE REST OF YOUR RETURN JSX HERE (from the previous answer)
-  // It starts with: return (<section id="portfolio" ... > ... </section>);
-  // The JSX for rendering the grid and modal does not need to be changed.
+  // Enhanced useEffect for keyboard and window management
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && selectedProject) {
+        closeModal();
+      }
+    };
+
+    const handleResize = () => {
+      // Modal will automatically reposition due to flexbox centering
+      if (selectedProject) {
+        // Force a re-render to ensure proper centering
+        const modal = document.querySelector('.project-modal');
+        if (modal) {
+          modal.style.transform = 'none';
+          // Trigger reflow
+          modal.offsetHeight;
+          modal.style.transform = '';
+        }
+      }
+    };
+
+    // Add event listeners when modal is open
+    if (selectedProject) {
+      document.addEventListener('keydown', handleEscape);
+      window.addEventListener('resize', handleResize);
+
+      // Prevent background scrolling on mobile
+      document.addEventListener('touchmove', (e) => {
+        if (!e.target.closest('.project-modal')) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+    }
+
+    // Cleanup function
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('touchmove', () => {});
+
+      // Ensure body scroll is restored if component unmounts with modal open
+      if (selectedProject) {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.classList.remove('modal-open');
+      }
+    };
+  }, [selectedProject]);
+
   return (
     <section id="portfolio" className="section">
       <div className="container">
@@ -181,12 +236,125 @@ const Portfolio = () => {
         )}
       </div>
 
+      {/* FIXED Modal with Perfect Centering */}
       {selectedProject && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="project-modal" onClick={e => e.stopPropagation()}>
-            <button className="close-modal" onClick={closeModal}>×</button>
+        <div
+          className="modal-overlay"
+          onClick={closeModal}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div
+            className="project-modal"
+            onClick={e => e.stopPropagation()}
+            role="document"
+          >
+            <button
+              className="close-modal"
+              onClick={closeModal}
+              aria-label="Close modal"
+              title="Close (Esc)"
+            >
+              ×
+            </button>
+
             <div className="modal-content">
-              {/* The modal's detailed content will be rendered here */}
+              <div className="modal-image">
+                <img
+                  src={selectedProject.image}
+                  alt={selectedProject.title}
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="modal-details">
+                <h2 id="modal-title">{selectedProject.title}</h2>
+                <p>{selectedProject.description}</p>
+
+                {/* Achievements Section */}
+                {selectedProject.achievements && (
+                  <div className="achievements-full">
+                    <h4>🏆 Key Achievements</h4>
+                    <ul className="achievement-list">
+                      {selectedProject.achievements.map((achievement, index) => (
+                        <li key={index}>{achievement}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Technologies Section */}
+                <div className="tech-stack-full">
+                  <h4>🛠️ Technologies Used</h4>
+                  <div className="tech-tags">
+                    {selectedProject.technologies.map((tech, index) => (
+                      <span key={index} className="tech-tag">{tech}</span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Project Actions */}
+                <div className="project-actions">
+                  {selectedProject.liveDemo && (
+                    <a
+                      href={selectedProject.liveDemo}
+                      className="action-btn primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      🚀 Live Demo
+                    </a>
+                  )}
+                  {selectedProject.githubRepo && (
+                    <a
+                      href={selectedProject.githubRepo}
+                      className="action-btn secondary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      📂 View Code
+                    </a>
+                  )}
+                </div>
+
+                {/* Image Gallery */}
+                {selectedProject.gallery && selectedProject.gallery.length > 1 && (
+                  <div className="image-gallery">
+                    <h4>📸 Project Gallery</h4>
+                    <div className="gallery-grid">
+                      {selectedProject.gallery.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`${selectedProject.title} screenshot ${index + 1}`}
+                          className="gallery-image"
+                          loading="lazy"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Project Info */}
+                <div className="documents-section">
+                  <h4>📋 Project Information</h4>
+                  <div className="document-list">
+                    <div className="document-item">
+                      <span className="doc-icon">📅</span>
+                      <span className="doc-name">Status: {selectedProject.featured ? 'Featured Project' : 'Completed'}</span>
+                    </div>
+                    <div className="document-item">
+                      <span className="doc-icon">🏷️</span>
+                      <span className="doc-name">Category: {selectedProject.category === 'ai-ml' ? 'AI & Machine Learning' : 'Web Development'}</span>
+                    </div>
+                    <div className="document-item">
+                      <span className="doc-icon">🔧</span>
+                      <span className="doc-name">Technologies: {selectedProject.technologies.length} different tools</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

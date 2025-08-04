@@ -1,10 +1,10 @@
-/* components/hero/hero.css */
+/* components/hero/hero.css - ENHANCED VERSION */
 
 .hero {
   position: relative;
   height: 100vh;
   padding: 2rem;
-  background: linear-gradient(135deg, #0f0f23 0%, #00CDFE 100%);
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -13,120 +13,360 @@
   overflow: hidden;
 }
 
+/* Enhanced Background with Multiple Layers */
 .parallax-bg {
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, #00CDFE10 0%, transparent 70%);
-  animation: floatBackground 30s linear infinite;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(0, 205, 254, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(0, 153, 204, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 60%, rgba(0, 205, 254, 0.08) 0%, transparent 40%);
+  animation: floatBackground 25s ease-in-out infinite;
   z-index: 0;
 }
 
+/* Floating Particles Effect */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(0, 205, 254, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(0, 205, 254, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.1), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(0, 205, 254, 0.2), transparent);
+  background-repeat: repeat;
+  background-size: 200px 100px;
+  animation: sparkle 15s linear infinite;
+  opacity: 0.6;
+  z-index: 1;
+}
+
 @keyframes floatBackground {
-  from {
-    transform: translate(0, 0) rotate(0deg);
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
   }
-  to {
-    transform: translate(0, 0) rotate(360deg);
+  33% {
+    transform: translate(-20px, -30px) rotate(120deg) scale(1.05);
+  }
+  66% {
+    transform: translate(20px, -10px) rotate(240deg) scale(0.95);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 0.8;
   }
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 900px;
   width: 100%;
   padding: 1rem;
 }
 
+/* Enhanced Profile Photo with Glow Effect */
 .profile-photo {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
-  margin: 0 auto 1.5rem;
-  border: 4px solid white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease;
+  margin: 0 auto 2rem;
+  border: 4px solid rgba(0, 205, 254, 0.5);
+  box-shadow:
+    0 0 30px rgba(0, 205, 254, 0.4),
+    0 10px 40px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(0, 205, 254, 0.1);
+  transition: all 0.4s ease;
+  position: relative;
+  background: linear-gradient(135deg, rgba(0, 205, 254, 0.1), rgba(0, 153, 204, 0.1));
+}
+
+.profile-photo::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #00CDFE, #0099cc, #00CDFE);
+  z-index: -1;
+  animation: borderRotate 3s linear infinite;
+  opacity: 0.8;
 }
 
 .profile-photo:hover {
-  transform: scale(1.05);
+  transform: scale(1.08) translateY(-5px);
+  box-shadow:
+    0 0 50px rgba(0, 205, 254, 0.6),
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 0 30px rgba(0, 205, 254, 0.2);
 }
 
+@keyframes borderRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Enhanced Typography */
 .hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 0.8rem;
+  font-size: 3.2rem;
+  margin-bottom: 1rem;
   line-height: 1.2;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #00CDFE 50%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px rgba(0, 205, 254, 0.3);
+  position: relative;
 }
 
 .highlight {
-  color: #00CDFE;
+  background: linear-gradient(135deg, #00CDFE 0%, #33d6ff 50%, #00CDFE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  display: inline-block;
+  animation: highlightPulse 2s ease-in-out infinite;
 }
 
+@keyframes highlightPulse {
+  0%, 100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.2);
+    transform: scale(1.02);
+  }
+}
+
+/* Enhanced Typing Text */
 .typing-text {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  min-height: 2rem;
+  font-size: 1.4rem;
+  margin-bottom: 2.5rem;
+  min-height: 2.5rem;
+  font-weight: 500;
+  color: #b8c5d1;
+  text-shadow: 0 0 10px rgba(0, 205, 254, 0.2);
+  position: relative;
 }
 
+.typing-text::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00CDFE, transparent);
+  border-radius: 2px;
+  opacity: 0.6;
+}
+
+/* Enhanced Buttons */
 .hero-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 2rem;
 }
 
 .cta-button {
-  padding: 12px 28px;
+  padding: 16px 35px;
   border-radius: 50px;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   text-decoration: none;
   border: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  min-width: 160px;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s;
+}
+
+.cta-button:hover::before {
+  left: 100%;
 }
 
 .cta-button.primary {
   background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
   color: white;
+  box-shadow: 0 8px 25px rgba(0, 205, 254, 0.3);
 }
 
 .cta-button.primary:hover {
-  background: linear-gradient(135deg, #33d6ff 0%, #00CDFE 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 205, 254, 0.4);
+  background: linear-gradient(135deg, #33d6ff 0%, #00CDFE 50%, #0099cc 100%);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 205, 254, 0.5);
 }
 
 .cta-button.secondary {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.05);
   color: white;
-  border: 2px solid #00CDFE;
+  border: 2px solid rgba(0, 205, 254, 0.6);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .cta-button.secondary:hover {
-  background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 205, 254, 0.3);
+  background: linear-gradient(135deg, rgba(0, 205, 254, 0.1), rgba(0, 205, 254, 0.2));
+  border-color: #00CDFE;
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 205, 254, 0.3);
 }
 
-/* ===== Responsive Design ===== */
+/* Add icons to buttons */
+.cta-button.primary::after {
+  content: '→';
+  transition: transform 0.3s ease;
+}
+
+.cta-button.primary:hover::after {
+  transform: translateX(5px);
+}
+
+.cta-button.secondary::after {
+  content: '✉';
+  transition: transform 0.3s ease;
+}
+
+.cta-button.secondary:hover::after {
+  transform: scale(1.2);
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.7;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  opacity: 1;
+}
+
+.scroll-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: #b8c5d1;
+}
+
+.scroll-arrow {
+  width: 2px;
+  height: 30px;
+  background: linear-gradient(to bottom, #00CDFE, transparent);
+  position: relative;
+  animation: scrollBounce 2s infinite;
+}
+
+.scroll-arrow::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #00CDFE;
+  border-bottom: 2px solid #00CDFE;
+  transform: rotate(45deg);
+}
+
+@keyframes scrollBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* ===== Enhanced Responsive Design ===== */
 
 @media (max-width: 768px) {
   .hero {
-    padding: 3rem 1rem;
+    padding: 2rem 1rem;
   }
 
   .profile-photo {
-    width: 140px;
-    height: 140px;
+    width: 160px;
+    height: 160px;
   }
 
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .typing-text {
+    font-size: 1.2rem;
+    min-height: 2rem;
+  }
+
+  .cta-button {
+    width: 100%;
+    max-width: 280px;
+    font-size: 1rem;
+    padding: 14px 30px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .scroll-indicator {
+    bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
   .hero h1 {
     font-size: 2rem;
   }
@@ -135,33 +375,69 @@
     font-size: 1rem;
   }
 
+  .profile-photo {
+    width: 140px;
+    height: 140px;
+  }
+
   .cta-button {
-    width: 100%;
-    max-width: 250px;
+    font-size: 0.95rem;
+    padding: 12px 25px;
+    min-width: 140px;
   }
 
   .hero-buttons {
-    flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.8rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 360px) {
   .hero h1 {
-    font-size: 1.5rem;
-  }
-
-  .typing-text {
-    font-size: 0.95rem;
+    font-size: 1.8rem;
   }
 
   .profile-photo {
     width: 120px;
     height: 120px;
   }
+}
+
+/* Dark Theme Enhancements */
+@media (prefers-color-scheme: dark) {
+  .hero {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #0f1419 100%);
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .parallax-bg,
+  .profile-photo::before,
+  .scroll-arrow {
+    animation: none;
+  }
+
+  .hero::before {
+    animation: none;
+  }
 
   .cta-button {
-    font-size: 0.95rem;
-    padding: 10px 24px;
+    transition: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .hero {
+    background: #000;
+  }
+
+  .profile-photo {
+    border-color: #fff;
+  }
+
+  .cta-button.primary {
+    background: #00CDFE;
+    color: #000;
   }
 }

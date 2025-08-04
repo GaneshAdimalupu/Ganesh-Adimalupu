@@ -1,4 +1,4 @@
-/* components/portfolio/portfolio.css */
+/* components/portfolio/portfolio.css - COMPLETE WITH FIXED MODAL */
 
 .section {
   padding: 5rem 2rem;
@@ -276,7 +276,7 @@
   font-style: italic;
 }
 
-/* Modal Styles - Perfect Centering */
+/* FIXED Modal Styles - Perfect Centering */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -310,8 +310,6 @@
   align-self: center;
   flex-shrink: 0;
 }
-
-/* Remove the fallback - not needed */
 
 @keyframes modalSlideIn {
   from {
@@ -777,6 +775,8 @@ body.modal-open {
   position: fixed;
   width: 100%;
 }
+
+/* Touch Device Optimizations */
 @media (hover: none) and (pointer: coarse) {
   .portfolio-card:hover {
     transform: none;
