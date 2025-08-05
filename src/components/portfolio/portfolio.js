@@ -1,4 +1,3 @@
-// components/portfolio/portfolio.js - COMPLETE WITH FIXED MODAL
 import React, { useState, useEffect } from 'react';
 import './portfolio.css';
 
@@ -14,8 +13,8 @@ import logoSTIST from '../../assets/images/logoSTIST.png';
 const Portfolio = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
 
-  // Your projects data
   const projects = [
     {
       id: 1,
@@ -98,89 +97,39 @@ const Portfolio = () => {
     ? projects
     : projects.filter(project => project.category === activeFilter);
 
-  // FIXED Modal Functions
-  const openModal = (project) => {
+  const openSidePanel = (project) => {
     setSelectedProject(project);
-    // Prevent body scrolling and save current scroll position
-    const scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.classList.add('modal-open');
+    setSidePanelOpen(true);
+    document.body.classList.add('side-panel-open');
   };
 
-  const closeModal = () => {
-    // Restore body scrolling and scroll position
-    const scrollY = document.body.style.top;
-    document.body.style.overflow = '';
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    document.body.classList.remove('modal-open');
-    window.scrollTo(0, parseInt(scrollY || '0') * -1);
-
-    setSelectedProject(null);
+  const closeSidePanel = () => {
+    setSidePanelOpen(false);
+    document.body.classList.remove('side-panel-open');
+    setTimeout(() => {
+      setSelectedProject(null);
+    }, 300);
   };
 
-  // Enhanced useEffect for keyboard and window management
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && selectedProject) {
-        closeModal();
+      if (e.key === 'Escape' && sidePanelOpen) {
+        closeSidePanel();
       }
     };
 
-    const handleResize = () => {
-      // Modal will automatically reposition due to flexbox centering
-      if (selectedProject) {
-        // Force a re-render to ensure proper centering
-        const modal = document.querySelector('.project-modal');
-        if (modal) {
-          modal.style.transform = 'none';
-          // Trigger reflow
-          modal.offsetHeight;
-          modal.style.transform = '';
-        }
-      }
-    };
-
-    // Add event listeners when modal is open
-    if (selectedProject) {
-      document.addEventListener('keydown', handleEscape);
-      window.addEventListener('resize', handleResize);
-
-      // Prevent background scrolling on mobile
-      document.addEventListener('touchmove', (e) => {
-        if (!e.target.closest('.project-modal')) {
-          e.preventDefault();
-        }
-      }, { passive: false });
-    }
-
-    // Cleanup function
+    document.addEventListener('keydown', handleEscape);
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('touchmove', () => {});
-
-      // Ensure body scroll is restored if component unmounts with modal open
-      if (selectedProject) {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.classList.remove('modal-open');
-      }
     };
-  }, [selectedProject]);
+  }, [sidePanelOpen]);
 
   return (
     <section id="portfolio" className="section">
       <div className="container">
         <h2>My Portfolio</h2>
         <p className="section-text">
-          Here are some of my best projects, showcasing my skills in AI, Machine Learning, and Web Development.
+          Click on any project to see detailed information in the side panel.
         </p>
 
         <div className="filter-container">
@@ -196,20 +145,17 @@ const Portfolio = () => {
           ))}
         </div>
 
-        <div className="portfolio-grid">
+        <div className={`portfolio-grid ${sidePanelOpen ? 'with-panel' : ''}`}>
           {filteredProjects.map(project => (
             <div
               key={project.id}
-              className={`portfolio-card ${project.featured ? 'featured' : ''}`}
-              onClick={() => openModal(project)}
+              className={`portfolio-card ${project.featured ? 'featured' : ''} ${selectedProject?.id === project.id ? 'selected' : ''}`}
+              onClick={() => openSidePanel(project)}
             >
-              {project.featured && <div className="featured-badge">🏆 Featured</div>}
               <div className="portfolio-image">
                 <img src={project.image} alt={project.title} loading="lazy" />
                 <div className="portfolio-overlay">
                   <div className="overlay-content">
-                    <h3>{project.title}</h3>
-                    <p>{project.description.substring(0, 100)}...</p>
                     <button className="view-btn">View Details</button>
                   </div>
                 </div>
@@ -228,55 +174,30 @@ const Portfolio = () => {
             </div>
           ))}
         </div>
-
-        {filteredProjects.length === 0 && (
-          <div className="no-projects">
-            <p>No projects found for this category. More coming soon!</p>
-          </div>
-        )}
       </div>
 
-      {/* FIXED Modal with Perfect Centering */}
-      {selectedProject && (
-        <div
-          className="modal-overlay"
-          onClick={closeModal}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-        >
-          <div
-            className="project-modal"
-            onClick={e => e.stopPropagation()}
-            role="document"
-          >
-            <button
-              className="close-modal"
-              onClick={closeModal}
-              aria-label="Close modal"
-              title="Close (Esc)"
-            >
-              ×
-            </button>
+      <div className={`side-panel ${sidePanelOpen ? 'open' : ''}`}>
+        <div className="side-panel-overlay" onClick={closeSidePanel}></div>
+        <div className="side-panel-content">
+          <div className="side-panel-header">
+            <h2>Project Details</h2>
+            <button className="close-panel" onClick={closeSidePanel}>×</button>
+          </div>
 
-            <div className="modal-content">
-              <div className="modal-image">
-                <img
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  loading="lazy"
-                />
+          {selectedProject && (
+            <div className="side-panel-body">
+              <div className="project-image">
+                <img src={selectedProject.image} alt={selectedProject.title} />
               </div>
 
-              <div className="modal-details">
-                <h2 id="modal-title">{selectedProject.title}</h2>
+              <div className="project-details">
+                <h3>{selectedProject.title}</h3>
                 <p>{selectedProject.description}</p>
 
-                {/* Achievements Section */}
                 {selectedProject.achievements && (
-                  <div className="achievements-full">
-                    <h4>🏆 Key Achievements</h4>
-                    <ul className="achievement-list">
+                  <div className="achievements">
+                    <h4>🏆 Achievements</h4>
+                    <ul>
                       {selectedProject.achievements.map((achievement, index) => (
                         <li key={index}>{achievement}</li>
                       ))}
@@ -284,9 +205,8 @@ const Portfolio = () => {
                   </div>
                 )}
 
-                {/* Technologies Section */}
-                <div className="tech-stack-full">
-                  <h4>🛠️ Technologies Used</h4>
+                <div className="technologies">
+                  <h4>🛠️ Technologies</h4>
                   <div className="tech-tags">
                     {selectedProject.technologies.map((tech, index) => (
                       <span key={index} className="tech-tag">{tech}</span>
@@ -294,71 +214,23 @@ const Portfolio = () => {
                   </div>
                 </div>
 
-                {/* Project Actions */}
-                <div className="project-actions">
+                <div className="project-links">
                   {selectedProject.liveDemo && (
-                    <a
-                      href={selectedProject.liveDemo}
-                      className="action-btn primary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href={selectedProject.liveDemo} className="btn primary" target="_blank" rel="noopener noreferrer">
                       🚀 Live Demo
                     </a>
                   )}
                   {selectedProject.githubRepo && (
-                    <a
-                      href={selectedProject.githubRepo}
-                      className="action-btn secondary"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                    <a href={selectedProject.githubRepo} className="btn secondary" target="_blank" rel="noopener noreferrer">
                       📂 View Code
                     </a>
                   )}
                 </div>
-
-                {/* Image Gallery */}
-                {selectedProject.gallery && selectedProject.gallery.length > 1 && (
-                  <div className="image-gallery">
-                    <h4>📸 Project Gallery</h4>
-                    <div className="gallery-grid">
-                      {selectedProject.gallery.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`${selectedProject.title} screenshot ${index + 1}`}
-                          className="gallery-image"
-                          loading="lazy"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Additional Project Info */}
-                <div className="documents-section">
-                  <h4>📋 Project Information</h4>
-                  <div className="document-list">
-                    <div className="document-item">
-                      <span className="doc-icon">📅</span>
-                      <span className="doc-name">Status: {selectedProject.featured ? 'Featured Project' : 'Completed'}</span>
-                    </div>
-                    <div className="document-item">
-                      <span className="doc-icon">🏷️</span>
-                      <span className="doc-name">Category: {selectedProject.category === 'ai-ml' ? 'AI & Machine Learning' : 'Web Development'}</span>
-                    </div>
-                    <div className="document-item">
-                      <span className="doc-icon">🔧</span>
-                      <span className="doc-name">Technologies: {selectedProject.technologies.length} different tools</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
     </section>
   );
 };
