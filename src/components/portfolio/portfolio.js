@@ -121,12 +121,14 @@ const Portfolio = () => {
     document.addEventListener('keydown', handleEscape);
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.body.classList.remove('side-panel-open');
     };
   }, [sidePanelOpen]);
 
   return (
     <section id="portfolio" className="section">
-      <div className="container">
+      {/* Apply the with-panel class to container instead of grid */}
+      <div className={`container ${sidePanelOpen ? 'with-panel' : ''}`}>
         <h2>My Portfolio</h2>
         <p className="section-text">
           Click on any project to see detailed information in the side panel.
@@ -145,7 +147,7 @@ const Portfolio = () => {
           ))}
         </div>
 
-        <div className={`portfolio-grid ${sidePanelOpen ? 'with-panel' : ''}`}>
+        <div className="portfolio-grid">
           {filteredProjects.map(project => (
             <div
               key={project.id}
@@ -176,12 +178,13 @@ const Portfolio = () => {
         </div>
       </div>
 
+      {/* Side Panel */}
       <div className={`side-panel ${sidePanelOpen ? 'open' : ''}`}>
         <div className="side-panel-overlay" onClick={closeSidePanel}></div>
         <div className="side-panel-content">
           <div className="side-panel-header">
             <h2>Project Details</h2>
-            <button className="close-panel" onClick={closeSidePanel}>×</button>
+            <button className="close-panel" onClick={closeSidePanel} aria-label="Close panel">×</button>
           </div>
 
           {selectedProject && (
@@ -216,12 +219,24 @@ const Portfolio = () => {
 
                 <div className="project-links">
                   {selectedProject.liveDemo && (
-                    <a href={selectedProject.liveDemo} className="btn primary" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={selectedProject.liveDemo}
+                      className="btn primary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="View live demo"
+                    >
                       🚀 Live Demo
                     </a>
                   )}
                   {selectedProject.githubRepo && (
-                    <a href={selectedProject.githubRepo} className="btn secondary" target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={selectedProject.githubRepo}
+                      className="btn secondary"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="View source code"
+                    >
                       📂 View Code
                     </a>
                   )}

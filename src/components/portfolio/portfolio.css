@@ -1,4 +1,4 @@
-/* portfolio-sidepanel.css - FIXED SIDE PANEL POSITIONING */
+/* portfolio.css - FIXED SIDE PANEL POSITIONING */
 
 .section {
   padding: 5rem 2rem;
@@ -10,6 +10,13 @@
   margin: 0 auto;
   position: relative;
   z-index: 1;
+  transition: all 0.3s ease;
+}
+
+/* When side panel is open, shift the container */
+.container.with-panel {
+  transform: translateX(-200px);
+  max-width: 1000px;
 }
 
 .section h2 {
@@ -74,18 +81,13 @@
   font-size: 1.1rem;
 }
 
-/* Portfolio Grid with Side Panel Support */
+/* Portfolio Grid - Simplified Layout */
 .portfolio-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   margin-top: 3rem;
-  transition: transform 0.3s ease, margin-right 0.3s ease;
-}
-
-.portfolio-grid.with-panel {
-  transform: translateX(-150px);
-  margin-right: 400px;
+  transition: all 0.3s ease;
 }
 
 .portfolio-card {
@@ -218,13 +220,13 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* FIXED SIDE PANEL STYLES - ALWAYS FULL VIEWPORT HEIGHT */
+/* FIXED SIDE PANEL STYLES */
 .side-panel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 100%;
-  height: 100vh; /* Always full viewport height */
+  width: 100vw;
+  height: 100vh;
   z-index: 1000;
   pointer-events: none;
   transition: all 0.3s ease;
@@ -235,14 +237,15 @@
 }
 
 .side-panel-overlay {
-  position: fixed; /* Changed from absolute to fixed */
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh; /* Always full viewport height */
-  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
   opacity: 0;
   transition: opacity 0.3s ease;
+  backdrop-filter: blur(5px);
 }
 
 .side-panel.open .side-panel-overlay {
@@ -250,18 +253,18 @@
 }
 
 .side-panel-content {
-  position: fixed; /* Changed from absolute to fixed */
+  position: absolute;
   top: 0;
   right: 0;
   width: 450px;
-  height: 100vh; /* Always full viewport height */
+  height: 100vh;
   background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(15, 15, 35, 0.98) 100%);
   backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(0, 205, 254, 0.3);
+  border-left: 2px solid rgba(0, 205, 254, 0.3);
   transform: translateX(100%);
   transition: transform 0.3s ease;
   overflow-y: auto;
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .side-panel.open .side-panel-content {
@@ -420,16 +423,27 @@
   box-shadow: 0 8px 25px rgba(0, 205, 254, 0.3);
 }
 
-/* Prevent body scroll when side panel is open */
-body.modal-open {
+/* Body scroll prevention when side panel is open */
+body.side-panel-open {
   overflow: hidden;
 }
 
 /* Mobile Responsive */
+@media (max-width: 1200px) {
+  .container.with-panel {
+    transform: translateX(-100px);
+    max-width: 1100px;
+  }
+
+  .side-panel-content {
+    width: 400px;
+  }
+}
+
 @media (max-width: 768px) {
-  .portfolio-grid.with-panel {
+  .container.with-panel {
     transform: none;
-    margin-right: 0;
+    max-width: 1200px;
   }
 
   .side-panel-content {
