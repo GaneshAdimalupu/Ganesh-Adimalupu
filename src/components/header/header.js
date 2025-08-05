@@ -47,19 +47,12 @@ const Header = () => {
   // Mobile menu toggle
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-
-    // Prevent body scroll when menu is open
-    if (!isMobileMenuOpen) {
-      document.body.classList.add('menu-open');
-    } else {
-      document.body.classList.remove('menu-open');
-    }
+    // No need to prevent body scroll for dropdown menu
   };
 
   // Close mobile menu
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
-    document.body.classList.remove('menu-open');
   };
 
   // Smooth scroll to section
@@ -69,13 +62,13 @@ const Header = () => {
       // Close mobile menu first
       closeMobileMenu();
 
-      // Small delay to allow menu closing animation
+      // Small delay for dropdown close animation
       setTimeout(() => {
         element.scrollIntoView({
           behavior: 'smooth',
           block: 'start'
         });
-      }, isMobileMenuOpen ? 300 : 0);
+      }, 100);
     }
   };
 
@@ -109,7 +102,7 @@ const Header = () => {
   // Clean up on unmount
   useEffect(() => {
     return () => {
-      document.body.classList.remove('menu-open');
+      // No cleanup needed for dropdown menu
     };
   }, []);
 
@@ -129,18 +122,8 @@ const Header = () => {
           Ganesh Adimalupu
         </a>
 
-        {/* Desktop Navigation */}
+        {/* Mobile Navigation - Small Dropdown */}
         <ul className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {isMobileMenuOpen && (
-            <button
-              className="menu-close"
-              onClick={closeMobileMenu}
-              aria-label="Close navigation menu"
-            >
-              ×
-            </button>
-          )}
-
           {navItems.map((item) => (
             <li key={item.id}>
               <button
@@ -148,7 +131,7 @@ const Header = () => {
                 onClick={() => scrollToSection(item.id)}
                 aria-label={`Navigate to ${item.label} section`}
               >
-                <span className="nav-icon" style={{ marginRight: '0.5rem' }}>
+                <span className="nav-icon">
                   {item.icon}
                 </span>
                 {item.label}
@@ -157,15 +140,13 @@ const Header = () => {
           ))}
 
           {/* Mobile CTA Button */}
-          {isMobileMenuOpen && (
-            <button
-              className="mobile-cta"
-              onClick={handleCTAClick}
-              aria-label="Get in touch"
-            >
-              Let's Work Together
-            </button>
-          )}
+          <button
+            className="mobile-cta"
+            onClick={handleCTAClick}
+            aria-label="Get in touch"
+          >
+            Let's Talk
+          </button>
         </ul>
 
         {/* Desktop CTA Button */}
