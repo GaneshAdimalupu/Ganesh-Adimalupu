@@ -1,179 +1,132 @@
-// components/header/header.js - Beautiful Desktop & Mobile Header
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './header.css';
 
-const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
+// --- Custom Hooks ---
 
-  // Scroll detection for header styling
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setScrolled(scrollPosition > 50);
-    };
+// Hook to detect scroll position
+const useScroll = (threshold = 10) => {
+    const [isScrolled, setIsScrolled] = useState(false);
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > threshold);
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Initial check
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [threshold]);
 
-  // Active section detection for navigation highlighting
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'about', 'portfolio', 'certifications', 'schedule', 'contact'];
-      const scrollPosition = window.scrollY + 100;
+    return isScrolled;
+};
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const offsetTop = element.offsetTop;
-          const offsetHeight = element.offsetHeight;
+// Hook to track the active section in the viewport
+const useScrollSpy = (sectionIds, options) => {
+    const [activeSection, setActiveSection] = useState(null);
+    const observer = useRef(null);
 
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
+    useEffect(() => {
+        if (observer.current) observer.current.disconnect();
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial position
+        observer.current = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id);
+                }
+            });
+        }, options);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Mobile menu toggle
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-    // No need to prevent body scroll for dropdown menu
-  };
-
-  // Close mobile menu
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
-  // Smooth scroll to section
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      // Close mobile menu first
-      closeMobileMenu();
-
-      // Small delay for dropdown close animation
-      setTimeout(() => {
-        element.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
+        sectionIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) observer.current.observe(element);
         });
-      }, 100);
-    }
-  };
 
-  // Handle CTA button click
-  const handleCTAClick = () => {
-    scrollToSection('contact');
-  };
+        return () => {
+            if (observer.current) {
+                observer.current.disconnect();
+            }
+        };
+    }, [sectionIds, options]);
 
-  // Navigation items
-  const navItems = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'about', label: 'About', icon: '👨‍💻' },
-    { id: 'portfolio', label: 'Portfolio', icon: '💼' },
-    { id: 'certifications', label: 'Certifications', icon: '🏆' },
-    { id: 'schedule', label: 'Schedule', icon: '📅' },
-    { id: 'contact', label: 'Contact', icon: '📧' }
-  ];
+    return activeSection;
+};
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isMobileMenuOpen) {
-        closeMobileMenu();
-      }
+// Hook to handle clicks outside a referenced element
+const useOnClickOutside = (ref, handler) => {
+    useEffect(() => {
+        const listener = (event) => {
+            if (!ref.current || ref.current.contains(event.target)) {
+                return;
+            }
+            handler(event);
+        };
+        document.addEventListener('mousedown', listener);
+        document.addEventListener('touchstart', listener);
+        return () => {
+            document.removeEventListener('mousedown', listener);
+            document.removeEventListener('touchstart', listener);
+        };
+    }, [ref, handler]);
+};
+
+
+// --- Main Header Component ---
+
+const Header = () => {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const isScrolled = useScroll(50);
+
+    // Added missing nav items
+    const navItems = ['home', 'about', 'portfolio', 'certifications', 'schedule', 'contact'];
+    const activeSection = useScrollSpy(navItems, { rootMargin: '-30% 0px -70% 0px' });
+
+    const headerRef = useRef();
+    useOnClickOutside(headerRef, () => setIsMenuOpen(false));
+
+    const scrollToSection = (sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setIsMenuOpen(false);
+        }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isMobileMenuOpen]);
+    // Prevent body scroll when mobile menu is open - only for fullscreen menus
+    // Not needed for dropdown, so this is removed.
 
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      // No cleanup needed for dropdown menu
-    };
-  }, []);
+    return (
+        <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
+            <nav className="nav-container" ref={headerRef}>
+                {/* Updated logo text */}
+                <a href="#home" className="logo" onClick={() => scrollToSection('home')}>
+                    Ganesh <span>Adimalupu</span>
+                </a>
 
-  return (
-    <header className={`header ${scrolled ? 'scrolled' : ''}`}>
-      <nav className="nav">
-        {/* Logo */}
-        <a
-          href="#"
-          className="logo"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection('home');
-          }}
-          aria-label="Ganesh Adimalupu - Go to home"
-        >
-          Ganesh Adimalupu
-        </a>
+                <button
+                    className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    aria-label="Toggle menu"
+                    aria-expanded={isMenuOpen}
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-        {/* Mobile Navigation - Small Dropdown */}
-        <ul className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`}>
-          {navItems.map((item) => (
-            <li key={item.id}>
-              <button
-                className={activeSection === item.id ? 'active' : ''}
-                onClick={() => scrollToSection(item.id)}
-                aria-label={`Navigate to ${item.label} section`}
-              >
-                <span className="nav-icon">
-                  {item.icon}
-                </span>
-                {item.label}
-              </button>
-            </li>
-          ))}
-
-          {/* Mobile CTA Button */}
-          <button
-            className="mobile-cta"
-            onClick={handleCTAClick}
-            aria-label="Get in touch"
-          >
-            Let's Talk
-          </button>
-        </ul>
-
-        {/* Desktop CTA Button */}
-        <button
-          className="header-cta"
-          onClick={handleCTAClick}
-          aria-label="Get in touch"
-        >
-          Let's Talk
-        </button>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className={`menu-toggle ${isMobileMenuOpen ? 'active' : ''}`}
-          onClick={toggleMobileMenu}
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={isMobileMenuOpen}
-        >
-          <div className="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
-        </button>
-      </nav>
-    </header>
-  );
+                <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+                    {navItems.map((item) => (
+                        <li key={item}>
+                            <button
+                                className={activeSection === item ? 'active' : ''}
+                                onClick={() => scrollToSection(item)}
+                            >
+                                {item.charAt(0).toUpperCase() + item.slice(1)}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+        </header>
+    );
 };
 
 export default Header;

@@ -1,171 +1,116 @@
-/* components/footer/footer.css */
+:root {
+  /* Purple & Black Theme */
+  --bg-black: #0D0D0D;
+  --bg-dark-purple: #1a0f23;
+  --glow-magenta: #F72585;
+  --glow-purple: #7209B7;
+  --glow-cyan: #4CC9F0;
+  --text-primary: #f0e6f0;
+  --text-secondary: #a89db2;
+  --border-color: rgba(247, 37, 133, 0.2);
+}
 
+/* --- Base Footer --- */
 .footer {
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
-  color: white;
-  padding: 3rem 0 1rem;
-  border-top: 1px solid rgba(0, 205, 254, 0.2);
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-black);
+  padding: 4rem 2rem 2rem 2rem;
+  border-top: 1px solid var(--border-color);
   position: relative;
 }
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 205, 254, 0.02) 0%, rgba(0, 205, 254, 0.05) 50%, transparent 100%);
-  pointer-events: none;
-}
-
-.footer-content {
-  max-width: 1200px;
+.footer-container {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 2rem;
+}
+
+/* --- Footer Content Grid --- */
+.footer-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 3rem;
-  margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 3rem;
 }
 
-.footer-section h3 {
-  font-size: 1.5rem;
+.footer-about h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #00CDFE 0%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
 }
 
-.footer-section h4 {
-  font-size: 1.2rem;
+.footer-about p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.footer-links h4 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
   margin-bottom: 1rem;
-  color: #ffffff;
 }
 
-.footer-section p {
-  color: #b8c5d1;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-}
-
-.footer-links {
+.footer-links ul {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-.footer-links li {
-  margin-bottom: 0.5rem;
-}
-
-.footer-link {
-  color: #b8c5d1;
-  text-decoration: none;
+.footer-links button {
   background: none;
   border: none;
+  color: var(--text-secondary);
   cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  padding: 0.5rem 0;
-  display: block;
+  padding: 0;
+  font-size: 0.95rem;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.footer-link:hover {
-  color: #00CDFE;
+.footer-links button:hover {
+  color: var(--glow-magenta);
   transform: translateX(5px);
 }
 
+/* --- Social Links --- */
 .social-links {
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
 }
 
 .social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, rgba(0, 205, 254, 0.1) 0%, rgba(0, 205, 254, 0.2) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 205, 254, 0.3);
-  color: #00CDFE;
+  color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-  font-size: 1.2rem;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .social-link:hover {
-  background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
-  color: white;
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 205, 254, 0.3);
+  color: var(--glow-magenta);
+  transform: translateY(-3px);
 }
 
+/* --- Footer Bottom --- */
 .footer-bottom {
-  border-top: 1px solid rgba(0, 205, 254, 0.2);
-  padding: 1.5rem 2rem 0;
+  border-top: 1px solid var(--border-color);
+  padding-top: 2rem;
   text-align: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 1;
-}
-
-.footer-bottom p {
-  margin: 0.5rem 0;
-  color: #b8c5d1;
   font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
-/* Mobile Styles */
+/* --- Responsive Design --- */
 @media (max-width: 768px) {
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .footer-grid {
     text-align: center;
   }
-
-  .footer-section h3 {
-    font-size: 1.3rem;
+  .footer-links ul {
+    align-items: center;
   }
-
-  .footer-section h4 {
-    font-size: 1.1rem;
-  }
-
   .social-links {
     justify-content: center;
-  }
-
-  .footer-bottom {
-    padding: 1rem 1rem 0;
-  }
-}
-
-@media (max-width: 480px) {
-  .footer {
-    padding: 2rem 0 1rem;
-  }
-
-  .footer-content {
-    padding: 0 1rem;
-  }
-
-  .social-link {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
-
-  .footer-bottom {
-    padding: 1rem 1rem 0;
   }
 }

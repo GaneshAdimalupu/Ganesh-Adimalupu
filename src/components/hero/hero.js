@@ -1,212 +1,136 @@
-// components/hero/hero.js - Beautiful Desktop & Mobile Hero
-import React, { useState, useEffect } from 'react';
-import './hero.css';
-import profileImage from '../../assets/images/profile.webp';
+import React, { useState, useEffect, useRef } from 'react';
+import './hero.css'; // Ensure this CSS file is imported
+import profileImage from '../../assets/images/profile.webp'; // Uncomment this to use your local image
+
+// Custom hook for the typing effect
+const useTypingEffect = (text, duration = 100, isStarted = true) => {
+    const [currentText, setCurrentText] = useState('');
+    const [isDone, setIsDone] = useState(false);
+
+    useEffect(() => {
+        if (!isStarted || !text) return;
+
+        setCurrentText('');
+        setIsDone(false);
+        let i = 0;
+        const timer = setInterval(() => {
+            setCurrentText(prev => prev + text.charAt(i));
+            i++;
+            if (i >= text.length) {
+                clearInterval(timer);
+                setIsDone(true);
+            }
+        }, duration);
+
+        return () => clearInterval(timer);
+    }, [text, duration, isStarted]);
+
+    return [currentText, isDone];
+};
 
 const Hero = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [isMounted, setIsMounted] = useState(false);
+    const heroVisualRef = useRef(null);
+    const fullRoleText = 'Machine Learning Engineer';
+    const [roleText, isTypingDone] = useTypingEffect(fullRoleText, 100, isMounted);
 
-  useEffect(() => {
-    // Component loaded animation
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+    // Set component as mounted after initial render
+    useEffect(() => {
+        setIsMounted(true);
 
-    // Mouse tracking for desktop parallax effect
-    const handleMouseMove = (e) => {
-      if (window.innerWidth > 768) {
-        setMousePosition({
-          x: (e.clientX / window.innerWidth) * 2 - 1,
-          y: (e.clientY / window.innerHeight) * 2 - 1
-        });
-      }
+        const heroVisualNode = heroVisualRef.current;
+        if (!heroVisualNode) return;
+
+        // Mouse tracking for parallax effect, optimized with CSS variables
+        const handleMouseMove = (e) => {
+            if (window.innerWidth <= 768) return;
+            const { clientX, clientY } = e;
+            const x = (clientX / window.innerWidth) - 0.5;
+            const y = (clientY / window.innerHeight) - 0.5;
+            heroVisualNode.style.setProperty('--mouse-x', x);
+            heroVisualNode.style.setProperty('--mouse-y', y);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, []);
+
+    // Function to scroll to a specific section
+    const scrollToSection = (sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('mousemove', handleMouseMove);
+    // Fallback for profile image
+    const handleImageError = (e) => {
+        e.target.src = `https://placehold.co/400x400/1a0f23/f0e6f0?text=GA`;
     };
-  }, []);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+    return (
+        <section id="home" className="hero">
+            <div className="hero-container">
+                {/* Left Content */}
+                <div className="hero-content">
+                    <div className="greeting-badge">
+                        <span className="wave" role="img" aria-label="waving hand">👋</span>
+                        <span>Hello, I'm Ganesh!</span>
+                    </div>
 
-  const handleImageError = (e) => {
-    // Fallback for broken image
-    e.target.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)';
-    e.target.style.display = 'flex';
-    e.target.style.alignItems = 'center';
-    e.target.style.justifyContent = 'center';
-    e.target.innerHTML = '👨‍💻';
-    e.target.style.fontSize = '4rem';
-  };
+                    <h1 className="hero-title">
+                        A Creative <span className="name-highlight">Developer</span> From India
+                        <span className="role">
+                            {roleText}
+                            {!isTypingDone && <span className="cursor" />}
+                        </span>
+                    </h1>
 
-  // Typing effect for role
-  const [roleText, setRoleText] = useState('');
-  const fullRoleText = 'Machine Learning Engineer';
+                    <p className="hero-description">
+                        I build intelligent and beautiful web applications. From machine learning models to pixel-perfect user interfaces, I love turning complex problems into elegant solutions.
+                    </p>
 
-  useEffect(() => {
-    if (isLoaded) {
-      let currentIndex = 0;
-      const typingInterval = setInterval(() => {
-        if (currentIndex <= fullRoleText.length) {
-          setRoleText(fullRoleText.slice(0, currentIndex));
-          currentIndex++;
-        } else {
-          clearInterval(typingInterval);
-        }
-      }, 100);
+                    <div className="hero-buttons">
+                        <button
+                            className="cta-btn primary"
+                            onClick={() => scrollToSection('about')}
+                            aria-label="Find out more about me"
+                        >
+                            <span>More About Me</span>
+                            <span>&rarr;</span>
+                        </button>
+                        <button
+                            className="cta-btn secondary"
+                            onClick={() => scrollToSection('contact')} // Assuming a contact section exists
+                            aria-label="Contact me"
+                        >
+                            Contact
+                        </button>
+                    </div>
+                </div>
 
-      return () => clearInterval(typingInterval);
-    }
-  }, [isLoaded]);
-
-  // Dynamic parallax transform for desktop
-  const parallaxTransform = {
-    transform: window.innerWidth > 768
-      ? `translate(${mousePosition.x * 10}px, ${mousePosition.y * 10}px)`
-      : 'none'
-  };
-
-  return (
-    <section id="home" className={`hero ${isLoaded ? 'loaded' : ''}`}>
-      <div className="hero-container">
-        {/* Left Content */}
-        <div className="hero-content">
-          <div className="greeting-badge">
-            <span className="wave">👋</span>
-            <span>Hello, Welcome!</span>
-          </div>
-
-          <h1 className="hero-title">
-            I'm <span className="name-highlight">Ganesh</span>,<br />
-            <span className="role">
-              {roleText}
-              <span className="cursor" style={{
-                opacity: roleText.length < fullRoleText.length ? 1 : 0,
-                animation: roleText.length < fullRoleText.length ? 'blink 1s infinite' : 'none'
-              }}>|</span>
-            </span>
-          </h1>
-
-          <p className="hero-description">
-            Exceptional AI solutions for your business success.
-            Building intelligent systems that solve real-world problems and drive innovation
-            through cutting-edge machine learning technologies.
-          </p>
-
-          <div className="hero-buttons">
-            <button
-              className="cta-btn primary"
-              onClick={() => scrollToSection('portfolio')}
-              aria-label="View my portfolio"
-            >
-              <span>View Portfolio</span>
-              <span className="arrow">↗</span>
-            </button>
-            <button
-              className="cta-btn secondary"
-              onClick={() => scrollToSection('contact')}
-              aria-label="Contact me"
-            >
-              <span>Hire Me</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Right Content - Image & Stats */}
-        <div className="hero-visual" style={parallaxTransform}>
-          <div className="image-container">
-            <div className="bg-circle"></div>
-            <img
-              src={profileImage}
-              alt="Ganesh Adimalupu - Machine Learning Engineer"
-              className="hero-image"
-              onError={handleImageError}
-              loading="eager"
-            />
-          </div>
-
-          <div className="experience-card">
-            <div className="stars">
-              <span role="img" aria-label="5 star rating">⭐⭐⭐⭐⭐</span>
+                {/* Right Content - Visual */}
+                <div className="hero-visual" ref={heroVisualRef}>
+                    <div className="image-wrapper">
+                        <div className="bg-blobs">
+                            <div className="blob blob-1"></div>
+                            <div className="blob blob-2"></div>
+                        </div>
+                        <img
+                             src={profileImage}
+                            //src="https://placehold.co/400x400/0D0D0D/f0e6f0?text=Ganesh" // Placeholder image
+                            alt="Ganesh Adimalupu - Machine Learning Engineer"
+                            className="hero-image"
+                            onError={handleImageError}
+                        />
+                    </div>
+                </div>
             </div>
-            <div className="experience-text">
-              <span className="years">3+</span>
-              <span className="label">Years Experience</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Additional CSS for typing cursor */}
-      <style>{`
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-
-        .cursor {
-          display: inline-block;
-          width: 2px;
-          margin-left: 2px;
-          color: #00CDFE;
-        }
-
-        .hero.loaded .hero-content {
-          animation: slideInLeft 1.2s ease-out;
-        }
-
-        .hero.loaded .hero-visual {
-          animation: slideInRight 1.2s ease-out;
-        }
-
-        /* Enhanced mobile interactions */
-        @media (max-width: 768px) {
-          .hero-image {
-            transition: transform 0.3s ease;
-          }
-
-          .hero-image:active {
-            transform: scale(0.95);
-          }
-
-          .cta-btn:active {
-            transform: scale(0.95);
-          }
-
-          .greeting-badge:active {
-            transform: scale(0.95);
-          }
-        }
-
-        /* Smooth transitions for all interactive elements */
-        .hero * {
-          transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        /* Enhanced focus states for accessibility */
-        .cta-btn:focus {
-          outline: 2px solid #00CDFE;
-          outline-offset: 2px;
-        }
-
-        /* Loading state */
-        .hero:not(.loaded) .hero-content,
-        .hero:not(.loaded) .hero-visual {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-      `}</style>
-    </section>
-  );
+        </section>
+    );
 };
 
 export default Hero;
