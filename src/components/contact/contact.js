@@ -25,32 +25,152 @@ const StatusMessage = ({ status }) => {
 
 // --- Main Contact Component ---
 const Contact = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        subject: '',
+        message: '',
+        phone: '',
+        company: '',
+        messageType: 'general'
+    });
     const [status, setStatus] = useState({ type: '', message: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Determine API base URL
+    const API_BASE_URL = process.env.NODE_ENV === 'production'
+        ? '' // Use relative URLs in production (Vercel)
+        : 'http://localhost:5000'; // Use localhost in development
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        // Clear error status when user starts typing
+        if (status.type === 'error') {
+            setStatus({ type: '', message: '' });
+        }
     };
 
-    const handleSubmit = (e) => {
+    const validateForm = () => {
+        const errors = [];
+
+        if (!formData.name.trim() || formData.name.trim().length < 2) {
+            errors.push('Name must be at least 2 characters long');
+        }
+
+        if (!formData.email.trim()) {
+            errors.push('Email is required');
+        } else {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(formData.email)) {
+                errors.push('Please enter a valid email address');
+            }
+        }
+
+        if (!formData.message.trim() || formData.message.trim().length < 10) {
+            errors.push('Message must be at least 10 characters long');
+        }
+
+        return errors;
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.name || !formData.email || !formData.message) {
-            setStatus({ type: 'error', message: 'Please fill out all fields.' });
+
+        // Clear previous status
+        setStatus({ type: '', message: '' });
+
+        // Validate form
+        const validationErrors = validateForm();
+        if (validationErrors.length > 0) {
+            setStatus({
+                type: 'error',
+                message: validationErrors.join('. ')
+            });
             return;
         }
 
         setIsSubmitting(true);
-        setStatus({ type: '', message: '' });
 
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Form submitted:', formData);
-            setStatus({ type: 'success', message: 'Thank you! Your message has been sent.' });
-            setFormData({ name: '', email: '', message: '' });
+        try {
+            console.log('🚀 Submitting contact form:', {
+                name: formData.name,
+                email: formData.email,
+                subject: formData.subject,
+                messageLength: formData.message.length,
+                messageType: formData.messageType
+            });
+
+            const response = await fetch(`${API_BASE_URL}/api/contact/submit`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    subject: formData.subject.trim() || 'Contact Form Submission',
+                    message: formData.message.trim(),
+                    phone: formData.phone.trim() || null,
+                    company: formData.company.trim() || null,
+                    messageType: formData.messageType
+                }),
+            });
+
+            const result = await response.json();
+            console.log('📧 Contact form response:', result);
+
+            if (!response.ok) {
+                throw new Error(result.message || result.error || `Server error: ${response.status}`);
+            }
+
+            // Success!
+            console.log('✅ Contact form submitted successfully!');
+
+            let successMessage = '✅ Thank you for your message!\n\n';
+            successMessage += 'I\'ve received your inquiry and will get back to you soon.\n';
+
+            if (result.services?.autoReply?.status === 'success') {
+                successMessage += '📧 Check your email for a confirmation message.\n';
+            }
+
+            successMessage += `\nReference ID: ${result.contact?.id}`;
+
+            setStatus({
+                type: 'success',
+                message: successMessage
+            });
+
+            // Reset form
+            setFormData({
+                name: '',
+                email: '',
+                subject: '',
+                message: '',
+                phone: '',
+                company: '',
+                messageType: 'general'
+            });
+
+        } catch (error) {
+            console.error('❌ Contact form submission failed:', error);
+
+            let errorMessage = 'Failed to send message. ';
+
+            if (error.message.includes('Rate limit')) {
+                errorMessage += 'Please wait a few minutes before sending another message.';
+            } else if (error.message.includes('fetch')) {
+                errorMessage += 'Please check your internet connection and try again.';
+            } else if (error.message.includes('Invalid email')) {
+                errorMessage += 'Please check your email address format.';
+            } else {
+                errorMessage += error.message || 'Please try again later.';
+            }
+
+            setStatus({ type: 'error', message: errorMessage });
+        } finally {
             setIsSubmitting(false);
-        }, 2000);
+        }
     };
 
     return (
@@ -58,13 +178,21 @@ const Contact = () => {
             <div className="contact-container">
                 <div className="contact-header">
                     <h2>Get In Touch</h2>
-                    <p>Have a project in mind or just want to say hello? Feel free to reach out.</p>
+                    <p>Have a project in mind or just want to say hello? I'd love to hear from you and discuss how we can work together.</p>
                 </div>
+
                 <div className="contact-grid">
                     <div className="contact-info">
+                        <h3>Contact Information</h3>
                         <div className="contact-info-list">
                             {contactInfo.map((item) => (
-                                <a key={item.title} href={item.link} target="_blank" rel="noopener noreferrer" className="contact-info-item">
+                                <a
+                                    key={item.title}
+                                    href={item.link}
+                                    target={item.link.startsWith('http') ? '_blank' : '_self'}
+                                    rel={item.link.startsWith('http') ? 'noopener noreferrer' : ''}
+                                    className="contact-info-item"
+                                >
                                     <div className="contact-icon">{item.icon}</div>
                                     <div>
                                         <h4>{item.title}</h4>
@@ -73,24 +201,203 @@ const Contact = () => {
                                 </a>
                             ))}
                         </div>
+
+                        <div className="additional-info" style={{ marginTop: '2rem', padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(247, 37, 133, 0.2)' }}>
+                            <h4 style={{ color: 'var(--glow-cyan)', marginBottom: '1rem' }}>📧 What to Expect</h4>
+                            <ul style={{ color: 'var(--text-secondary)', lineHeight: '1.6', paddingLeft: '1rem' }}>
+                                <li>Auto-reply confirmation within seconds</li>
+                                <li>Personal response within 24-48 hours</li>
+                                <li>Priority handling for project inquiries</li>
+                                <li>Direct contact for urgent matters</li>
+                            </ul>
+                        </div>
                     </div>
+
                     <div className="contact-form">
                         <h3>Send Me a Message</h3>
                         <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <input type="text" name="name" placeholder="Your Name" value={formData.name} onChange={handleChange} className="form-input" required />
+                            <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Your Name *"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Your Email *"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                        required
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <input type="email" name="email" placeholder="Your Email" value={formData.email} onChange={handleChange} className="form-input" required />
+
+                            <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        name="phone"
+                                        placeholder="Phone Number"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <input
+                                        type="text"
+                                        name="company"
+                                        placeholder="Company (Optional)"
+                                        value={formData.company}
+                                        onChange={handleChange}
+                                        className="form-input"
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
                             </div>
+
                             <div className="form-group">
-                                <textarea name="message" placeholder="Your Message" value={formData.message} onChange={handleChange} className="form-input" required></textarea>
+                                <input
+                                    type="text"
+                                    name="subject"
+                                    placeholder="Subject"
+                                    value={formData.subject}
+                                    onChange={handleChange}
+                                    className="form-input"
+                                    disabled={isSubmitting}
+                                />
                             </div>
+
+                            <div className="form-group">
+                                <select
+                                    name="messageType"
+                                    value={formData.messageType}
+                                    onChange={handleChange}
+                                    className="form-input"
+                                    disabled={isSubmitting}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <option value="general">💬 General Inquiry</option>
+                                    <option value="project">🚀 Project Discussion</option>
+                                    <option value="collaboration">🤝 Collaboration Opportunity</option>
+                                    <option value="support">🛠️ Support Request</option>
+                                    <option value="other">📋 Other</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <textarea
+                                    name="message"
+                                    placeholder="Your Message *"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                    className="form-input"
+                                    required
+                                    disabled={isSubmitting}
+                                    rows={5}
+                                    style={{ minHeight: '120px', resize: 'vertical' }}
+                                ></textarea>
+                            </div>
+
                             <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                                {isSubmitting ? <><div className="spinner"></div><span>Sending...</span></> : 'Send Message'}
+                                {isSubmitting ? (
+                                    <>
+                                        <div className="spinner"></div>
+                                        <span>Sending Message...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>📧 Send Message</span>
+                                    </>
+                                )}
                             </button>
+
                             <StatusMessage status={status} />
+
+                            {/* Form submission summary */}
+                            {(formData.name || formData.email || formData.message) && !isSubmitting && (
+                                <div style={{
+                                    marginTop: '1rem',
+                                    padding: '1rem',
+                                    background: 'rgba(76, 201, 240, 0.05)',
+                                    border: '1px solid rgba(76, 201, 240, 0.2)',
+                                    borderRadius: '8px',
+                                    fontSize: '0.9rem',
+                                    color: 'var(--text-secondary)'
+                                }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                        <span>📝 Form Status:</span>
+                                        <span style={{ color: 'var(--glow-cyan)' }}>
+                                            {formData.name && formData.email && formData.message ? '✅ Ready to send' : '⚠️ Fill required fields'}
+                                        </span>
+                                    </div>
+                                    {formData.message && (
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span>Message length:</span>
+                                            <span style={{ color: formData.message.length >= 10 ? 'var(--glow-cyan)' : 'var(--glow-magenta)' }}>
+                                                {formData.message.length} characters {formData.message.length < 10 ? '(minimum 10)' : ''}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </form>
+
+                        {/* Enhanced privacy notice */}
+                        <div style={{
+                            marginTop: '1.5rem',
+                            padding: '1rem',
+                            background: 'rgba(255,255,255,0.02)',
+                            borderRadius: '8px',
+                            fontSize: '0.8rem',
+                            color: 'var(--text-secondary)',
+                            textAlign: 'center'
+                        }}>
+                            🔒 Your information is secure and will only be used to respond to your inquiry.
+                            I respect your privacy and will never share your details with third parties.
+                        </div>
+                    </div>
+                </div>
+
+                {/* Enhanced status bar */}
+                <div style={{
+                    marginTop: '3rem',
+                    padding: '1rem 2rem',
+                    background: 'rgba(255,255,255,0.03)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(247, 37, 133, 0.2)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                    gap: '2rem'
+                }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '1.2rem', color: 'var(--glow-cyan)' }}>🚀</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Backend: Enhanced</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '1.2rem', color: 'var(--glow-magenta)' }}>📧</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Auto-Reply: Enabled</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '1.2rem', color: 'var(--glow-purple)' }}>🛡️</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Spam Protection: Active</div>
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{ fontSize: '1.2rem', color: 'var(--glow-cyan)' }}>💾</div>
+                        <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Database: MongoDB</div>
                     </div>
                 </div>
             </div>

@@ -51,13 +51,17 @@ try {
 // Import booking model
 const Booking = require('./models/bookingModel');
 
+// Import contact routes
+const contactRoutes = require('./routes/contactRoutes');
+
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   console.log('❤️ Health check requested');
   res.json({
     status: 'OK',
     message: 'Enhanced Vercel server is running!',
-    features: ['Database', 'Google Calendar', 'Email Notifications'],
+    features: ['Database', 'Google Calendar', 'Email Notifications', 'Schedule Booking', 'Contact Form' ],
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
@@ -73,9 +77,25 @@ app.get('/api/debug', (req, res) => {
     mongoUriPreview: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 50) + '...' : null,
     nodeEnv: process.env.NODE_ENV,
     allEnvKeys: Object.keys(process.env).filter(key => key.includes('MONGO') || key.includes('GOOGLE') || key.includes('EMAIL')),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    availableRoutes: [
+      'GET /api/health',
+      'GET /api/debug',
+      'GET /api/schedule/availability',
+      'POST /api/schedule/book',
+      'GET /api/schedule/bookings',
+      'DELETE /api/schedule/booking/:id',
+      'POST /api/contact/submit',
+      'GET /api/contact/messages',
+      'PUT /api/contact/messages/:messageId',
+      'DELETE /api/contact/messages/:messageId',
+      'GET /api/contact/stats'
+    ]
   });
 });
+
+// CONTACT ROUTES - Mount the contact routes
+app.use('/api/contact', contactRoutes);
 
 // Enhanced availability endpoint
 app.get('/api/schedule/availability', async (req, res) => {
@@ -323,10 +343,16 @@ app.use((req, res) => {
     url: req.url,
     availableRoutes: [
       'GET /api/health',
+      'GET /api/debug',
       'GET /api/schedule/availability?date=YYYY-MM-DD',
       'POST /api/schedule/book',
       'GET /api/schedule/bookings',
-      'DELETE /api/schedule/booking/:id'
+      'DELETE /api/schedule/booking/:id',
+      'POST /api/contact/submit',
+      'GET /api/contact/messages',
+      'PUT /api/contact/messages/:messageId',
+      'DELETE /api/contact/messages/:messageId',
+      'GET /api/contact/stats'
     ]
   });
 });
@@ -362,6 +388,18 @@ if (process.env.NODE_ENV !== 'production') {
     console.log('\n🚀 DEVELOPMENT SERVER STARTED');
     console.log(`📍 Server: http://localhost:${PORT}`);
     console.log(`🏥 Health: http://localhost:${PORT}/api/health`);
-    console.log('✨ Features: Google Calendar + Email + Enhanced Error Handling');
+    console.log('✨ Features: Schedule Booking + Contact Form + Google Calendar + Email + Analytics');
+    console.log('\n📋 Available Endpoints:');
+    console.log('   SCHEDULE:');
+    console.log('   GET  /api/schedule/availability?date=2025-08-05');
+    console.log('   POST /api/schedule/book');
+    console.log('   GET  /api/schedule/bookings');
+    console.log('   DELETE /api/schedule/booking/:id');
+    console.log('   CONTACT:');
+    console.log('   POST /api/contact/submit');
+    console.log('   GET  /api/contact/messages');
+    console.log('   PUT  /api/contact/messages/:messageId');
+    console.log('   DELETE /api/contact/messages/:messageId');
+    console.log('   GET  /api/contact/stats');
   });
 }
