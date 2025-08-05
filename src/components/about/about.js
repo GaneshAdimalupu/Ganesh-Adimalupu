@@ -1,233 +1,198 @@
-// components/about/about.js - COMPACT ENHANCED VERSION
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation, useInView } from 'framer-motion';
 import './about.css';
 
-const About = () => {
-  const [animatedStats, setAnimatedStats] = useState({});
-  const controls = useAnimation();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, threshold: 0.1 });
+// === SVG ICONS ===
+const icons = {
+  ml: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3"/>
+      <path d="M8 21H5a2 2 0 0 1-2-2v-3m18 0v3a2 2 0 0 1-2 2h-3"/>
+      <path d="M8 12a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v0a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1Z"/>
+      <path d="M12 8v8"/>
+    </svg>
+  ),
+  fullstack: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 17V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10"/>
+      <path d="M4 17h16"/>
+      <path d="M6 21h12"/>
+    </svg>
+  ),
+  data: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20V10"/>
+      <path d="M18 20V4"/>
+      <path d="M6 20v-4"/>
+    </svg>
+  ),
+  cloud: (
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+    </svg>
+  ),
+};
 
-  // Compact stats data
-  const stats = [
-    { number: '15+', label: 'Projects', icon: '🚀' },
-    { number: '32+', label: 'Certificates', icon: '🏆' },
-    { number: '2+', label: 'Years Exp', icon: '⏳' },
-    { number: '8+', label: 'Tech Stack', icon: '💻' }
-  ];
+// === CUSTOM HOOKS ===
+const useIntersectionObserver = (options) => {
+  const [entry, setEntry] = useState(null);
+  const [node, setNode] = useState(null);
+  const observer = useRef(null);
 
-  // Compact skills list
-  const skills = [
-    'Machine Learning', 'Python', 'React.js', 'Node.js',
-    'TensorFlow', 'MongoDB', 'Docker', 'AWS',
-    'Deep Learning', 'FastAPI', 'PostgreSQL', 'Git'
-  ];
-
-  // Key achievements
-  const achievements = [
-    { emoji: '🏅', text: 'IEEE Best Paper Award for ML Research' },
-    { emoji: '🌟', text: 'Active Open Source Contributor' },
-    { emoji: '🎯', text: 'Led AI-powered Solution Development' },
-    { emoji: '📚', text: 'Published Research in Food Recommendation Systems' }
-  ];
-
-  // Animate stats on scroll
   useEffect(() => {
-    if (isInView) {
-      controls.start('visible');
+    if (observer.current) observer.current.disconnect();
+    observer.current = new window.IntersectionObserver(([entry]) => setEntry(entry), options);
+    if (node) observer.current.observe(node);
+    return () => observer.current.disconnect();
+  }, [node, options]);
 
-      // Initialize with 0 values first
-      const initialStats = {};
-      stats.forEach((stat, index) => {
-        initialStats[index] = '0' + (stat.number.includes('+') ? '+' : '');
-      });
-      setAnimatedStats(initialStats);
+  return [setNode, entry];
+};
 
-      // Animate numbers with shorter duration and smoother transitions
-      stats.forEach((stat, index) => {
-        const finalNumber = parseInt(stat.number);
-        let current = 0;
-        const increment = finalNumber / 25; // Smoother animation
-        const hasPlus = stat.number.includes('+');
+const useAnimatedCounter = (target, isVisible) => {
+  const [count, setCount] = useState(0);
+  const countRef = useRef(0);
+  const animationFrameId = useRef();
 
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= finalNumber) {
-            setAnimatedStats(prev => ({
-              ...prev,
-              [index]: stat.number
-            }));
-            clearInterval(timer);
-          } else {
-            const displayNumber = Math.floor(current);
-            setAnimatedStats(prev => ({
-              ...prev,
-              [index]: displayNumber + (hasPlus ? '+' : '')
-            }));
-          }
-        }, 50);
+  useEffect(() => {
+    if (isVisible) {
+      const startTime = Date.now();
+      const duration = 2000;
 
-        // Cleanup function
-        return () => clearInterval(timer);
-      });
+      const animate = () => {
+        const elapsedTime = Date.now() - startTime;
+        if (elapsedTime < duration) {
+          const progress = elapsedTime / duration;
+          countRef.current = Math.min(target, Math.ceil(target * progress));
+          setCount(countRef.current);
+          animationFrameId.current = requestAnimationFrame(animate);
+        } else {
+          setCount(target);
+        }
+      };
+
+      animationFrameId.current = requestAnimationFrame(animate);
     }
-  }, [isInView, controls]);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
-    }
-  };
+    return () => {
+      cancelAnimationFrame(animationFrameId.current);
+    };
+  }, [target, isVisible]);
 
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
+  return count;
+};
 
-  const cardVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
+
+// === DATA ===
+const skillsData = [
+  { icon: icons.ml, title: 'Machine Learning', description: 'Expertise in ML algorithms, neural networks, and AI model development.' },
+  { icon: icons.fullstack, title: 'Full Stack Development', description: 'Proficient in modern web tech, from React to Node.js and databases.' },
+  { icon: icons.data, title: 'Data Science', description: 'Advanced data analysis, visualization, and statistical modeling.' },
+  { icon: icons.cloud, title: 'Cloud & DevOps', description: 'Experience with cloud platforms, containerization, and CI/CD pipelines.' }
+];
+
+const timelineData = [
+    { year: '2018', title: 'Started University', description: 'Began my B.Tech in Computer Science, diving deep into foundational concepts.' },
+    { year: '2020', title: 'First Internship', description: 'Gained practical experience as a web development intern at a startup.' },
+    { year: '2021', title: 'AI/ML Specialization', description: 'Focused my studies and projects on Machine Learning and Data Science.' },
+    { year: '2022', title: 'Graduated & First Job', description: 'Joined a leading tech company as a Junior Software Engineer.' },
+];
+
+
+// === CHILD COMPONENTS ===
+const SkillCard = ({ icon, title, description, delay }) => (
+  <div className="skill-card" style={{ transitionDelay: `${delay}s` }}>
+    <div className="icon">{icon}</div>
+    <h4>{title}</h4>
+    <p>{description}</p>
+  </div>
+);
+
+const StatCard = ({ target, label, isVisible, delay }) => {
+  const count = useAnimatedCounter(target, isVisible);
+  return (
+    <div className="stat-card" style={{ transitionDelay: `${delay}s` }}>
+      <h3>{count}+</h3>
+      <p>{label}</p>
+    </div>
+  );
+};
+
+const Timeline = ({ data }) => (
+    <div className="timeline-container">
+        {data.map((item, index) => (
+            <div
+                className="timeline-item"
+                key={index}
+                style={{ animationDelay: `${0.5 + index * 0.3}s` }}
+            >
+                <div className="timeline-content">
+                    <span className="year">{item.year}</span>
+                    <h4>{item.title}</h4>
+                    <p>{item.description}</p>
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
+
+// === MAIN COMPONENT ===
+const About = () => {
+  const [sectionRef, sectionEntry] = useIntersectionObserver({ threshold: 0.2 }); // Adjusted threshold
+  const isVisible = sectionEntry ? sectionEntry.isIntersecting : false;
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   return (
-    <section id="about" className="section" ref={ref}>
-      <div className="container">
-        <motion.h2
-          initial={{ opacity: 0, y: -30 }}
-          animate={controls}
-          variants={itemVariants}
-        >
-          About Me
-        </motion.h2>
+    <section
+      id="about"
+      ref={sectionRef}
+      className={`about-section ${isVisible ? 'is-visible' : ''}`}
+    >
+      <div className="about-container">
+        <h2>About Me & My Journey</h2>
 
-        <motion.div
-          className="about-main"
-          variants={containerVariants}
-          initial="hidden"
-          animate={controls}
-        >
-          {/* Left Side - Text & Skills */}
-          <div className="about-text-side">
-            <motion.div variants={itemVariants}>
-              <p className="section-text highlight">
-                Machine Learning Engineer & AI Solutions Developer passionate about creating
-                intelligent systems that solve real-world problems.
-              </p>
-              <p className="section-text">
-                I specialize in building scalable AI applications, from recommendation systems
-                to predictive analytics, combining deep technical knowledge with practical
-                business solutions.
-              </p>
-              <p className="section-text">
-                My journey spans full-stack development and machine learning, with a focus
-                on delivering innovative solutions that drive meaningful impact and enhance
-                user experiences.
-              </p>
-            </motion.div>
-
-            <motion.div className="skills-compact" variants={itemVariants}>
-              <h3>🛠️ Technical Arsenal</h3>
-              <div className="skills-cloud">
-                {skills.map((skill, index) => (
-                  <motion.span
-                    key={skill}
-                    className="skill-tag"
-                    variants={cardVariants}
-                    whileHover={{
-                      y: -3,
-                      scale: 1.05,
-                      transition: { duration: 0.2 }
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {skill}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Right Side - Stats & Achievements */}
-          <div className="stats-overview">
-            <motion.div className="stats-cards" variants={itemVariants}>
-              {stats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="stat-card"
-                  variants={cardVariants}
-                  whileHover={{
-                    y: -5,
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="stat-icon">{stat.icon}</span>
-                  <motion.div
-                    className="stat-number"
-                    initial={{ scale: 1 }}
-                    animate={{ scale: animatedStats[index] !== stats[index].number ? [1, 1.05, 1] : 1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {animatedStats[index] || '0+'}
-                  </motion.div>
-                  <p className="stat-label">{stat.label}</p>
-                </motion.div>
+        <div className="about-content-grid">
+          <div className="about-text-content">
+            <p className="intro">
+              I'm a passionate Machine Learning Engineer and Full Stack Developer with a deep commitment to creating innovative, high-impact solutions.
+            </p>
+            <p className="details">
+              My journey in technology is driven by a curiosity for intelligent systems, leading me to specialize in building end-to-end applications that merge cutting-edge machine learning with robust, scalable, and user-friendly design.
+            </p>
+            <div className="skills-grid">
+              {skillsData.map((skill, index) => (
+                <SkillCard key={skill.title} {...skill} delay={index * 0.1} />
               ))}
-            </motion.div>
-
-            <motion.div className="achievements-highlight" variants={itemVariants}>
-              <h3>🏆 Key Achievements</h3>
-              <div className="achievement-list">
-                {achievements.map((achievement, index) => (
-                  <motion.div
-                    key={index}
-                    className="achievement-item"
-                    variants={cardVariants}
-                    whileHover={{
-                      x: 10,
-                      transition: { duration: 0.2 }
-                    }}
-                  >
-                    <span className="achievement-emoji">{achievement.emoji}</span>
-                    <span className="achievement-text">{achievement.text}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+          <Timeline data={timelineData} />
+        </div>
 
-        {/* Philosophy Section */}
-        <motion.div className="philosophy-section" variants={itemVariants}>
-          <p className="philosophy-text">
-            "Innovation distinguishes between a leader and a follower. I strive to push
-            the boundaries of what's possible with AI, creating solutions that anticipate
-            tomorrow's challenges."
+        <div className="stats-grid">
+          <StatCard target={8} label="Major Projects" isVisible={isVisible} delay={0} />
+          <StatCard target={32} label="Certifications" isVisible={isVisible} delay={0.1} />
+          <StatCard target={3} label="Years Experience" isVisible={isVisible} delay={0.2} />
+        </div>
+
+        <div className="about-cta">
+          <h3>Ready to Build Together?</h3>
+          <p>
+            I'm always excited to collaborate on innovative projects. Let's discuss how we can bring your ideas to life with cutting-edge technology.
           </p>
-          <p className="philosophy-author">- Adimalupu Ganesh</p>
-        </motion.div>
+          <button
+            className="cta-button"
+            onClick={() => scrollToSection('contact')}
+            aria-label="Scroll to contact section"
+          >
+            Let's Connect
+          </button>
+        </div>
       </div>
     </section>
   );
