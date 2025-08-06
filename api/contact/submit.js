@@ -1,101 +1,22 @@
-// api/contact/submit.js - REFACTORED to use central email service
-import mongoose from 'mongoose';
-
-// Import the specific function from your central email service
-// Adjust the path ('../../lib/services/emailService') if your folder structure is different
+// api/contact/submit.js - REFACTORED to use central DB and Model
+import connectDB from '../../lib/db/mongodb';
+import ContactMessage from '../../lib/models/ContactMessage';
 import { sendContactNotification } from '../../lib/services/emailService';
 
-// MongoDB connection
-const MONGODB_URI = process.env.MONGO_URI;
-let isConnected = false;
+// The local connectDB function and contactMessageSchema have been removed from this file.
 
-async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) {
-    return;
-  }
-
-  try {
-    if (!MONGODB_URI) {
-      throw new Error('MONGO_URI environment variable is not defined');
-    }
-    await mongoose.connect(MONGODB_URI, { bufferCommands: false });
-    isConnected = true;
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    isConnected = false;
-    throw error;
-  }
-}
-
-// Contact Message Model Schema (re-using the same schema)
-const contactMessageSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true, trim: true, maxlength: 100 },
-    email: { type: String, required: true, trim: true, lowercase: true },
-    subject: {
-      type: String,
-      trim: true,
-      maxlength: 200,
-      default: 'General Inquiry',
-    },
-    message: { type: String, required: true, trim: true, maxlength: 2000 },
-    phone: { type: String, trim: true, maxlength: 20 },
-    company: { type: String, trim: true, maxlength: 100 },
-    messageType: {
-      type: String,
-      enum: ['general', 'project', 'collaboration', 'support', 'other'],
-      default: 'general',
-    },
-    priority: {
-      type: String,
-      enum: ['low', 'medium', 'high', 'urgent'],
-      default: 'medium',
-    },
-    status: {
-      type: String,
-      enum: ['new', 'read', 'replied', 'archived'],
-      default: 'new',
-    },
-    ipAddress: { type: String, default: null },
-    userAgent: { type: String, default: null },
-    source: {
-      type: String,
-      enum: ['website', 'linkedin', 'email', 'referral', 'other'],
-      default: 'website',
-    },
-    isSpam: { type: Boolean, default: false },
-  },
-  { timestamps: true }
-);
-
-// Auto-detect spam and set priority
-contactMessageSchema.pre('save', function (next) {
-  const spamKeywords = ['casino', 'lottery', 'viagra', 'crypto', 'bitcoin'];
-  const messageContent = (
-    this.message +
-    ' ' +
-    (this.subject || '')
-  ).toLowerCase();
-  if (spamKeywords.some((keyword) => messageContent.includes(keyword))) {
-    this.isSpam = true;
-    this.priority = 'low';
-  }
-  next();
-});
-
-const ContactMessage =
-  mongoose.models.ContactMessage ||
-  mongoose.model('ContactMessage', contactMessageSchema);
-
-// MAIN SERVERLESS FUNCTION
 export default async function handler(req, res) {
+  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
+  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
+
+  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -103,6 +24,7 @@ export default async function handler(req, res) {
   const startTime = Date.now();
 
   try {
+    // --- Validation ---
     const { name, email, message } = req.body;
     if (!name || !email || !message) {
       return res
@@ -113,11 +35,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
+    // --- Database Connection ---
     await connectDB();
 
+    // --- Rate Limiting ---
     const recentSubmission = await ContactMessage.findOne({
       email: email.toLowerCase(),
-      createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) },
+      createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) }, // 5 minutes
     });
 
     if (recentSubmission) {
@@ -126,6 +50,7 @@ export default async function handler(req, res) {
         .json({ error: 'Rate limit exceeded. Please wait 5 minutes.' });
     }
 
+    // --- Data Preparation ---
     const getClientIP = (req) =>
       req.headers['x-forwarded-for'] ||
       req.connection?.remoteAddress ||
@@ -143,24 +68,25 @@ export default async function handler(req, res) {
       userAgent: req.headers['user-agent'] || null,
     };
 
+    // --- Save to Database ---
     const contactMessage = new ContactMessage(contactData);
     const savedMessage = await contactMessage.save();
 
-    // --- EMAIL LOGIC ---
-    // Use the imported central email function
+    // --- Email Sending ---
     let emailError = null;
     try {
       await sendContactNotification({
-        ...savedMessage.toObject(), // Pass the saved data to the function
+        ...savedMessage.toObject(),
         contactId: savedMessage._id,
       });
     } catch (error) {
       console.error('Centralized email sending failed:', error.message);
-      emailError = error.message;
+      emailError = error.message; // Log error but don't fail the request
     }
 
     const processingTime = Date.now() - startTime;
 
+    // --- Success Response ---
     return res.status(201).json({
       success: true,
       message: 'Message sent successfully! Thank you for reaching out.',
@@ -170,10 +96,10 @@ export default async function handler(req, res) {
         status: savedMessage.status,
       },
       services: {
-        database: { status: 'success', message: 'Contact message saved' },
+        database: { status: 'success' },
         email: emailError
           ? { status: 'failed', error: emailError }
-          : { status: 'success', message: 'Notifications sent' },
+          : { status: 'success' },
       },
       processingTime: `${processingTime}ms`,
     });

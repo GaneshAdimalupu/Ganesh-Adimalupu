@@ -1,116 +1,35 @@
-// api/contact/stats.js - CONTACT FORM STATISTICS ENDPOINT
-import mongoose from 'mongoose';
+// api/contact/stats.js - REFACTORED to use central DB and Model
+import connectDB from '../../lib/db/mongodb';
+import ContactMessage from '../../lib/models/ContactMessage';
 
-// MongoDB connection
-const MONGODB_URI = process.env.MONGO_URI;
-let isConnected = false;
+// The local connectDB function and contactMessageSchema have been removed from this file.
 
-async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) {
-    return mongoose.connection;
-  }
-
-  try {
-    if (!MONGODB_URI) {
-      throw new Error('MONGO_URI environment variable is not defined');
-    }
-
-    const opts = {
-      bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    };
-
-    await mongoose.connect(MONGODB_URI, opts);
-    isConnected = true;
-
-    return mongoose.connection;
-  } catch (error) {
-
-    isConnected = false;
-    throw error;
-  }
-}
-
-// Contact Message Model Schema (same as other endpoints)
-const contactMessageSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true, maxlength: 100 },
-  email: { type: String, required: true, trim: true, lowercase: true },
-  subject: { type: String, trim: true, maxlength: 200, default: 'General Inquiry' },
-  message: { type: String, required: true, trim: true, maxlength: 2000 },
-  phone: { type: String, trim: true, maxlength: 20 },
-  company: { type: String, trim: true, maxlength: 100 },
-  messageType: {
-    type: String,
-    enum: ['general', 'project', 'collaboration', 'support', 'other'],
-    default: 'general'
-  },
-  priority: {
-    type: String,
-    enum: ['low', 'medium', 'high', 'urgent'],
-    default: 'medium'
-  },
-  status: {
-    type: String,
-    enum: ['new', 'read', 'replied', 'archived'],
-    default: 'new'
-  },
-  ipAddress: { type: String, default: null },
-  userAgent: { type: String, default: null },
-  source: {
-    type: String,
-    enum: ['website', 'linkedin', 'email', 'referral', 'other'],
-    default: 'website'
-  },
-  isSpam: { type: Boolean, default: false },
-  readAt: { type: Date, default: null },
-  repliedAt: { type: Date, default: null }
-}, {
-  timestamps: true
-});
-
-// Export model safely for serverless
-const ContactMessage = mongoose.models.ContactMessage || mongoose.model('ContactMessage', contactMessageSchema);
-
-// MAIN SERVERLESS FUNCTION
 export default async function handler(req, res) {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Set CORS headers for admin dashboard access
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Or lock down to your specific admin domain
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-
-  // Only allow GET requests
   if (req.method !== 'GET') {
-    return res.status(405).json({
-      error: 'Method not allowed',
-      allowedMethods: ['GET'],
-      received: req.method
-    });
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
 
   try {
-
+    // Establish DB connection once for the request
     await connectDB();
 
     const { timeframe = '30d' } = req.query;
 
-    // Calculate date range based on timeframe
     const now = new Date();
     let startDate;
 
     switch (timeframe) {
       case '7d':
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '30d':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
       case '90d':
         startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -119,264 +38,126 @@ export default async function handler(req, res) {
         startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         break;
       case 'all':
-        startDate = new Date('2020-01-01'); // Far back date
+        startDate = new Date('2020-01-01');
         break;
-      default:
+      default: // 30d
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
-    // Base query (exclude spam for main stats)
-    const baseQuery = {
-      createdAt: { $gte: startDate },
-      isSpam: { $ne: true }
-    };
+    const baseQuery = { createdAt: { $gte: startDate }, isSpam: { $ne: true } };
 
-    // Execute all aggregation queries in parallel
-    const [
-      totalStats,
-      statusBreakdown,
-      priorityBreakdown,
-      messageTypeBreakdown,
-      sourceBreakdown,
-      dailyTrend,
-      responseTimeStats,
-      topCompanies,
-      recentActivity,
-      spamStats
-    ] = await Promise.all([
-      // Total statistics
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        {
-          $group: {
-            _id: null,
-            totalMessages: { $sum: 1 },
-            avgMessageLength: { $avg: { $strLenCP: '$message' } },
-            uniqueContacts: { $addToSet: '$email' }
-          }
-        },
-        {
-          $project: {
-            totalMessages: 1,
-            avgMessageLength: { $round: ['$avgMessageLength', 0] },
-            uniqueContacts: { $size: '$uniqueContacts' }
-          }
-        }
-      ]),
-
-      // Status breakdown
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$status', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ]),
-
-      // Priority breakdown
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$priority', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ]),
-
-      // Message type breakdown
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$messageType', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ]),
-
-      // Source breakdown
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$source', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ]),
-
-      // Daily trend (last 30 days)
-      ContactMessage.aggregate([
-        {
-          $match: {
-            createdAt: { $gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) },
-            isSpam: { $ne: true }
-          }
-        },
-        {
-          $group: {
-            _id: {
-              year: { $year: '$createdAt' },
-              month: { $month: '$createdAt' },
-              day: { $dayOfMonth: '$createdAt' }
+    const [totalStats, statusBreakdown, dailyTrend, responseTimeStats] =
+      await Promise.all([
+        // Total statistics
+        ContactMessage.aggregate([
+          { $match: baseQuery },
+          {
+            $group: {
+              _id: null,
+              totalMessages: { $sum: 1 },
+              uniqueContacts: { $addToSet: '$email' },
             },
-            count: { $sum: 1 }
-          }
-        },
-        {
-          $project: {
-            date: {
-              $dateFromParts: {
-                year: '$_id.year',
-                month: '$_id.month',
-                day: '$_id.day'
-              }
+          },
+          {
+            $project: {
+              _id: 0,
+              totalMessages: 1,
+              uniqueContacts: { $size: '$uniqueContacts' },
             },
-            count: 1
-          }
-        },
-        { $sort: { date: 1 } }
-      ]),
+          },
+        ]),
+        // Status breakdown
+        ContactMessage.aggregate([
+          { $match: baseQuery },
+          { $group: { _id: '$status', count: { $sum: 1 } } },
+        ]),
+        // Daily trend (last 30 days regardless of timeframe filter)
+        ContactMessage.aggregate([
+          {
+            $match: {
+              createdAt: {
+                $gte: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+              },
+              isSpam: { $ne: true },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+              },
+              count: { $sum: 1 },
+            },
+          },
+          { $sort: { _id: 1 } },
+          { $project: { _id: 0, date: '$_id', count: 1 } },
+        ]),
+        // Response time statistics
+        ContactMessage.aggregate([
+          {
+            $match: {
+              ...baseQuery,
+              status: 'replied',
+              repliedAt: { $exists: true },
+            },
+          },
+          {
+            $project: {
+              responseTimeHours: {
+                $divide: [
+                  { $subtract: ['$repliedAt', '$createdAt'] },
+                  1000 * 60 * 60,
+                ],
+              },
+            },
+          },
+          {
+            $group: {
+              _id: null,
+              avgResponseTime: { $avg: '$responseTimeHours' },
+              totalReplied: { $sum: 1 },
+            },
+          },
+        ]),
+      ]);
 
-      // Response time statistics
-      ContactMessage.aggregate([
-        {
-          $match: {
-            ...baseQuery,
-            status: { $in: ['replied'] },
-            repliedAt: { $exists: true }
-          }
-        },
-        {
-          $project: {
-            responseTime: {
-              $divide: [
-                { $subtract: ['$repliedAt', '$createdAt'] },
-                1000 * 60 * 60 // Convert to hours
-              ]
-            }
-          }
-        },
-        {
-          $group: {
-            _id: null,
-            avgResponseTime: { $avg: '$responseTime' },
-            minResponseTime: { $min: '$responseTime' },
-            maxResponseTime: { $max: '$responseTime' },
-            totalReplied: { $sum: 1 }
-          }
-        }
-      ]),
-
-      // Top companies (excluding null/empty)
-      ContactMessage.aggregate([
-        {
-          $match: {
-            ...baseQuery,
-            company: { $exists: true, $ne: null, $ne: '' }
-          }
-        },
-        { $group: { _id: '$company', count: { $sum: 1 } } },
-        { $sort: { count: -1 } },
-        { $limit: 10 }
-      ]),
-
-      // Recent activity (last 24 hours)
-      ContactMessage.find({
-        createdAt: { $gte: new Date(now.getTime() - 24 * 60 * 60 * 1000) },
-        isSpam: { $ne: true }
-      })
-      .select('name email subject priority status createdAt')
-      .sort({ createdAt: -1 })
-      .limit(10)
-      .lean(),
-
-      // Spam statistics
-      ContactMessage.aggregate([
-        { $match: { createdAt: { $gte: startDate } } },
-        {
-          $group: {
-            _id: '$isSpam',
-            count: { $sum: 1 }
-          }
-        }
-      ])
-    ]);
-
-    // Process and format results
+    // Format final statistics object
     const stats = {
       overview: {
-        totalMessages: totalStats[0]?.totalMessages || 0,
-        uniqueContacts: totalStats[0]?.uniqueContacts || 0,
-        avgMessageLength: totalStats[0]?.avgMessageLength || 0,
+        ...totalStats[0],
         timeframe,
         startDate,
-        endDate: now
+        endDate: now,
       },
       breakdown: {
-        status: statusBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {}),
-        priority: priorityBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {}),
-        messageType: messageTypeBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {}),
-        source: sourceBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {})
+        status: statusBreakdown.reduce(
+          (acc, item) => ({ ...acc, [item._id]: item.count }),
+          {}
+        ),
       },
       trends: {
-        daily: dailyTrend.map(item => ({
-          date: item.date.toISOString().split('T')[0],
-          count: item.count
-        }))
+        daily: dailyTrend,
       },
       performance: {
-        responseTime: responseTimeStats[0] ? {
-          average: Math.round(responseTimeStats[0].avgResponseTime * 100) / 100,
-          minimum: Math.round(responseTimeStats[0].minResponseTime * 100) / 100,
-          maximum: Math.round(responseTimeStats[0].maxResponseTime * 100) / 100,
-          totalReplied: responseTimeStats[0].totalReplied
-        } : null
+        avgResponseTimeHours: responseTimeStats[0]
+          ? Math.round(responseTimeStats[0].avgResponseTime * 10) / 10
+          : 0,
+        totalReplied: responseTimeStats[0]
+          ? responseTimeStats[0].totalReplied
+          : 0,
       },
-      insights: {
-        topCompanies: topCompanies.map(item => ({
-          company: item._id,
-          count: item.count
-        })),
-        recentActivity: recentActivity.map(item => ({
-          id: item._id,
-          name: item.name,
-          email: item.email,
-          subject: item.subject,
-          priority: item.priority,
-          status: item.status,
-          createdAt: item.createdAt
-        })),
-        spam: {
-          total: spamStats.reduce((sum, item) => sum + item.count, 0),
-          spam: spamStats.find(item => item._id === true)?.count || 0,
-          legitimate: spamStats.find(item => item._id !== true)?.count || 0
-        }
-      }
     };
-
-    // Calculate additional metrics
-    const responseRate = stats.overview.totalMessages > 0
-      ? Math.round(((stats.breakdown.status.replied || 0) / stats.overview.totalMessages) * 100)
-      : 0;
-
-    stats.performance.responseRate = responseRate;
 
     return res.status(200).json({
       success: true,
       statistics: stats,
-      meta: {
-        generatedAt: new Date().toISOString(),
-        timeframe,
-        databaseStatus: 'connected'
-      }
+      generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
-
+    console.error('Failed to generate statistics:', error);
     return res.status(500).json({
       error: 'Failed to generate statistics',
       message: error.message,
-      timestamp: new Date().toISOString()
     });
   }
 }

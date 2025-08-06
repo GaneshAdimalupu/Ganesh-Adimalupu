@@ -1,92 +1,23 @@
-// api/contact/messages.js - CONTACT MESSAGES ADMIN ENDPOINT
-import mongoose from 'mongoose';
+// api/contact/messages.js - REFACTORED to use central DB and Model
+import connectDB from '../../lib/db/mongodb';
+import ContactMessage from '../../lib/models/ContactMessage';
 
-// MongoDB connection
-const MONGODB_URI = process.env.MONGO_URI;
-let isConnected = false;
-
-async function connectDB() {
-  if (isConnected && mongoose.connection.readyState === 1) {
-    return mongoose.connection;
-  }
-
-  try {
-    if (!MONGODB_URI) {
-      throw new Error('MONGO_URI environment variable is not defined');
-    }
-
-    const opts = {
-      bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-    };
-
-    await mongoose.connect(MONGODB_URI, opts);
-    isConnected = true;
-
-    return mongoose.connection;
-  } catch (error) {
-
-    isConnected = false;
-    throw error;
-  }
-}
-
-// Contact Message Model Schema (same as submit endpoint)
-const contactMessageSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true, maxlength: 100 },
-  email: { type: String, required: true, trim: true, lowercase: true },
-  subject: { type: String, trim: true, maxlength: 200, default: 'General Inquiry' },
-  message: { type: String, required: true, trim: true, maxlength: 2000 },
-  phone: { type: String, trim: true, maxlength: 20 },
-  company: { type: String, trim: true, maxlength: 100 },
-  messageType: {
-    type: String,
-    enum: ['general', 'project', 'collaboration', 'support', 'other'],
-    default: 'general'
-  },
-  priority: {
-    type: String,
-    enum: ['low', 'medium', 'high', 'urgent'],
-    default: 'medium'
-  },
-  status: {
-    type: String,
-    enum: ['new', 'read', 'replied', 'archived'],
-    default: 'new'
-  },
-  ipAddress: { type: String, default: null },
-  userAgent: { type: String, default: null },
-  source: {
-    type: String,
-    enum: ['website', 'linkedin', 'email', 'referral', 'other'],
-    default: 'website'
-  },
-  isSpam: { type: Boolean, default: false },
-  readAt: { type: Date, default: null },
-  repliedAt: { type: Date, default: null }
-}, {
-  timestamps: true
-});
-
-// Export model safely for serverless
-const ContactMessage = mongoose.models.ContactMessage || mongoose.model('ContactMessage', contactMessageSchema);
+// The local connectDB function and contactMessageSchema have been removed from this file.
 
 // MAIN SERVERLESS FUNCTION
 export default async function handler(req, res) {
-  // Set CORS headers
+  // Set CORS headers for admin dashboard access
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Or lock down to your specific admin domain
+  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   try {
+    // Establish DB connection once for the request
     await connectDB();
 
     switch (req.method) {
@@ -97,316 +28,158 @@ export default async function handler(req, res) {
       case 'DELETE':
         return await handleDeleteMessage(req, res);
       default:
-        return res.status(405).json({
-          error: 'Method not allowed',
-          allowedMethods: ['GET', 'PUT', 'DELETE'],
-          received: req.method
-        });
+        res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
+        return res
+          .status(405)
+          .json({ error: `Method ${req.method} not allowed` });
     }
   } catch (error) {
-
+    console.error('Error in /api/contact/messages handler:', error);
     return res.status(500).json({
       error: 'Internal server error',
       message: error.message,
-      timestamp: new Date().toISOString()
     });
   }
 }
 
+// --- HANDLER FUNCTIONS ---
+
 // GET: Fetch contact messages with filtering and pagination
 async function handleGetMessages(req, res) {
-  const {
-    limit = 20,
-    page = 1,
-    status,
-    priority,
-    messageType,
-    search,
-    sortBy = 'createdAt',
-    sortOrder = 'desc',
-    includeSpam = 'false'
-  } = req.query;
-
   try {
+    const {
+      limit = 20,
+      page = 1,
+      status,
+      priority,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+    } = req.query;
 
-    // Build query
     const query = {};
-
-    // Filter by status
-    if (status && status !== 'all') {
-      query.status = status;
-    }
-
-    // Filter by priority
-    if (priority && priority !== 'all') {
-      query.priority = priority;
-    }
-
-    // Filter by message type
-    if (messageType && messageType !== 'all') {
-      query.messageType = messageType;
-    }
-
-    // Exclude spam unless explicitly included
-    if (includeSpam === 'false') {
-      query.isSpam = { $ne: true };
-    }
-
-    // Search functionality
-    if (search && search.trim()) {
+    if (status && status !== 'all') query.status = status;
+    if (priority && priority !== 'all') query.priority = priority;
+    if (search) {
       const searchRegex = new RegExp(search.trim(), 'i');
       query.$or = [
         { name: searchRegex },
         { email: searchRegex },
         { subject: searchRegex },
-        { message: searchRegex },
-        { company: searchRegex }
       ];
     }
 
-    // Sort options
-    const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
-
-    // Calculate pagination
+    const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
     const pageNum = Math.max(1, parseInt(page));
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit))); // Max 100 per page
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query with pagination
     const [messages, totalCount] = await Promise.all([
       ContactMessage.find(query)
         .sort(sortOptions)
         .skip(skip)
         .limit(limitNum)
-        .select('-__v')
         .lean(),
-      ContactMessage.countDocuments(query)
+      ContactMessage.countDocuments(query),
     ]);
-
-    // Get summary statistics
-    const [statusCounts, priorityCounts, newMessagesCount] = await Promise.all([
-      ContactMessage.aggregate([
-        { $match: { isSpam: { $ne: true } } },
-        { $group: { _id: '$status', count: { $sum: 1 } } }
-      ]),
-      ContactMessage.aggregate([
-        { $match: { isSpam: { $ne: true } } },
-        { $group: { _id: '$priority', count: { $sum: 1 } } }
-      ]),
-      ContactMessage.countDocuments({ status: 'new', isSpam: { $ne: true } })
-    ]);
-
-    // Format response
-    const formattedMessages = messages.map(message => ({
-      id: message._id,
-      name: message.name,
-      email: message.email,
-      subject: message.subject,
-      message: message.message.substring(0, 150) + (message.message.length > 150 ? '...' : ''),
-      fullMessage: message.message,
-      phone: message.phone,
-      company: message.company,
-      messageType: message.messageType,
-      priority: message.priority,
-      status: message.status,
-      isSpam: message.isSpam,
-      ipAddress: message.ipAddress,
-      source: message.source,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-      readAt: message.readAt,
-      repliedAt: message.repliedAt
-    }));
 
     const summary = {
       total: totalCount,
       currentPage: pageNum,
       totalPages: Math.ceil(totalCount / limitNum),
-      hasNextPage: pageNum < Math.ceil(totalCount / limitNum),
-      hasPrevPage: pageNum > 1,
-      newMessages: newMessagesCount,
-      statusCounts: statusCounts.reduce((acc, item) => {
-        acc[item._id] = item.count;
-        return acc;
-      }, {}),
-      priorityCounts: priorityCounts.reduce((acc, item) => {
-        acc[item._id] = item.count;
-        return acc;
-      }, {})
     };
 
     return res.status(200).json({
       success: true,
-      messages: formattedMessages,
+      messages: messages.map((msg) => ({ ...msg, id: msg._id })),
       summary,
-      filters: {
-        status,
-        priority,
-        messageType,
-        search,
-        includeSpam
-      },
-      timestamp: new Date().toISOString()
     });
-
   } catch (error) {
-
+    console.error('Failed to fetch messages:', error);
     return res.status(500).json({
       error: 'Failed to fetch messages',
-      message: error.message
+      message: error.message,
     });
   }
 }
 
-// PUT: Update message status
+// PUT: Update a message's status, priority, etc.
 async function handleUpdateMessage(req, res) {
-  const { messageId } = req.query;
-  const { status, priority, isSpam } = req.body;
-
-  if (!messageId) {
-    return res.status(400).json({
-      error: 'Missing messageId parameter'
-    });
-  }
-
   try {
+    const { messageId } = req.query;
+    const { status, priority, isSpam } = req.body;
+
+    if (!messageId) {
+      return res.status(400).json({ error: 'Missing messageId parameter' });
+    }
 
     const updateData = {};
+    if (status) updateData.status = status;
+    if (priority) updateData.priority = priority;
+    if (typeof isSpam === 'boolean') updateData.isSpam = isSpam;
+    if (status === 'read' && !updateData.readAt) updateData.readAt = new Date();
+    if (status === 'replied') updateData.repliedAt = new Date();
 
-    // Validate and set status
-    if (status) {
-      const validStatuses = ['new', 'read', 'replied', 'archived'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({
-          error: 'Invalid status',
-          validStatuses
-        });
-      }
-      updateData.status = status;
-
-      // Set timestamps based on status
-      if (status === 'read' && !updateData.readAt) {
-        updateData.readAt = new Date();
-      } else if (status === 'replied') {
-        updateData.repliedAt = new Date();
-      }
-    }
-
-    // Validate and set priority
-    if (priority) {
-      const validPriorities = ['low', 'medium', 'high', 'urgent'];
-      if (!validPriorities.includes(priority)) {
-        return res.status(400).json({
-          error: 'Invalid priority',
-          validPriorities
-        });
-      }
-      updateData.priority = priority;
-    }
-
-    // Set spam flag
-    if (typeof isSpam === 'boolean') {
-      updateData.isSpam = isSpam;
-    }
-
-    // Update the message
     const updatedMessage = await ContactMessage.findByIdAndUpdate(
       messageId,
-      updateData,
-      { new: true, runValidators: true }
-    );
+      { $set: updateData },
+      { new: true }
+    ).lean();
 
     if (!updatedMessage) {
-      return res.status(404).json({
-        error: 'Message not found',
-        messageId
-      });
+      return res.status(404).json({ error: 'Message not found' });
     }
 
     return res.status(200).json({
       success: true,
       message: 'Message updated successfully',
-      updatedMessage: {
-        id: updatedMessage._id,
-        status: updatedMessage.status,
-        priority: updatedMessage.priority,
-        isSpam: updatedMessage.isSpam,
-        readAt: updatedMessage.readAt,
-        repliedAt: updatedMessage.repliedAt,
-        updatedAt: updatedMessage.updatedAt
-      }
+      updatedMessage: { ...updatedMessage, id: updatedMessage._id },
     });
-
   } catch (error) {
-
+    console.error('Failed to update message:', error);
     return res.status(500).json({
       error: 'Failed to update message',
-      message: error.message
+      message: error.message,
     });
   }
 }
 
-// DELETE: Delete or archive message
+// DELETE: Permanently delete or archive a message
 async function handleDeleteMessage(req, res) {
-  const { messageId } = req.query;
-  const { permanent = false } = req.body;
-
-  if (!messageId) {
-    return res.status(400).json({
-      error: 'Missing messageId parameter'
-    });
-  }
-
   try {
+    const { messageId } = req.query;
+    const { permanent = 'false' } = req.query; // Use query param for simplicity
 
-    const message = await ContactMessage.findById(messageId);
-
-    if (!message) {
-      return res.status(404).json({
-        error: 'Message not found',
-        messageId
-      });
+    if (!messageId) {
+      return res.status(400).json({ error: 'Missing messageId parameter' });
     }
 
-    if (permanent) {
-      // Permanently delete the message
-      await ContactMessage.findByIdAndDelete(messageId);
+    const message = await ContactMessage.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
 
+    if (permanent === 'true') {
+      await ContactMessage.findByIdAndDelete(messageId);
       return res.status(200).json({
         success: true,
         message: 'Message permanently deleted',
-        deletedMessage: {
-          id: message._id,
-          name: message.name,
-          email: message.email,
-          subject: message.subject
-        }
+        deletedId: message._id,
       });
     } else {
-      // Archive the message
-      const archivedMessage = await ContactMessage.findByIdAndUpdate(
-        messageId,
-        { status: 'archived' },
-        { new: true }
-      );
-
+      message.status = 'archived';
+      await message.save();
       return res.status(200).json({
         success: true,
         message: 'Message archived successfully',
-        archivedMessage: {
-          id: archivedMessage._id,
-          status: archivedMessage.status,
-          updatedAt: archivedMessage.updatedAt
-        }
+        archivedMessage: { id: message._id, status: message.status },
       });
     }
-
   } catch (error) {
-
+    console.error('Failed to delete message:', error);
     return res.status(500).json({
-      error: `Failed to ${permanent ? 'delete' : 'archive'} message`,
-      message: error.message
+      error: 'Failed to delete or archive message',
+      message: error.message,
     });
   }
 }
