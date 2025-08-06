@@ -1,5 +1,5 @@
 // api/health.js
-const connectDB = require('./lib/mongodb');
+const connectDB = require('../lib/db/mongodb');
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -21,6 +21,6 @@ module.exports = async (req, res) => {
     features: ['Database', 'Google Calendar', 'Email Notifications'],
     timestamp: new Date().toISOString(),
     environment: 'production',
-    mongodb: mongoStatus
+    mongodb: mongoStatus,
   });
 };
