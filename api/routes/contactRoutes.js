@@ -3,38 +3,28 @@ const express = require('express');
 const router = express.Router();
 const ContactMessage = require('../../lib/models/contactModel');
 
-console.log('📧 Initializing contact form routes...');
-
 // Import the existing email service (fixed path)
 let sendConfirmationEmail;
 try {
   const emailService = require('../../lib/services/emailService');
   sendConfirmationEmail = emailService.sendConfirmationEmail;
-  console.log('✅ Email service loaded for contact form');
+
 } catch (error) {
-  console.error('⚠️ Email service loading failed:', error.message);
+
 }
 
 // Add debug middleware for all contact routes
 router.use((req, res, next) => {
-  console.log('\n📧 CONTACT ROUTE MIDDLEWARE:');
-  console.log(`   Route: ${req.method} /api/contact${req.url}`);
-  console.log(`   Base URL: ${req.baseUrl}`);
-  console.log(`   Original URL: ${req.originalUrl}`);
-  console.log(`   Parameters:`, req.params);
-  console.log(`   Query:`, req.query);
-  console.log(`   Body keys:`, Object.keys(req.body));
-  console.log('   Timestamp:', new Date().toISOString());
+
   next();
 });
 
 // POST /api/contact/submit - Submit contact form (using RAW MongoDB)
 router.post('/submit', async (req, res) => {
-  console.log('\n📧 CONTACT FORM SUBMISSION (RAW MONGODB)');
+
   const startTime = Date.now();
 
   try {
-    console.log('📋 Processing contact form submission');
 
     // Validate required fields
     const { name, email, message } = req.body;
@@ -119,9 +109,7 @@ router.post('/submit', async (req, res) => {
       updatedAt: new Date()
     };
 
-    console.log('💾 Saving contact message to database with RAW MongoDB...');
     const insertResult = await collection.insertOne(contactData, { maxTimeMS: 5000 });
-    console.log('✅ Contact message saved successfully:', insertResult.insertedId);
 
     // Send emails using the existing email service
     let emailResult = null;
@@ -129,7 +117,6 @@ router.post('/submit', async (req, res) => {
 
     if (sendConfirmationEmail) {
       try {
-        console.log('📧 Sending contact confirmation emails...');
 
         // Adapt the contact data to work with the booking email service
         emailResult = await sendConfirmationEmail({
@@ -147,14 +134,14 @@ router.post('/submit', async (req, res) => {
           message: contactData.message,
           subject: contactData.subject
         });
-        console.log('✅ Contact form emails sent');
+
       } catch (error) {
-        console.error('⚠️ Email sending failed:', error.message);
+
         emailError = error.message;
         // Continue - don't fail contact submission for email issues
       }
     } else {
-      console.log('⚠️ Email service not available');
+
       emailError = 'Email service not loaded';
     }
 
@@ -185,7 +172,6 @@ router.post('/submit', async (req, res) => {
 
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error('❌ Contact form submission failed:', error);
 
     return res.status(500).json({
       success: false,
@@ -201,7 +187,6 @@ router.post('/submit', async (req, res) => {
 
 // GET /api/contact/messages - Get contact messages (Admin) using RAW MongoDB
 router.get('/messages', async (req, res) => {
-  console.log('\n📨 GET CONTACT MESSAGES (RAW MONGODB)');
 
   try {
     const {
@@ -215,16 +200,6 @@ router.get('/messages', async (req, res) => {
       sortOrder = 'desc',
       includeSpam = 'false'
     } = req.query;
-
-    console.log('📋 Fetching contact messages with filters:', {
-      limit: parseInt(limit),
-      page: parseInt(page),
-      status,
-      priority,
-      messageType,
-      search,
-      includeSpam
-    });
 
     // Check MongoDB connection
     const mongoose = require('mongoose');
@@ -322,8 +297,6 @@ router.get('/messages', async (req, res) => {
       hasPrevPage: pageNum > 1
     };
 
-    console.log(`✅ Fetched ${messages.length} messages (${totalCount} total)`);
-
     return res.status(200).json({
       success: true,
       messages: formattedMessages,
@@ -339,7 +312,7 @@ router.get('/messages', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Failed to fetch contact messages:', error);
+
     return res.status(500).json({
       error: 'Failed to fetch messages',
       message: error.message
@@ -349,10 +322,6 @@ router.get('/messages', async (req, res) => {
 
 // Route-specific error handler
 router.use((error, req, res, next) => {
-  console.error('\n🚨 CONTACT ROUTE ERROR:');
-  console.error('   Route:', req.method, req.originalUrl);
-  console.error('   Error:', error.message);
-  console.error('   Stack:', error.stack);
 
   res.status(500).json({
     error: 'Contact route error',
@@ -361,9 +330,5 @@ router.use((error, req, res, next) => {
     method: req.method
   });
 });
-
-console.log('✅ Contact routes configured (RAW MongoDB):');
-console.log('   POST /api/contact/submit');
-console.log('   GET  /api/contact/messages');
 
 module.exports = router;

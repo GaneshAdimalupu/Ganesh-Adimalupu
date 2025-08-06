@@ -12,7 +12,6 @@ const icons = {
   programming: <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
 };
 
-
 // --- Data ---
 const certificationsData = [
     { id: 1, title: 'Google Machine Learning Crash Course', provider: 'Google', category: 'ml', date: '2025', description: 'A comprehensive course from Google covering machine learning fundamentals, TensorFlow, and practical ML applications.', skills: ['Machine Learning', 'TensorFlow', 'Python', 'Data Science'], logo: icons.ml },
@@ -24,7 +23,6 @@ const certificationsData = [
     { id: 7, title: 'Technology Workshop Series', provider: 'DevTown & Others', category: 'workshop', date: '2023', description: 'Active participation in multiple technology workshops and bootcamps focusing on emerging technologies.', skills: ['Workshop', 'Technology Trends', 'Networking'], logo: icons.workshop },
     { id: 8, title: 'Competitive Programming', provider: 'Various Platforms', category: 'programming', date: '2023', description: 'Achievements in competitive programming challenges and treasure hunt competitions, honing algorithmic skills.', skills: ['Problem Solving', 'Algorithms', 'Data Structures'], logo: icons.programming }
 ];
-
 
 // --- Custom Hooks ---
 const useIntersectionObserver = (options) => {
@@ -49,7 +47,6 @@ const useIntersectionObserver = (options) => {
 
     return setElements;
 };
-
 
 // --- Child Components ---
 
@@ -102,7 +99,6 @@ const CertificationModal = ({ cert, onClose }) => {
         </div>
     );
 };
-
 
 // --- Main Certifications Component ---
 

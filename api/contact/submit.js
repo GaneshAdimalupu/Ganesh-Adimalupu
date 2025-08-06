@@ -25,10 +25,10 @@ async function connectDB() {
 
     await mongoose.connect(MONGODB_URI, opts);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+
     return mongoose.connection;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+
     isConnected = false;
     throw error;
   }
@@ -99,7 +99,6 @@ const ContactMessage = mongoose.models.ContactMessage || mongoose.model('Contact
 
 // Email service
 async function sendContactFormEmails(contactDetails) {
-  console.log('📧 Attempting to send contact form emails');
 
   try {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -220,14 +219,13 @@ async function sendContactFormEmails(contactDetails) {
     const autoReplyResult = await transporter.sendMail(autoReplyOptions);
     const adminResult = await transporter.sendMail(adminNotificationOptions);
 
-    console.log('✅ Contact form emails sent successfully');
     return {
       autoReply: { messageId: autoReplyResult.messageId },
       adminNotification: { messageId: adminResult.messageId }
     };
 
   } catch (error) {
-    console.error('❌ Contact form email sending failed:', error);
+
     throw error;
   }
 }
@@ -257,7 +255,6 @@ export default async function handler(req, res) {
   const startTime = Date.now();
 
   try {
-    console.log('📧 Processing contact form submission');
 
     // Validate required fields
     const { name, email, message } = req.body;
@@ -326,8 +323,6 @@ export default async function handler(req, res) {
     const contactMessage = new ContactMessage(contactData);
     const savedMessage = await contactMessage.save();
 
-    console.log('✅ Contact message saved successfully:', savedMessage._id);
-
     // Send emails
     let emailResult = null;
     let emailError = null;
@@ -339,9 +334,9 @@ export default async function handler(req, res) {
         priority: savedMessage.priority,
         isSpam: savedMessage.isSpam
       });
-      console.log('✅ Contact form emails sent');
+
     } catch (error) {
-      console.error('⚠️ Email sending failed:', error.message);
+
       emailError = error.message;
       // Continue - don't fail contact submission for email issues
     }
@@ -376,7 +371,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error('❌ Contact form submission failed:', error);
 
     return res.status(500).json({
       success: false,

@@ -52,7 +52,6 @@ const useAnimatedCounter = (target, isVisible, duration = 2000) => {
     return count;
 };
 
-
 // --- Data ---
 const skills = [
     'React', 'JavaScript (ES6+)', 'Node.js', 'Python', 'TensorFlow', 'PyTorch',
@@ -103,7 +102,6 @@ const AbstractVisual = () => (
         </svg>
     </div>
 );
-
 
 // --- Main About Component ---
 

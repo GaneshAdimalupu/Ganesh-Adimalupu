@@ -9,7 +9,6 @@ import digit from '../../assets/images/digit.png';
 import snehaDeepaImage from '../../assets/images/sneha deepa.png';
 import faceRecognitionImage from '../../assets/images/face recog.jpeg';
 
-
 // Hook to track element visibility for animations
 const useIntersectionObserver = (options) => {
     const [elements, setElements] = useState([]);
@@ -41,7 +40,6 @@ const useIntersectionObserver = (options) => {
 
     return setElements;
 };
-
 
 // --- Data ---
 // Replaced local image imports with placeholder URLs.
@@ -103,7 +101,6 @@ const portfolioData = [
 
 const filterCategories = ['All', 'AI/ML', 'Web Dev'];
 
-
 // --- Child Components ---
 
 const PortfolioCard = React.forwardRef(({ project }, ref) => {
@@ -136,7 +133,6 @@ const PortfolioCard = React.forwardRef(({ project }, ref) => {
         </div>
     );
 });
-
 
 // --- Main Portfolio Component ---
 

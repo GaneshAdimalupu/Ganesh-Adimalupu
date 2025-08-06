@@ -24,10 +24,10 @@ async function connectDB() {
 
     await mongoose.connect(MONGODB_URI, opts);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+
     return mongoose.connection;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+
     isConnected = false;
     throw error;
   }
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('📊 Generating contact form statistics');
+
     await connectDB();
 
     const { timeframe = '30d' } = req.query;
@@ -361,11 +361,6 @@ export default async function handler(req, res) {
 
     stats.performance.responseRate = responseRate;
 
-    console.log('✅ Contact form statistics generated successfully');
-    console.log(`   Total messages: ${stats.overview.totalMessages}`);
-    console.log(`   Unique contacts: ${stats.overview.uniqueContacts}`);
-    console.log(`   Response rate: ${responseRate}%`);
-
     return res.status(200).json({
       success: true,
       statistics: stats,
@@ -377,7 +372,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Failed to generate contact statistics:', error);
+
     return res.status(500).json({
       error: 'Failed to generate statistics',
       message: error.message,

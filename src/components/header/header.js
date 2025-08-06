@@ -68,7 +68,6 @@ const useOnClickOutside = (ref, handler) => {
     }, [ref, handler]);
 };
 
-
 // --- Main Header Component ---
 
 const Header = () => {

@@ -26,10 +26,10 @@ async function connectDB() {
 
     await mongoose.connect(MONGODB_URI, opts);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+
     return mongoose.connection;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+
     isConnected = false;
     throw error;
   }
@@ -37,7 +37,6 @@ async function connectDB() {
 
 // Email service
 async function sendConfirmationEmail(bookingDetails) {
-  console.log('📧 Attempting to send confirmation email');
 
   try {
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -140,14 +139,13 @@ async function sendConfirmationEmail(bookingDetails) {
     const clientResult = await transporter.sendMail(clientMailOptions);
     const adminResult = await transporter.sendMail(adminMailOptions);
 
-    console.log('✅ Emails sent successfully');
     return {
       client: { messageId: clientResult.messageId },
       admin: { messageId: adminResult.messageId }
     };
 
   } catch (error) {
-    console.error('❌ Email sending failed:', error);
+
     throw error;
   }
 }
@@ -202,7 +200,6 @@ export default async function handler(req, res) {
   const startTime = Date.now();
 
   try {
-    console.log('🎯 Processing booking request');
 
     // Validate required fields
     const { name, email, date, time, meetingType } = req.body;
@@ -258,8 +255,6 @@ export default async function handler(req, res) {
     const booking = new Booking(bookingData);
     const savedBooking = await booking.save();
 
-    console.log('✅ Booking saved successfully:', savedBooking._id);
-
     // Send confirmation email
     let emailResult = null;
     let emailError = null;
@@ -269,9 +264,9 @@ export default async function handler(req, res) {
         ...req.body,
         bookingId: savedBooking._id
       });
-      console.log('✅ Confirmation emails sent');
+
     } catch (error) {
-      console.error('⚠️ Email sending failed:', error.message);
+
       emailError = error.message;
       // Continue - don't fail booking for email issues
     }
@@ -304,7 +299,6 @@ export default async function handler(req, res) {
 
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error('❌ Booking failed:', error);
 
     return res.status(500).json({
       success: false,

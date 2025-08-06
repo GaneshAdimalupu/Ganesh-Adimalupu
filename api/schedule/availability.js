@@ -24,10 +24,10 @@ async function connectDB() {
 
     await mongoose.connect(MONGODB_URI, opts);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+
     return mongoose.connection;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+
     isConnected = false;
     throw error;
   }
@@ -102,7 +102,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('📅 Checking availability for:', date);
 
     // Connect to MongoDB
     await connectDB();
@@ -111,14 +110,10 @@ export default async function handler(req, res) {
     const bookings = await Booking.find({ date }).lean();
     const unavailableSlots = bookings.map(booking => booking.time);
 
-    console.log(`📊 Found ${bookings.length} bookings for ${date}`);
-    console.log('⏰ Unavailable slots:', unavailableSlots);
-
     // Return the unavailable slots array
     return res.status(200).json(unavailableSlots);
 
   } catch (error) {
-    console.error('❌ Availability check failed:', error);
 
     return res.status(500).json({
       error: 'Failed to check availability',

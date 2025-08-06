@@ -24,10 +24,10 @@ async function connectDB() {
 
     await mongoose.connect(MONGODB_URI, opts);
     isConnected = true;
-    console.log('✅ MongoDB connected successfully');
+
     return mongoose.connection;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error);
+
     isConnected = false;
     throw error;
   }
@@ -104,7 +104,7 @@ export default async function handler(req, res) {
         });
     }
   } catch (error) {
-    console.error('❌ Contact messages API error:', error);
+
     return res.status(500).json({
       error: 'Internal server error',
       message: error.message,
@@ -128,15 +128,6 @@ async function handleGetMessages(req, res) {
   } = req.query;
 
   try {
-    console.log('📨 Fetching contact messages with filters:', {
-      limit: parseInt(limit),
-      page: parseInt(page),
-      status,
-      priority,
-      messageType,
-      search,
-      includeSpam
-    });
 
     // Build query
     const query = {};
@@ -245,8 +236,6 @@ async function handleGetMessages(req, res) {
       }, {})
     };
 
-    console.log(`✅ Fetched ${messages.length} messages (${totalCount} total)`);
-
     return res.status(200).json({
       success: true,
       messages: formattedMessages,
@@ -262,7 +251,7 @@ async function handleGetMessages(req, res) {
     });
 
   } catch (error) {
-    console.error('❌ Failed to fetch contact messages:', error);
+
     return res.status(500).json({
       error: 'Failed to fetch messages',
       message: error.message
@@ -282,7 +271,6 @@ async function handleUpdateMessage(req, res) {
   }
 
   try {
-    console.log(`📝 Updating message ${messageId}:`, { status, priority, isSpam });
 
     const updateData = {};
 
@@ -336,8 +324,6 @@ async function handleUpdateMessage(req, res) {
       });
     }
 
-    console.log(`✅ Message ${messageId} updated successfully`);
-
     return res.status(200).json({
       success: true,
       message: 'Message updated successfully',
@@ -353,7 +339,7 @@ async function handleUpdateMessage(req, res) {
     });
 
   } catch (error) {
-    console.error(`❌ Failed to update message ${messageId}:`, error);
+
     return res.status(500).json({
       error: 'Failed to update message',
       message: error.message
@@ -373,7 +359,6 @@ async function handleDeleteMessage(req, res) {
   }
 
   try {
-    console.log(`🗑️ ${permanent ? 'Permanently deleting' : 'Archiving'} message ${messageId}`);
 
     const message = await ContactMessage.findById(messageId);
 
@@ -387,7 +372,6 @@ async function handleDeleteMessage(req, res) {
     if (permanent) {
       // Permanently delete the message
       await ContactMessage.findByIdAndDelete(messageId);
-      console.log(`✅ Message ${messageId} permanently deleted`);
 
       return res.status(200).json({
         success: true,
@@ -407,8 +391,6 @@ async function handleDeleteMessage(req, res) {
         { new: true }
       );
 
-      console.log(`✅ Message ${messageId} archived`);
-
       return res.status(200).json({
         success: true,
         message: 'Message archived successfully',
@@ -421,7 +403,7 @@ async function handleDeleteMessage(req, res) {
     }
 
   } catch (error) {
-    console.error(`❌ Failed to ${permanent ? 'delete' : 'archive'} message ${messageId}:`, error);
+
     return res.status(500).json({
       error: `Failed to ${permanent ? 'delete' : 'archive'} message`,
       message: error.message
