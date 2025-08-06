@@ -1,4 +1,4 @@
-// api/index.js - Production Ready (Debug Cleaned)
+// api/index.js - Production Ready (Refactored)
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -25,27 +25,30 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Import services
-let createCalendarEvent, sendConfirmationEmail;
+// Import services with new specific names
+let createCalendarEvent, sendMeetingConfirmation;
 try {
   const calendarService = require('../lib/services/googleCalendarService');
   const emailService = require('../lib/services/emailService');
   createCalendarEvent = calendarService.createCalendarEvent;
-  sendConfirmationEmail = emailService.sendConfirmationEmail;
+  // Use the specific function for meeting confirmation
+  sendMeetingConfirmation = emailService.sendMeetingConfirmation;
 } catch (error) {
-  // Services failed to load
+  console.error('Failed to load core services:', error);
 }
 
 // Import contact routes
-const contactRoutes = require('./routes/contactRoutes');
+const contactRoutes = require('./routes/contactRoutes'); //
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {
+  //
   let mongoStatus = 'Disconnected';
   let mongoDetails = {};
 
   try {
     if (mongoose.connection.readyState === 1) {
+      //
       await mongoose.connection.db.admin().ping();
       mongoStatus = 'Connected';
       mongoDetails = {
@@ -55,7 +58,7 @@ app.get('/api/health', async (req, res) => {
         port: mongoose.connection.port,
       };
     } else {
-      mongoStatus = `State: ${mongoose.connection.readyState}`;
+      mongoStatus = `State: ${mongoose.connection.readyState}`; //
     }
   } catch (error) {
     mongoStatus = `Error: ${error.message}`;
@@ -73,10 +76,11 @@ app.get('/api/health', async (req, res) => {
 });
 
 // CONTACT ROUTES
-app.use('/api/contact', contactRoutes);
+app.use('/api/contact', contactRoutes); //
 
 // Schedule availability endpoint
 app.get('/api/schedule/availability', async (req, res) => {
+  //
   const { date } = req.query;
 
   if (!date) {
@@ -88,6 +92,7 @@ app.get('/api/schedule/availability', async (req, res) => {
 
   try {
     if (mongoose.connection.readyState !== 1) {
+      //
       return res.status(500).json({
         error: 'Database not connected',
         message: 'Please try again in a moment',
@@ -116,6 +121,7 @@ app.get('/api/schedule/availability', async (req, res) => {
 
 // Schedule booking endpoint
 app.post('/api/schedule/book', async (req, res) => {
+  //
   const startTime = Date.now();
 
   try {
@@ -139,6 +145,7 @@ app.post('/api/schedule/book', async (req, res) => {
 
     // Check MongoDB connection
     if (mongoose.connection.readyState !== 1) {
+      //
       return res.status(500).json({
         error: 'Database not connected',
         message: 'Please try again in a moment',
@@ -150,6 +157,7 @@ app.post('/api/schedule/book', async (req, res) => {
 
     // Check for existing booking
     const existingBooking = await collection.findOne(
+      //
       { date, time },
       { maxTimeMS: 5000 }
     );
@@ -159,12 +167,6 @@ app.post('/api/schedule/book', async (req, res) => {
         error: 'Time slot unavailable',
         message:
           'This time slot has been booked by another user. Please select a different time.',
-        conflictingBooking: {
-          id: existingBooking._id,
-          name: existingBooking.name,
-          date: existingBooking.date,
-          time: existingBooking.time,
-        },
       });
     }
 
@@ -195,18 +197,20 @@ app.post('/api/schedule/book', async (req, res) => {
     };
 
     const insertResult = await collection.insertOne(bookingData, {
+      //
       maxTimeMS: 5000,
     });
 
     // Send confirmation email
     let emailError = null;
 
-    if (sendConfirmationEmail) {
+    // Use the renamed, specific function for meeting confirmations
+    if (sendMeetingConfirmation) {
       try {
-        await sendConfirmationEmail({
+        await sendMeetingConfirmation({
           ...req.body,
           bookingId: insertResult.insertedId,
-          calendarEventId: calendarEventData,
+          calendarEventId: calendarEventData?.eventId || null, // Pass only the ID
         });
       } catch (error) {
         emailError = error.message;
@@ -263,11 +267,13 @@ app.post('/api/schedule/book', async (req, res) => {
 
 // Admin endpoints
 app.get('/api/schedule/bookings', async (req, res) => {
+  //
   try {
     const { limit = 10, date } = req.query;
     const query = date ? { date } : {};
 
     if (mongoose.connection.readyState !== 1) {
+      //
       return res.status(500).json({ error: 'Database not connected' });
     }
 
@@ -305,8 +311,10 @@ app.get('/api/schedule/bookings', async (req, res) => {
 });
 
 app.delete('/api/schedule/booking/:id', async (req, res) => {
+  //
   try {
     if (mongoose.connection.readyState !== 1) {
+      //
       return res.status(500).json({ error: 'Database not connected' });
     }
 
@@ -332,22 +340,17 @@ app.delete('/api/schedule/booking/:id', async (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
+  //
   res.status(404).json({
     error: 'Route not found',
     method: req.method,
     url: req.url,
-    availableRoutes: [
-      'GET /api/health',
-      'GET /api/schedule/availability?date=YYYY-MM-DD',
-      'POST /api/schedule/book',
-      'GET /api/schedule/bookings',
-      'DELETE /api/schedule/booking/:id',
-    ],
   });
 });
 
 // Global error handler
 app.use((error, req, res, next) => {
+  //
   res.status(500).json({
     error: 'Internal server error',
     message: error.message,
@@ -367,23 +370,14 @@ const mongoOptions = {
 
 mongoose
   .connect(process.env.MONGO_URI, mongoOptions)
-  .then(async () => {
-    // Test connection
-    try {
-      const db = mongoose.connection.db;
-      await db.admin().ping();
-    } catch (testError) {
-      // Connection test failed
-    }
-
-    // Start server
+  .then(() => {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      if (process.env.NODE_ENV !== 'production') {
-      }
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((error) => {
+    console.error('MongoDB connection failed:', error.message);
     process.exit(1);
   });
 

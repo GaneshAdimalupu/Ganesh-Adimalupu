@@ -1,44 +1,39 @@
-// api/routes/contactRoutes.js - FIXED to use existing email service
+// api/routes/contactRoutes.js - REFACTORED
 const express = require('express');
 const router = express.Router();
-const ContactMessage = require('../../lib/models/contactModel');
+const mongoose = require('mongoose');
 
-// Import the existing email service (fixed path)
-let sendConfirmationEmail;
+// Import the specific email service function needed for this route
+let sendContactNotification;
 try {
   const emailService = require('../../lib/services/emailService');
-  sendConfirmationEmail = emailService.sendConfirmationEmail;
-
+  sendContactNotification = emailService.sendContactNotification;
 } catch (error) {
-
+  console.error('Failed to load email service for contact routes:', error);
+  // Set the function to null so we can check for its existence later
+  sendContactNotification = null;
 }
 
-// Add debug middleware for all contact routes
-router.use((req, res, next) => {
-
-  next();
-});
-
-// POST /api/contact/submit - Submit contact form (using RAW MongoDB)
+// POST /api/contact/submit - Submit contact form
 router.post('/submit', async (req, res) => {
-
   const startTime = Date.now();
 
   try {
-
     // Validate required fields
     const { name, email, message } = req.body;
     const missingFields = [];
 
-    if (!name || name.trim().length < 2) missingFields.push('name (minimum 2 characters)');
+    if (!name || name.trim().length < 2)
+      missingFields.push('name (minimum 2 characters)');
     if (!email) missingFields.push('email');
-    if (!message || message.trim().length < 10) missingFields.push('message (minimum 10 characters)');
+    if (!message || message.trim().length < 10)
+      missingFields.push('message (minimum 10 characters)');
 
     if (missingFields.length > 0) {
       return res.status(400).json({
         error: 'Invalid form data',
         missingFields,
-        received: Object.keys(req.body)
+        received: Object.keys(req.body),
       });
     }
 
@@ -47,48 +42,50 @@ router.post('/submit', async (req, res) => {
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         error: 'Invalid email format',
-        received: email
+        received: email,
       });
     }
 
     // Check MongoDB connection
-    const mongoose = require('mongoose');
     if (mongoose.connection.readyState !== 1) {
       return res.status(500).json({
         error: 'Database not connected',
-        message: 'Please try again in a moment'
+        message: 'Please try again in a moment',
       });
     }
 
-    // Use RAW MongoDB for contact messages too
     const db = mongoose.connection.db;
     const collection = db.collection('contactmessages');
 
-    // Rate limiting - check for recent submissions from same email using RAW MongoDB
+    // Rate limiting - check for recent submissions from the same email
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    const recentSubmission = await collection.findOne({
-      email: email.toLowerCase(),
-      createdAt: { $gte: fiveMinutesAgo }
-    }, { maxTimeMS: 5000 });
+    const recentSubmission = await collection.findOne(
+      {
+        email: email.toLowerCase(),
+        createdAt: { $gte: fiveMinutesAgo },
+      },
+      { maxTimeMS: 5000 }
+    );
 
     if (recentSubmission) {
       return res.status(429).json({
         error: 'Rate limit exceeded',
         message: 'Please wait 5 minutes before submitting another message',
-        nextAllowedTime: new Date(recentSubmission.createdAt.getTime() + 5 * 60 * 1000)
       });
     }
 
     // Capture request metadata
     const getClientIP = (req) => {
-      return req.headers['x-forwarded-for'] ||
-             req.headers['x-real-ip'] ||
-             req.connection?.remoteAddress ||
-             req.socket?.remoteAddress ||
-             'unknown';
+      return (
+        req.headers['x-forwarded-for'] ||
+        req.headers['x-real-ip'] ||
+        req.connection?.remoteAddress ||
+        req.socket?.remoteAddress ||
+        'unknown'
+      );
     };
 
-    // Save contact message using RAW MongoDB
+    // Prepare contact data for insertion
     const contactData = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -106,42 +103,29 @@ router.post('/submit', async (req, res) => {
       readAt: null,
       repliedAt: null,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
-    const insertResult = await collection.insertOne(contactData, { maxTimeMS: 5000 });
+    const insertResult = await collection.insertOne(contactData, {
+      maxTimeMS: 5000,
+    });
 
-    // Send emails using the existing email service
-    let emailResult = null;
+    // Send emails using the new, dedicated contact email service
     let emailError = null;
 
-    if (sendConfirmationEmail) {
+    if (sendContactNotification) {
       try {
-
-        // Adapt the contact data to work with the booking email service
-        emailResult = await sendConfirmationEmail({
-          name: contactData.name,
-          email: contactData.email,
-          date: new Date().toISOString().split('T')[0], // Today's date
-          time: new Date().toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-          }), // Current time
-          meetingType: 'consultation', // Default type for contact inquiries
-          timezone: 'UTC+05:30',
-          bookingId: insertResult.insertedId,
-          message: contactData.message,
-          subject: contactData.subject
+        // Pass the contact data directly. No adaptation needed.
+        await sendContactNotification({
+          ...contactData,
+          contactId: insertResult.insertedId, // Pass the new ID for reference
         });
-
       } catch (error) {
-
+        console.error('Contact email sending failed:', error.message);
         emailError = error.message;
-        // Continue - don't fail contact submission for email issues
+        // Continue - don't fail the API request just because email failed
       }
     } else {
-
       emailError = 'Email service not loaded';
     }
 
@@ -156,58 +140,45 @@ router.post('/submit', async (req, res) => {
         name: contactData.name,
         email: contactData.email,
         subject: contactData.subject,
-        messageType: contactData.messageType,
-        priority: contactData.priority,
-        status: contactData.status
       },
       services: {
-        database: { status: 'success', message: 'Contact message saved with RAW MongoDB' },
-        email: emailResult
-          ? { status: 'success', message: 'Confirmation sent' }
-          : { status: 'failed', error: emailError }
+        database: { status: 'success', message: 'Contact message saved' },
+        email: !emailError
+          ? { status: 'success', message: 'Notifications sent' }
+          : { status: 'failed', error: emailError },
       },
       processingTime: `${processingTime}ms`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     const processingTime = Date.now() - startTime;
-
+    console.error('Error in /api/contact/submit:', error);
     return res.status(500).json({
       success: false,
       error: 'Contact form submission failed',
       message: error.message,
       details: {
         processingTime: `${processingTime}ms`,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
   }
 });
 
-// GET /api/contact/messages - Get contact messages (Admin) using RAW MongoDB
+// GET /api/contact/messages - Get contact messages (for an Admin dashboard)
 router.get('/messages', async (req, res) => {
-
   try {
     const {
       limit = 20,
       page = 1,
       status,
-      priority,
-      messageType,
       search,
       sortBy = 'createdAt',
       sortOrder = 'desc',
-      includeSpam = 'false'
     } = req.query;
 
-    // Check MongoDB connection
-    const mongoose = require('mongoose');
     if (mongoose.connection.readyState !== 1) {
-      return res.status(500).json({
-        error: 'Database not connected',
-        message: 'Please try again in a moment'
-      });
+      return res.status(500).json({ error: 'Database not connected' });
     }
 
     const db = mongoose.connection.db;
@@ -215,28 +186,7 @@ router.get('/messages', async (req, res) => {
 
     // Build query
     const query = {};
-
-    // Filter by status
-    if (status && status !== 'all') {
-      query.status = status;
-    }
-
-    // Filter by priority
-    if (priority && priority !== 'all') {
-      query.priority = priority;
-    }
-
-    // Filter by message type
-    if (messageType && messageType !== 'all') {
-      query.messageType = messageType;
-    }
-
-    // Exclude spam unless explicitly included
-    if (includeSpam === 'false') {
-      query.isSpam = { $ne: true };
-    }
-
-    // Search functionality
+    if (status && status !== 'all') query.status = status;
     if (search && search.trim()) {
       const searchRegex = new RegExp(search.trim(), 'i');
       query.$or = [
@@ -244,90 +194,53 @@ router.get('/messages', async (req, res) => {
         { email: searchRegex },
         { subject: searchRegex },
         { message: searchRegex },
-        { company: searchRegex }
       ];
     }
 
-    // Sort options
-    const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
-
-    // Calculate pagination
+    const sortOptions = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
     const pageNum = Math.max(1, parseInt(page));
-    const limitNum = Math.min(100, Math.max(1, parseInt(limit))); // Max 100 per page
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query with pagination using RAW MongoDB
+    // Execute query with pagination
     const [messages, totalCount] = await Promise.all([
-      collection.find(query, { maxTimeMS: 8000 })
+      collection
+        .find(query, { maxTimeMS: 8000 })
         .sort(sortOptions)
         .skip(skip)
         .limit(limitNum)
         .toArray(),
-      collection.countDocuments(query, { maxTimeMS: 5000 })
+      collection.countDocuments(query, { maxTimeMS: 5000 }),
     ]);
-
-    // Format response
-    const formattedMessages = messages.map(message => ({
-      id: message._id,
-      name: message.name,
-      email: message.email,
-      subject: message.subject,
-      message: message.message.substring(0, 150) + (message.message.length > 150 ? '...' : ''),
-      fullMessage: message.message,
-      phone: message.phone,
-      company: message.company,
-      messageType: message.messageType,
-      priority: message.priority,
-      status: message.status,
-      isSpam: message.isSpam,
-      ipAddress: message.ipAddress,
-      source: message.source,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-      readAt: message.readAt,
-      repliedAt: message.repliedAt
-    }));
-
-    const summary = {
-      total: totalCount,
-      currentPage: pageNum,
-      totalPages: Math.ceil(totalCount / limitNum),
-      hasNextPage: pageNum < Math.ceil(totalCount / limitNum),
-      hasPrevPage: pageNum > 1
-    };
 
     return res.status(200).json({
       success: true,
-      messages: formattedMessages,
-      summary,
-      filters: {
-        status,
-        priority,
-        messageType,
-        search,
-        includeSpam
+      messages: messages.map((msg) => ({ ...msg, id: msg._id })), // Ensure 'id' field is present
+      summary: {
+        total: totalCount,
+        currentPage: pageNum,
+        totalPages: Math.ceil(totalCount / limitNum),
       },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-
+    console.error('Error in /api/contact/messages:', error);
     return res.status(500).json({
       error: 'Failed to fetch messages',
-      message: error.message
+      message: error.message,
     });
   }
 });
 
 // Route-specific error handler
 router.use((error, req, res, next) => {
-
+  console.error(
+    `Error in contact route [${req.method} ${req.originalUrl}]:`,
+    error
+  );
   res.status(500).json({
     error: 'Contact route error',
     message: error.message,
-    route: req.originalUrl,
-    method: req.method
   });
 });
 
