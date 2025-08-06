@@ -1,18 +1,18 @@
-// routes/contactRoutes.js - CONTACT FORM ROUTES
+// api/routes/contactRoutes.js - FIXED to use existing email service
 const express = require('express');
 const router = express.Router();
-const ContactMessage = require('../models/contactModel');
+const ContactMessage = require('../../lib/models/contactModel');
 
 console.log('📧 Initializing contact form routes...');
 
-// Import the contact email service
-let sendContactFormEmails;
+// Import the existing email service (fixed path)
+let sendConfirmationEmail;
 try {
-  const contactEmailService = require('../services/contactEmailService');
-  sendContactFormEmails = contactEmailService.sendContactFormEmails;
-  console.log('✅ Contact email service loaded');
+  const emailService = require('../../lib/services/emailService');
+  sendConfirmationEmail = emailService.sendConfirmationEmail;
+  console.log('✅ Email service loaded for contact form');
 } catch (error) {
-  console.error('⚠️ Contact email service loading failed:', error.message);
+  console.error('⚠️ Email service loading failed:', error.message);
 }
 
 // Add debug middleware for all contact routes
@@ -28,9 +28,9 @@ router.use((req, res, next) => {
   next();
 });
 
-// POST /api/contact/submit - Submit contact form
+// POST /api/contact/submit - Submit contact form (using RAW MongoDB)
 router.post('/submit', async (req, res) => {
-  console.log('\n📧 CONTACT FORM SUBMISSION');
+  console.log('\n📧 CONTACT FORM SUBMISSION (RAW MONGODB)');
   const startTime = Date.now();
 
   try {
@@ -61,11 +61,25 @@ router.post('/submit', async (req, res) => {
       });
     }
 
-    // Rate limiting - check for recent submissions from same email
-    const recentSubmission = await ContactMessage.findOne({
+    // Check MongoDB connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({
+        error: 'Database not connected',
+        message: 'Please try again in a moment'
+      });
+    }
+
+    // Use RAW MongoDB for contact messages too
+    const db = mongoose.connection.db;
+    const collection = db.collection('contactmessages');
+
+    // Rate limiting - check for recent submissions from same email using RAW MongoDB
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentSubmission = await collection.findOne({
       email: email.toLowerCase(),
-      createdAt: { $gte: new Date(Date.now() - 5 * 60 * 1000) } // 5 minutes
-    });
+      createdAt: { $gte: fiveMinutesAgo }
+    }, { maxTimeMS: 5000 });
 
     if (recentSubmission) {
       return res.status(429).json({
@@ -77,14 +91,14 @@ router.post('/submit', async (req, res) => {
 
     // Capture request metadata
     const getClientIP = (req) => {
-      return req.headers['x-forwarded-for'] || 
-             req.headers['x-real-ip'] || 
-             req.connection?.remoteAddress || 
+      return req.headers['x-forwarded-for'] ||
+             req.headers['x-real-ip'] ||
+             req.connection?.remoteAddress ||
              req.socket?.remoteAddress ||
              'unknown';
     };
 
-    // Save contact message
+    // Save contact message using RAW MongoDB
     const contactData = {
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -93,29 +107,45 @@ router.post('/submit', async (req, res) => {
       phone: req.body.phone?.trim() || null,
       company: req.body.company?.trim() || null,
       messageType: req.body.messageType || 'general',
+      priority: 'medium', // Default priority
+      status: 'new',
       ipAddress: getClientIP(req),
       userAgent: req.headers['user-agent'] || null,
-      source: 'website'
+      source: 'website',
+      isSpam: false,
+      readAt: null,
+      repliedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
-    console.log('💾 Saving contact message to database...');
-    const contactMessage = new ContactMessage(contactData);
-    const savedMessage = await contactMessage.save();
+    console.log('💾 Saving contact message to database with RAW MongoDB...');
+    const insertResult = await collection.insertOne(contactData, { maxTimeMS: 5000 });
+    console.log('✅ Contact message saved successfully:', insertResult.insertedId);
 
-    console.log('✅ Contact message saved successfully:', savedMessage._id);
-
-    // Send emails
+    // Send emails using the existing email service
     let emailResult = null;
     let emailError = null;
 
-    if (sendContactFormEmails) {
+    if (sendConfirmationEmail) {
       try {
-        console.log('📧 Sending confirmation emails...');
-        emailResult = await sendContactFormEmails({
-          ...contactData,
-          contactId: savedMessage._id,
-          priority: savedMessage.priority,
-          isSpam: savedMessage.isSpam
+        console.log('📧 Sending contact confirmation emails...');
+
+        // Adapt the contact data to work with the booking email service
+        emailResult = await sendConfirmationEmail({
+          name: contactData.name,
+          email: contactData.email,
+          date: new Date().toISOString().split('T')[0], // Today's date
+          time: new Date().toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          }), // Current time
+          meetingType: 'consultation', // Default type for contact inquiries
+          timezone: 'UTC+05:30',
+          bookingId: insertResult.insertedId,
+          message: contactData.message,
+          subject: contactData.subject
         });
         console.log('✅ Contact form emails sent');
       } catch (error) {
@@ -135,21 +165,18 @@ router.post('/submit', async (req, res) => {
       success: true,
       message: 'Message sent successfully! Thank you for reaching out.',
       contact: {
-        id: savedMessage._id,
-        name: savedMessage.name,
-        email: savedMessage.email,
-        subject: savedMessage.subject,
-        messageType: savedMessage.messageType,
-        priority: savedMessage.priority,
-        status: savedMessage.status
+        id: insertResult.insertedId,
+        name: contactData.name,
+        email: contactData.email,
+        subject: contactData.subject,
+        messageType: contactData.messageType,
+        priority: contactData.priority,
+        status: contactData.status
       },
       services: {
-        database: { status: 'success', message: 'Contact message saved' },
-        autoReply: emailResult?.autoReply
-          ? { status: 'success', message: 'Auto-reply sent' }
-          : { status: 'failed', error: emailError },
-        adminNotification: emailResult?.adminNotification
-          ? { status: 'success', message: 'Admin notification sent' }
+        database: { status: 'success', message: 'Contact message saved with RAW MongoDB' },
+        email: emailResult
+          ? { status: 'success', message: 'Confirmation sent' }
           : { status: 'failed', error: emailError }
       },
       processingTime: `${processingTime}ms`,
@@ -172,9 +199,9 @@ router.post('/submit', async (req, res) => {
   }
 });
 
-// GET /api/contact/messages - Get contact messages (Admin)
+// GET /api/contact/messages - Get contact messages (Admin) using RAW MongoDB
 router.get('/messages', async (req, res) => {
-  console.log('\n📨 GET CONTACT MESSAGES');
+  console.log('\n📨 GET CONTACT MESSAGES (RAW MONGODB)');
 
   try {
     const {
@@ -198,6 +225,18 @@ router.get('/messages', async (req, res) => {
       search,
       includeSpam
     });
+
+    // Check MongoDB connection
+    const mongoose = require('mongoose');
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(500).json({
+        error: 'Database not connected',
+        message: 'Please try again in a moment'
+      });
+    }
+
+    const db = mongoose.connection.db;
+    const collection = db.collection('contactmessages');
 
     // Build query
     const query = {};
@@ -243,15 +282,14 @@ router.get('/messages', async (req, res) => {
     const limitNum = Math.min(100, Math.max(1, parseInt(limit))); // Max 100 per page
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query with pagination
+    // Execute query with pagination using RAW MongoDB
     const [messages, totalCount] = await Promise.all([
-      ContactMessage.find(query)
+      collection.find(query, { maxTimeMS: 8000 })
         .sort(sortOptions)
         .skip(skip)
         .limit(limitNum)
-        .select('-__v')
-        .lean(),
-      ContactMessage.countDocuments(query)
+        .toArray(),
+      collection.countDocuments(query, { maxTimeMS: 5000 })
     ]);
 
     // Format response
@@ -309,270 +347,6 @@ router.get('/messages', async (req, res) => {
   }
 });
 
-// PUT /api/contact/messages/:messageId - Update message status
-router.put('/messages/:messageId', async (req, res) => {
-  console.log('\n📝 UPDATE CONTACT MESSAGE');
-  const { messageId } = req.params;
-  const { status, priority, isSpam } = req.body;
-
-  try {
-    console.log(`📝 Updating message ${messageId}:`, { status, priority, isSpam });
-
-    const updateData = {};
-
-    // Validate and set status
-    if (status) {
-      const validStatuses = ['new', 'read', 'replied', 'archived'];
-      if (!validStatuses.includes(status)) {
-        return res.status(400).json({
-          error: 'Invalid status',
-          validStatuses
-        });
-      }
-      updateData.status = status;
-      
-      // Set timestamps based on status
-      if (status === 'read' && !updateData.readAt) {
-        updateData.readAt = new Date();
-      } else if (status === 'replied') {
-        updateData.repliedAt = new Date();
-      }
-    }
-
-    // Validate and set priority
-    if (priority) {
-      const validPriorities = ['low', 'medium', 'high', 'urgent'];
-      if (!validPriorities.includes(priority)) {
-        return res.status(400).json({
-          error: 'Invalid priority',
-          validPriorities
-        });
-      }
-      updateData.priority = priority;
-    }
-
-    // Set spam flag
-    if (typeof isSpam === 'boolean') {
-      updateData.isSpam = isSpam;
-    }
-
-    // Update the message
-    const updatedMessage = await ContactMessage.findByIdAndUpdate(
-      messageId,
-      updateData,
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedMessage) {
-      return res.status(404).json({
-        error: 'Message not found',
-        messageId
-      });
-    }
-
-    console.log(`✅ Message ${messageId} updated successfully`);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Message updated successfully',
-      updatedMessage: {
-        id: updatedMessage._id,
-        status: updatedMessage.status,
-        priority: updatedMessage.priority,
-        isSpam: updatedMessage.isSpam,
-        readAt: updatedMessage.readAt,
-        repliedAt: updatedMessage.repliedAt,
-        updatedAt: updatedMessage.updatedAt
-      }
-    });
-
-  } catch (error) {
-    console.error(`❌ Failed to update message ${messageId}:`, error);
-    return res.status(500).json({
-      error: 'Failed to update message',
-      message: error.message
-    });
-  }
-});
-
-// DELETE /api/contact/messages/:messageId - Delete or archive message
-router.delete('/messages/:messageId', async (req, res) => {
-  console.log('\n🗑️ DELETE CONTACT MESSAGE');
-  const { messageId } = req.params;
-  const { permanent = false } = req.body;
-
-  try {
-    console.log(`🗑️ ${permanent ? 'Permanently deleting' : 'Archiving'} message ${messageId}`);
-
-    const message = await ContactMessage.findById(messageId);
-
-    if (!message) {
-      return res.status(404).json({
-        error: 'Message not found',
-        messageId
-      });
-    }
-
-    if (permanent) {
-      // Permanently delete the message
-      await ContactMessage.findByIdAndDelete(messageId);
-      console.log(`✅ Message ${messageId} permanently deleted`);
-
-      return res.status(200).json({
-        success: true,
-        message: 'Message permanently deleted',
-        deletedMessage: {
-          id: message._id,
-          name: message.name,
-          email: message.email,
-          subject: message.subject
-        }
-      });
-    } else {
-      // Archive the message
-      const archivedMessage = await ContactMessage.findByIdAndUpdate(
-        messageId,
-        { status: 'archived' },
-        { new: true }
-      );
-
-      console.log(`✅ Message ${messageId} archived`);
-
-      return res.status(200).json({
-        success: true,
-        message: 'Message archived successfully',
-        archivedMessage: {
-          id: archivedMessage._id,
-          status: archivedMessage.status,
-          updatedAt: archivedMessage.updatedAt
-        }
-      });
-    }
-
-  } catch (error) {
-    console.error(`❌ Failed to ${permanent ? 'delete' : 'archive'} message ${messageId}:`, error);
-    return res.status(500).json({
-      error: `Failed to ${permanent ? 'delete' : 'archive'} message`,
-      message: error.message
-    });
-  }
-});
-
-// GET /api/contact/stats - Get contact statistics
-router.get('/stats', async (req, res) => {
-  console.log('\n📊 GET CONTACT STATISTICS');
-
-  try {
-    const { timeframe = '30d' } = req.query;
-
-    // Calculate date range based on timeframe
-    const now = new Date();
-    let startDate;
-
-    switch (timeframe) {
-      case '7d':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '30d':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case '90d':
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case '1y':
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-        break;
-      case 'all':
-        startDate = new Date('2020-01-01');
-        break;
-      default:
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    }
-
-    const baseQuery = { 
-      createdAt: { $gte: startDate },
-      isSpam: { $ne: true }
-    };
-
-    // Get basic statistics
-    const [totalStats, statusBreakdown, priorityBreakdown] = await Promise.all([
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        {
-          $group: {
-            _id: null,
-            totalMessages: { $sum: 1 },
-            avgMessageLength: { $avg: { $strLenCP: '$message' } },
-            uniqueContacts: { $addToSet: '$email' }
-          }
-        },
-        {
-          $project: {
-            totalMessages: 1,
-            avgMessageLength: { $round: ['$avgMessageLength', 0] },
-            uniqueContacts: { $size: '$uniqueContacts' }
-          }
-        }
-      ]),
-
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$status', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ]),
-
-      ContactMessage.aggregate([
-        { $match: baseQuery },
-        { $group: { _id: '$priority', count: { $sum: 1 } } },
-        { $sort: { count: -1 } }
-      ])
-    ]);
-
-    const stats = {
-      overview: {
-        totalMessages: totalStats[0]?.totalMessages || 0,
-        uniqueContacts: totalStats[0]?.uniqueContacts || 0,
-        avgMessageLength: totalStats[0]?.avgMessageLength || 0,
-        timeframe,
-        startDate,
-        endDate: now
-      },
-      breakdown: {
-        status: statusBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {}),
-        priority: priorityBreakdown.reduce((acc, item) => {
-          acc[item._id] = item.count;
-          return acc;
-        }, {})
-      }
-    };
-
-    console.log('✅ Contact statistics generated successfully');
-    console.log(`   Total messages: ${stats.overview.totalMessages}`);
-    console.log(`   Unique contacts: ${stats.overview.uniqueContacts}`);
-
-    return res.status(200).json({
-      success: true,
-      statistics: stats,
-      meta: {
-        generatedAt: new Date().toISOString(),
-        timeframe,
-        databaseStatus: 'connected'
-      }
-    });
-
-  } catch (error) {
-    console.error('❌ Failed to generate contact statistics:', error);
-    return res.status(500).json({
-      error: 'Failed to generate statistics',
-      message: error.message,
-      timestamp: new Date().toISOString()
-    });
-  }
-});
-
 // Route-specific error handler
 router.use((error, req, res, next) => {
   console.error('\n🚨 CONTACT ROUTE ERROR:');
@@ -588,11 +362,8 @@ router.use((error, req, res, next) => {
   });
 });
 
-console.log('✅ Contact routes configured:');
+console.log('✅ Contact routes configured (RAW MongoDB):');
 console.log('   POST /api/contact/submit');
 console.log('   GET  /api/contact/messages');
-console.log('   PUT  /api/contact/messages/:messageId');
-console.log('   DELETE /api/contact/messages/:messageId');
-console.log('   GET  /api/contact/stats');
 
 module.exports = router;

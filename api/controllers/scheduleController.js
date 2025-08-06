@@ -1,5 +1,5 @@
 // api/controllers/scheduleController.js - MINIMAL TEST VERSION
-const Booking = require('../models/bookingModel');
+const Booking = require('../lib/models/bookingModel');
 
 exports.getAvailability = async (req, res) => {
   console.log('🔍 GET AVAILABILITY REQUEST:', req.query);
