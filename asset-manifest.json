@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.d655e82a.css",
-    "main.js": "/static/js/main.7c4ce91d.js",
+    "main.css": "/static/css/main.296f4508.css",
+    "main.js": "/static/js/main.cd9c4fa9.js",
     "static/media/best pap cer.jpg": "/static/media/best pap cer.fe321cf5c72030e7fddc.jpg",
     "static/media/sneha deepa.png": "/static/media/sneha deepa.9dd8c0cea383b04cf0e3.png",
     "static/media/portfolio.png": "/static/media/portfolio.c319da7532ef3f585e5b.png",
@@ -9,7 +9,7 @@
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.d655e82a.css",
-    "static/js/main.7c4ce91d.js"
+    "static/css/main.296f4508.css",
+    "static/js/main.cd9c4fa9.js"
   ]
 }
