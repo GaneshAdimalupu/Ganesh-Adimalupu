@@ -210,3 +210,70 @@
     transition: none !important;
   }
 }
+
+/* ======================================= */
+/* === ADDITIONS FOR RESUME & FOCUS FIX === */
+/* ======================================= */
+
+/* --- 1. Accessibility & Focus Fix --- */
+.nav-menu li button:focus {
+  outline: none;
+  /* Removes the blue rectangle on click */
+}
+
+/* Provides a visible focus style for keyboard navigation (Tab key) */
+.nav-menu li button:focus-visible {
+  /* You can choose your preferred style. A background color works well here. */
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+
+/* --- 2. Resume Button Styles --- */
+.resume-btn {
+  display: inline-block;
+  padding: 8px 18px;
+  background-color: var(--glow-purple);
+  color: white !important;
+  /* Use !important to override other link styles if needed */
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  /* Prevents the button from wrapping to two lines */
+}
+
+.resume-btn:hover {
+  background-color: var(--glow-magenta);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+}
+
+/* Resume button focus style for accessibility */
+.resume-btn:focus-visible {
+  outline: 2px solid var(--glow-cyan);
+  outline-offset: 2px;
+}
+
+
+/* --- Resume Button Styles for Mobile --- */
+@media (max-width: 768px) {
+  .nav-menu li .resume-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--glow-magenta);
+    /* Make it stand out on mobile too */
+  }
+
+  .nav-menu li .resume-btn:hover {
+    background-color: var(--glow-purple);
+    transform: none;
+    /* No lift effect on mobile */
+    box-shadow: none;
+  }
+}

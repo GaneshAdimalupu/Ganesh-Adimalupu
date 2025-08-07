@@ -1,5 +1,6 @@
+/* hero.css */
 :root {
-  /* New Purple & Black Theme */
+  /* Your theme variables */
   --bg-black: #0D0D0D;
   --bg-dark-purple: #1a0f23;
   --glow-magenta: #F72585;
@@ -13,38 +14,128 @@
 
 /* --- Keyframe Animations --- */
 @keyframes background-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes gradient-pan {
-  to { background-position: 200% center; }
+  to {
+    background-position: 200% center;
+  }
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-50px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(50px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes blink {
-  50% { opacity: 0; }
+  50% {
+    opacity: 0;
+  }
 }
 
+@keyframes wave {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  10%,
+  30% {
+    transform: rotate(14deg);
+  }
+
+  20% {
+    transform: rotate(-8deg);
+  }
+
+  40% {
+    transform: rotate(10deg);
+  }
+
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
+/* --- NEW EXIT ANIMATIONS --- */
+@keyframes slide-out-to-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-100px);
+  }
+}
+
+@keyframes slide-out-to-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+}
 
 /* --- Base Hero Section --- */
 .hero {
@@ -57,10 +148,23 @@
   overflow: hidden;
 }
 
+/* --- APPLY EXIT ANIMATIONS --- */
+.hero.is-exiting .hero-content {
+  animation: slide-out-to-left 0.7s ease-out forwards;
+}
+
+.hero.is-exiting .hero-visual {
+  animation: slide-out-to-right 0.7s ease-out forwards;
+}
+
+
 .hero::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background:
     radial-gradient(circle at 15% 25%, rgba(114, 9, 183, 0.15) 0%, transparent 40%),
     radial-gradient(circle at 85% 75%, rgba(247, 37, 133, 0.12) 0%, transparent 40%);
@@ -85,6 +189,8 @@
   animation: slide-in-left 1s ease-out 0.2s forwards;
 }
 
+/* ... (rest of your hero.css file remains the same) ... */
+
 .greeting-badge {
   display: inline-flex;
   align-items: center;
@@ -102,21 +208,13 @@
 
 .greeting-badge:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .wave {
   font-size: 1.2rem;
   animation: wave 2.5s infinite;
   transform-origin: 70% 70%;
-}
-
-@keyframes wave {
-  0%, 100% { transform: rotate(0deg); }
-  10%, 30% { transform: rotate(14deg); }
-  20% { transform: rotate(-8deg); }
-  40% { transform: rotate(10deg); }
-  50% { transform: rotate(0deg); }
 }
 
 .hero-title {
@@ -143,7 +241,8 @@
   font-weight: 500;
   color: var(--glow-cyan);
   margin-top: 1rem;
-  min-height: 2.2rem; /* Prevent layout shift during typing */
+  min-height: 2.2rem;
+  /* Prevent layout shift during typing */
 }
 
 .cursor {
@@ -206,7 +305,6 @@
   border-color: var(--border-hover-color);
 }
 
-/* --- Hero Visual (Right) --- */
 .hero-visual {
   position: relative;
   opacity: 0;
@@ -240,7 +338,10 @@
 
 .bg-blobs {
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 1;
 }
 
@@ -252,24 +353,30 @@
 }
 
 .blob-1 {
-  width: 250px; height: 250px;
-  background: rgba(114, 9, 183, 0.4); /* Purple */
-  top: -20%; left: -20%;
+  width: 250px;
+  height: 250px;
+  background: rgba(114, 9, 183, 0.4);
+  /* Purple */
+  top: -20%;
+  left: -20%;
   animation-delay: 0s;
 }
 
 .blob-2 {
-  width: 200px; height: 200px;
-  background: rgba(247, 37, 133, 0.4); /* Magenta */
-  bottom: -10%; right: -20%;
+  width: 200px;
+  height: 200px;
+  background: rgba(247, 37, 133, 0.4);
+  /* Magenta */
+  bottom: -10%;
+  right: -20%;
   animation-delay: -5s;
 }
 
-/* --- Responsive Design --- */
 @media (max-width: 992px) {
   .hero-container {
     gap: 3rem;
   }
+
   .hero-title {
     font-size: clamp(2.5rem, 8vw, 3.5rem);
   }
@@ -280,29 +387,39 @@
     min-height: auto;
     padding: 8rem 1rem 4rem 1rem;
   }
+
   .hero-container {
     grid-template-columns: 1fr;
     gap: 4rem;
     text-align: center;
   }
+
   .hero-content {
     order: 2;
   }
+
   .hero-visual {
     order: 1;
   }
+
   .hero-description {
     margin-left: auto;
     margin-right: auto;
   }
+
   .hero-buttons {
     justify-content: center;
   }
 }
 
-/* --- Accessibility --- */
 @media (prefers-reduced-motion: reduce) {
-  .hero-content, .hero-visual, .blob, .wave, .hero-image, .cta-btn {
+
+  .hero-content,
+  .hero-visual,
+  .blob,
+  .wave,
+  .hero-image,
+  .cta-btn {
     animation: none !important;
     transition: none !important;
   }
