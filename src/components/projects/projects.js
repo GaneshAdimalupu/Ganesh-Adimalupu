@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './portfolio.css';
+import './projects.css';
 
 // --- Custom Hooks ---
 // Import your images
@@ -42,15 +42,13 @@ const useIntersectionObserver = (options) => {
 };
 
 // --- Data ---
-// Replaced local image imports with placeholder URLs.
-// To use your local images, you can import them at the top of the file like so:
-// import bestPaperCert from './assets/images/best_pap_cer.jpg';
-// And then use the variable, e.g., image: bestPaperCert,
-const portfolioData = [
+
+const projectsData = [
   {
     id: 1,
     title: 'Smart Food Recommendation System',
-    description: 'An award-winning intelligent system using ML to recommend food. Presented at an IEEE conference and won Best Paper.',
+    description:
+      'An award-winning intelligent system using ML to recommend food. Presented at an IEEE conference and won Best Paper.',
     image: bestPaperCert,
     category: 'AI/ML',
     tags: ['Machine Learning', 'Python', 'IEEE'],
@@ -60,8 +58,9 @@ const portfolioData = [
   {
     id: 2,
     title: 'Handwritten Digit Recognition',
-    description: 'A Deep Learning model using TensorFlow and Keras to classify handwritten digits from the MNIST dataset with high accuracy.',
-    image: digit ,
+    description:
+      'A Deep Learning model using TensorFlow and Keras to classify handwritten digits from the MNIST dataset with good accuracy.',
+    image: digit,
     category: 'AI/ML',
     tags: ['TensorFlow', 'Keras', 'CNN'],
     liveDemo: '#',
@@ -70,7 +69,8 @@ const portfolioData = [
   {
     id: 3,
     title: 'Hospital Management System',
-    description: 'A full-stack hospital management web app for patient registration, appointments, and secure digital record keeping.',
+    description:
+      'A full-stack hospital management web app for patient registration, appointments, and secure digital record keeping.',
     image: snehaDeepaImage,
     category: 'Web Dev',
     tags: ['React', 'Node.js', 'MongoDB'],
@@ -80,22 +80,25 @@ const portfolioData = [
   {
     id: 4,
     title: 'Modern React Portfolio',
-    description: 'This personal portfolio, built with React. Features a clean UI, dark theme, responsive design, and interactive components.',
+    description:
+      'This personal portfolio, built with React. Features a clean UI, dark theme, responsive design, and interactive components.',
     image: portfolioImage,
     category: 'Web Dev',
     tags: ['React', 'CSS3', 'UI/UX'],
     liveDemo: '#',
-    githubRepo: 'https://github.com/GaneshAdimalupu/portfolio',
+    githubRepo: 'https://github.com/GaneshAdimalupu/Ganesh-Adimalupu',
   },
   {
     id: 5,
     title: 'Face Recognition Evaluation',
-    description: 'A robust platform for benchmarking face recognition models, providing tools for dataset management and performance analytics.',
+    description:
+      'A robust platform for benchmarking face recognition models, providing tools for dataset management and performance analytics.',
     image: faceRecognitionImage,
     category: 'AI/ML',
     tags: ['Python', 'OpenCV', 'scikit-learn'],
     liveDemo: '#',
-    githubRepo: 'https://github.com/GaneshAdimalupu/face-recognition-evaluation',
+    githubRepo:
+      'https://github.com/GaneshAdimalupu/face-recognition-evaluation',
   },
 ];
 
@@ -103,13 +106,13 @@ const filterCategories = ['All', 'AI/ML', 'Web Dev'];
 
 // --- Child Components ---
 
-const PortfolioCard = React.forwardRef(({ project }, ref) => {
+const ProjectCard = React.forwardRef(({ project }, ref) => {
     const handleImageError = (e) => {
         e.target.src = `https://placehold.co/600x400/1a0f23/f0e6f0?text=Project`;
     };
 
     return (
-        <div className="portfolio-card" ref={ref}>
+        <div className="projects-card" ref={ref}>
             <div className="card-image-wrapper">
                 <img src={project.image} alt={project.title} className="card-image" onError={handleImageError} loading="lazy" />
             </div>
@@ -136,20 +139,20 @@ const PortfolioCard = React.forwardRef(({ project }, ref) => {
 
 // --- Main Portfolio Component ---
 
-const Portfolio = () => {
+const Projects = () => {
     const [activeFilter, setActiveFilter] = useState('All');
     const setObservedElements = useIntersectionObserver({ threshold: 0.1 });
 
     // This state will hold the projects to be rendered
-    const [displayedProjects, setDisplayedProjects] = useState(portfolioData);
+    const [displayedProjects, setDisplayedProjects] = useState(projectsData);
     const gridRef = useRef(null);
 
     // Update displayed projects when the filter changes
     useEffect(() => {
         if (activeFilter === 'All') {
-            setDisplayedProjects(portfolioData);
+            setDisplayedProjects(projectsData);
         } else {
-            setDisplayedProjects(portfolioData.filter(p => p.category === activeFilter));
+            setDisplayedProjects(projectsData.filter(p => p.category === activeFilter));
         }
     }, [activeFilter]);
 
@@ -162,10 +165,10 @@ const Portfolio = () => {
     }, [displayedProjects, setObservedElements]);
 
     return (
-        <section id="portfolio" className="portfolio-section">
-            <div className="portfolio-container">
-                <div className="portfolio-header">
-                    <h2>My Portfolio</h2>
+        <section id="projects" className="projects-section">
+            <div className="projects-container">
+                <div className="projects-header">
+                    <h2>My Projects</h2>
                     <p>A showcase of my projects in AI, Machine Learning, and Web Development.</p>
                 </div>
 
@@ -181,9 +184,9 @@ const Portfolio = () => {
                     ))}
                 </div>
 
-                <div className="portfolio-grid" ref={gridRef}>
+                <div className="projects-grid" ref={gridRef}>
                     {displayedProjects.map((project) => (
-                        <PortfolioCard key={project.id} project={project} />
+                        <ProjectCard key={project.id} project={project} />
                     ))}
                 </div>
             </div>
@@ -191,4 +194,4 @@ const Portfolio = () => {
     );
 };
 
-export default Portfolio;
+export default Projects;

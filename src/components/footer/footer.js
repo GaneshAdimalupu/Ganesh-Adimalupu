@@ -17,7 +17,7 @@ const socialLinks = [
     { icon: icons.twitter, url: 'https://x.com/John56247240', label: 'Twitter' }
 ];
 
-const quickLinks = ['home', 'about', 'portfolio', 'contact'];
+const quickLinks = ['home', 'about', 'projects', 'contact'];
 
 // --- Main Footer Component ---
 const Footer = () => {

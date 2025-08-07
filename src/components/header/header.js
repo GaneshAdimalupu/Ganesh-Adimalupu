@@ -75,7 +75,7 @@ const Header = () => {
     const isScrolled = useScroll(50);
 
     // Added missing nav items
-    const navItems = ['home', 'about', 'portfolio', 'certifications', 'schedule', 'contact'];
+    const navItems = ['home', 'about', 'projects', 'certifications', 'schedule', 'contact'];
     const activeSection = useScrollSpy(navItems, { rootMargin: '-30% 0px -70% 0px' });
 
     const headerRef = useRef();
