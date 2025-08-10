@@ -1,15 +1,23 @@
 {
   "files": {
-    "main.css": "/static/css/main.e67b1d6b.css",
-    "main.js": "/static/js/main.2dc2f8bb.js",
+    "main.css": "/static/css/main.ae1c3f76.css",
+    "main.js": "/static/js/main.c665c22f.js",
+    "static/media/yukthi_team.jpeg": "/static/media/yukthi_team.584312a62a741ce2f8a5.jpeg",
+    "static/media/banner.png": "/static/media/banner.d5bb9b3cf27142b8842e.png",
+    "static/media/with_them.jpeg": "/static/media/with_them.8e43bee5f678813a18a3.jpeg",
+    "static/media/talk_1.jpeg": "/static/media/talk_1.29fd1e264a1455f489b1.jpeg",
     "static/media/best pap cer.jpg": "/static/media/best pap cer.fe321cf5c72030e7fddc.jpg",
+    "static/media/class.jpeg": "/static/media/class.e61e94d99fa3c2b835a4.jpeg",
+    "static/media/graduation.jpeg": "/static/media/graduation.100a95edd7a87f67d51b.jpeg",
     "static/media/sneha deepa.png": "/static/media/sneha deepa.9dd8c0cea383b04cf0e3.png",
+    "static/media/talk_3.jpeg": "/static/media/talk_3.14759d8ea96821757a7d.jpeg",
+    "static/media/talk_2.jpeg": "/static/media/talk_2.4982e126da35a7e246eb.jpeg",
     "static/media/portfolio.png": "/static/media/portfolio.c319da7532ef3f585e5b.png",
     "static/media/profile.webp": "/static/media/profile.fb71b79b2b65fd8dcbc1.webp",
     "index.html": "/index.html"
   },
   "entrypoints": [
-    "static/css/main.e67b1d6b.css",
-    "static/js/main.2dc2f8bb.js"
+    "static/css/main.ae1c3f76.css",
+    "static/js/main.c665c22f.js"
   ]
 }
