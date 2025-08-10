@@ -1,6 +1,4 @@
-/* hero.css */
 :root {
-  /* Your theme variables */
   --bg-black: #0D0D0D;
   --bg-dark-purple: #1a0f23;
   --glow-magenta: #F72585;
@@ -14,13 +12,6 @@
 
 /* --- Keyframe Animations --- */
 @keyframes background-pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-
   50% {
     opacity: 0.7;
     transform: scale(1.05);
@@ -28,12 +19,6 @@
 }
 
 @keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
   50% {
     transform: translateY(-20px);
   }
@@ -89,11 +74,6 @@
 
 @keyframes wave {
 
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-
   10%,
   30% {
     transform: rotate(14deg);
@@ -106,34 +86,22 @@
   40% {
     transform: rotate(10deg);
   }
+}
 
-  50% {
-    transform: rotate(0deg);
+@keyframes bounce {
+  40% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+
+  60% {
+    transform: translateX(-50%) translateY(-5px);
   }
 }
 
-/* --- NEW EXIT ANIMATIONS --- */
-@keyframes slide-out-to-left {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
+@keyframes scroll-wheel {
   to {
     opacity: 0;
-    transform: translateX(-100px);
-  }
-}
-
-@keyframes slide-out-to-right {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateX(100px);
+    top: 24px;
   }
 }
 
@@ -141,22 +109,14 @@
 .hero {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 2rem;
+  padding: 4rem 2rem;
   background: linear-gradient(145deg, var(--bg-black) 0%, var(--bg-dark-purple) 100%);
   position: relative;
   overflow: hidden;
 }
-
-/* --- APPLY EXIT ANIMATIONS --- */
-.hero.is-exiting .hero-content {
-  animation: slide-out-to-left 0.7s ease-out forwards;
-}
-
-.hero.is-exiting .hero-visual {
-  animation: slide-out-to-right 0.7s ease-out forwards;
-}
-
 
 .hero::before {
   content: '';
@@ -189,8 +149,6 @@
   animation: slide-in-left 1s ease-out 0.2s forwards;
 }
 
-/* ... (rest of your hero.css file remains the same) ... */
-
 .greeting-badge {
   display: inline-flex;
   align-items: center;
@@ -200,15 +158,9 @@
   border: 1px solid var(--border-color);
   padding: 0.75rem 1.5rem;
   border-radius: 50px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   color: var(--text-primary);
   font-weight: 500;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.greeting-badge:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .wave {
@@ -221,9 +173,9 @@
   font-size: clamp(2.8rem, 6vw, 4.5rem);
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
   color: var(--text-primary);
   letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
 }
 
 .name-highlight {
@@ -241,8 +193,9 @@
   font-weight: 500;
   color: var(--glow-cyan);
   margin-top: 1rem;
-  min-height: 2.2rem;
-  /* Prevent layout shift during typing */
+  min-height: 2.5rem;
+  /* Ensures no layout shift */
+  width: fit-content;
 }
 
 .cursor {
@@ -256,21 +209,25 @@
 }
 
 .hero-description {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--text-secondary);
   line-height: 1.7;
-  margin-bottom: 2.5rem;
   max-width: 550px;
+  margin-bottom: 2.5rem;
+  /* Increased spacing */
 }
 
 .hero-buttons {
   display: flex;
   gap: 1rem;
   align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+  /* Increased spacing */
 }
 
 .cta-btn {
-  padding: 1rem 2.2rem;
+  padding: 0.9rem 2rem;
   border-radius: 50px;
   font-weight: 600;
   font-size: 1rem;
@@ -305,10 +262,61 @@
   border-color: var(--border-hover-color);
 }
 
+.cta-btn.tertiary {
+  background: transparent;
+  color: var(--glow-cyan);
+  border: 2px solid transparent;
+}
+
+.cta-btn.tertiary:hover {
+  border-color: var(--glow-cyan);
+}
+
+.hero-social {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.social-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.social-links {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: var(--glow-magenta);
+  color: white;
+  border-color: var(--glow-magenta);
+  transform: translateY(-3px);
+}
+
+/* --- Hero Visual (Right) --- */
 .hero-visual {
   position: relative;
   opacity: 0;
   animation: slide-in-right 1s ease-out 0.2s forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
 
 .image-wrapper {
@@ -349,14 +357,13 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(40px);
-  animation: float 15s ease-in-out infinite;
+  animation: float 15s ease-in-out infinite alternate;
 }
 
 .blob-1 {
   width: 250px;
   height: 250px;
   background: rgba(114, 9, 183, 0.4);
-  /* Purple */
   top: -20%;
   left: -20%;
   animation-delay: 0s;
@@ -366,28 +373,204 @@
   width: 200px;
   height: 200px;
   background: rgba(247, 37, 133, 0.4);
-  /* Magenta */
   bottom: -10%;
   right: -20%;
   animation-delay: -5s;
 }
 
-@media (max-width: 992px) {
-  .hero-container {
-    gap: 3rem;
-  }
-
-  .hero-title {
-    font-size: clamp(2.5rem, 8vw, 3.5rem);
-  }
+.blob-3 {
+  width: 180px;
+  height: 180px;
+  background: rgba(76, 201, 240, 0.3);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -10s;
 }
 
-@media (max-width: 768px) {
-  .hero {
-    min-height: auto;
-    padding: 8rem 1rem 4rem 1rem;
-  }
+/* --- Relocated & Cleaned Tech Stack --- */
+.tech-stack {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 320px;
+}
 
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  width: 65px;
+}
+
+.tech-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+  border-color: var(--border-hover-color);
+}
+
+.tech-item span:first-child {
+  font-size: 1.5rem;
+}
+
+.tech-item span:last-child {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+/* --- Achievements & Stats Sections --- */
+.achievements-section {
+  margin-top: 6rem;
+  /* Increased spacing */
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease;
+  width: 100%;
+}
+
+.achievements-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.achievements-container {
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.achievements-container h3 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.achievement-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.achievement-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-hover-color);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.achievement-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.achievement-card h4 {
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.achievement-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.hero-stats {
+  margin-top: 4rem;
+  padding: 3rem 0;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 2rem;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--glow-cyan);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* --- Scroll Indicator --- */
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  animation: bounce 2s infinite;
+}
+
+.scroll-mouse {
+  width: 24px;
+  height: 40px;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  position: relative;
+}
+
+.scroll-wheel {
+  width: 4px;
+  height: 8px;
+  background: var(--glow-cyan);
+  border-radius: 2px;
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scroll-wheel 2s infinite;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
   .hero-container {
     grid-template-columns: 1fr;
     gap: 4rem;
@@ -396,13 +579,16 @@
 
   .hero-content {
     order: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .hero-visual {
     order: 1;
   }
 
-  .hero-description {
+  .role {
     margin-left: auto;
     margin-right: auto;
   }
@@ -410,8 +596,41 @@
   .hero-buttons {
     justify-content: center;
   }
+
+  .hero-social {
+    justify-content: center;
+  }
 }
 
+@media (max-width: 768px) {
+  .hero {
+    padding: 8rem 1rem 4rem 1rem;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+  }
+
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .cta-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* --- Accessibility & Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
 
   .hero-content,
@@ -419,8 +638,23 @@
   .blob,
   .wave,
   .hero-image,
-  .cta-btn {
+  .cta-btn,
+  .scroll-indicator,
+  .tech-item,
+  .achievement-card,
+  .social-link {
     animation: none !important;
     transition: none !important;
   }
+
+  .cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+.cta-btn:focus,
+.social-link:focus {
+  outline: 2px solid var(--glow-cyan);
+  outline-offset: 2px;
 }
