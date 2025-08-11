@@ -763,9 +763,55 @@
     padding: 4rem 1.5rem;
   }
 
+  /* MOBILE CERTIFICATION STATS - 2x2 GRID LAYOUT */
   .cert-stats {
-    grid-template-columns: 1fr;
-    max-width: 300px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+    margin: 1.5rem auto !important;
+    max-width: 100% !important;
+  }
+
+  .stat-item {
+    padding: 1.25rem 0.75rem !important;
+  }
+
+  .stat-number {
+    font-size: 1.6rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.85rem !important;
+    line-height: 1.3 !important;
+  }
+
+  /* MOBILE FILTER BUTTONS - COMPACT LAYOUT */
+  .certifications-controls {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+  }
+
+  .filter-buttons {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    justify-content: center !important;
+  }
+
+  .filter-btn {
+    padding: 0.6rem 0.8rem !important;
+    font-size: 0.85rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .sort-controls {
+    justify-content: center !important;
+    width: 100% !important;
   }
 
   .certifications-grid {
@@ -804,13 +850,32 @@
 }
 
 @media (max-width: 480px) {
+  /* VERY SMALL MOBILE - TIGHTER SPACING */
+  .cert-stats {
+    gap: 0.75rem !important;
+    margin: 1rem auto !important;
+  }
+
+  .stat-item {
+    padding: 1rem 0.5rem !important;
+  }
+
+  .stat-number {
+    font-size: 1.4rem !important;
+  }
+
+  .stat-label {
+    font-size: 0.8rem !important;
+  }
+
   .filter-buttons {
-    flex-direction: column;
-    align-items: stretch;
+    gap: 0.5rem !important;
+    max-width: 350px !important;
   }
 
   .filter-btn {
-    justify-content: center;
+    padding: 0.5rem 0.6rem !important;
+    font-size: 0.8rem !important;
   }
 
   .modal-header h2 {
@@ -827,6 +892,18 @@
   .cert-status {
     font-size: 0.75rem;
     padding: 0.2rem 0.5rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+  .filter-buttons {
+    max-width: 300px !important;
+  }
+
+  .filter-btn {
+    padding: 0.4rem 0.5rem !important;
+    font-size: 0.75rem !important;
   }
 }
 

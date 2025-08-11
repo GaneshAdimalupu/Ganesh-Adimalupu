@@ -85,32 +85,69 @@
 
 /* Keyframe animations */
 @keyframes background-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 @keyframes gradient-pan {
-  to { background-position: 200% center; }
+  to {
+    background-position: 200% center;
+  }
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slide-in-left {
-  from { opacity: 0; transform: translateX(-30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Base Section */
@@ -125,7 +162,10 @@
 .about-section::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background:
     radial-gradient(circle at 20% 80%, rgba(114, 9, 183, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 80% 20%, rgba(247, 37, 133, 0.08) 0%, transparent 40%);
@@ -257,6 +297,41 @@
   margin-top: 1.5rem;
 }
 
+.stat-item {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.5rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--border-hover-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.stat-item h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.5rem 0;
+  line-height: 1;
+}
+
+.stat-item p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Legacy stat classes for backward compatibility */
 .stat {
   text-align: center;
 }
@@ -311,7 +386,8 @@
   content: '';
   position: absolute;
   left: 2rem;
-  top: 0; bottom: 0;
+  top: 0;
+  bottom: 0;
   width: 2px;
   background: linear-gradient(to bottom, var(--glow-magenta), var(--glow-purple));
 }
@@ -458,7 +534,9 @@
 .leadership-card::before {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
 }
@@ -564,7 +642,7 @@
   transform: translateY(-2px);
 }
 
-/* Enhanced Stats Grid */
+/* Enhanced Stats Grid - UPDATED FOR MOBILE */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -586,8 +664,10 @@
 .stat-item::before {
   content: '';
   position: absolute;
-  top: 0; left: -100%;
-  width: 100%; height: 2px;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
   background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
   transition: left 0.5s ease;
 }
@@ -681,38 +761,100 @@
   }
 
   .highlight-stats {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    align-items: center;
+    margin-top: 1.5rem;
+    align-items: stretch;
+  }
+
+  .highlight-stats .stat-item {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .highlight-stats .stat-item h3 {
+    font-size: 1.6rem;
+  }
+
+  .highlight-stats .stat-item p {
+    font-size: 0.8rem;
   }
 
   .skills-categories {
     grid-template-columns: 1fr;
   }
 
+  /* MOBILE STATS GRID - NOW 2x2 INSTEAD OF SINGLE COLUMN */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
+    margin-top: 3rem;
+    /* Reduced top margin */
+  }
+
+  /* Reduce padding for mobile to save vertical space */
+  .stat-item {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .stat-item h3 {
+    font-size: 2rem;
+    /* Slightly smaller on mobile */
+  }
+
+  .stat-item p {
+    font-size: 0.85rem;
+    /* Slightly smaller text */
+    line-height: 1.3;
   }
 }
 
 @media (max-width: 480px) {
+
+  /* For very small screens, still keep 2x2 but with tighter spacing */
   .stats-grid {
-    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .stat-item {
+    padding: 1.25rem 0.5rem;
+  }
+
+  .stat-item h3 {
+    font-size: 1.8rem;
+  }
+
+  .stat-item p {
+    font-size: 0.8rem;
+  }
+
+  /* Highlight stats on very small screens */
+  .highlight-stats {
+    gap: 0.75rem;
+  }
+
+  .highlight-stats .stat-item {
+    padding: 1rem 0.5rem;
+  }
+
+  .highlight-stats .stat-item h3 {
+    font-size: 1.4rem;
+  }
+
+  .highlight-stats .stat-item p {
+    font-size: 0.75rem;
   }
 
   .tab-btn {
     padding: 0.5rem 0.8rem;
     font-size: 0.85rem;
   }
-
-  .stat-item h3 {
-    font-size: 2rem;
-  }
 }
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
+
   .about-section::before,
   .about-header h2,
   .carousel-container,
