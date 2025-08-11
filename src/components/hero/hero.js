@@ -63,12 +63,6 @@ const heroData = {
       ),
     },
   ],
-  techStack: [
-    { icon: '🐍', name: 'Python' },
-    { icon: '⚛️', name: 'React' },
-    { icon: '🤖', name: 'TensorFlow' },
-    { icon: '☁️', name: 'AWS' },
-  ],
   achievements: [
     {
       icon: '🏆',
@@ -85,11 +79,6 @@ const heroData = {
       title: 'Event Organizer',
       description: "Led Yukthi'25 TechFest with 500+ participants",
     },
-  ],
-  stats: [
-    { number: '8+', label: 'Projects Completed' },
-    { number: '500+', label: 'Event Participants' },
-    { number: '3+', label: 'Years Experience' },
   ],
 };
 
@@ -272,15 +261,6 @@ const Hero = () => {
             />
           </div>
 
-          {/* Relocated Tech Stack */}
-          <div className="tech-stack">
-            {heroData.techStack.map((tech) => (
-              <div key={tech.name} className="tech-item" title={tech.name}>
-                <span>{tech.icon}</span>
-                <span>{tech.name}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -300,24 +280,6 @@ const Hero = () => {
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="hero-stats">
-        <div className="stats-container">
-          {heroData.stats.map((stat) => (
-            <div key={stat.label} className="stat-item">
-              <span className="stat-number">{stat.number}</span>
-              <span className="stat-label">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="scroll-indicator">
-        <div className="scroll-mouse">
-          <div className="scroll-wheel"></div>
-        </div>
-        <span>Scroll to explore</span>
       </div>
     </section>
   );

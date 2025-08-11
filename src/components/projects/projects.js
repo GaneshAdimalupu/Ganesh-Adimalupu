@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import './projects.css';
 
 // Import images
-import bestPaperCert from '../../assets/images/best pap cer.jpg';
-import portfolioImage from '../../assets/images/portfolio.png';
-import digit from '../../assets/images/digit.png';
-import snehaDeepaImage from '../../assets/images/sneha deepa.png';
-import faceRecognitionImage from '../../assets/images/face recog.jpeg';
-import bannerImage from '../../assets/images/banner.png';
+import bestPaperCert from '../../assets/images/projects/best pap cer.webp';
+import portfolioImage from '../../assets/images/projects/portfolio.webp';
+import digit from '../../assets/images/projects/digit.webp';
+import snehaDeepaImage from '../../assets/images/projects/sneha deepa.webp';
+import faceRecognitionImage from '../../assets/images/projects/face recog.webp';
+import newsImage from '../../assets/images/projects/news.webp';
+import liftImage from '../../assets/images/projects/lift.webp';
 
 // Hook to track element visibility for animations
 const useIntersectionObserver = (options) => {
@@ -40,10 +41,9 @@ const useIntersectionObserver = (options) => {
   return setElements;
 };
 
-// Data for projects (remains unchanged)
+// Data for projects
 const projectsData = [
-  // ... all your project data objects go here ...
-   {
+  {
     id: 1,
     title: 'Be My Chef AI - AI-Powered Recipe Recommendation System',
     shortTitle: 'Be My Chef AI',
@@ -85,7 +85,7 @@ const projectsData = [
     shortTitle: 'Smart Lift Control',
     description:
       'An innovative IoT-based lift access control system integrating secure RFID authentication, keypad floor selection, and real-time cloud monitoring with mobile app support.',
-    image: bannerImage,
+    image: liftImage,
     category: 'IoT',
     featured: true,
     period: 'March 2024 - May 2024',
@@ -237,7 +237,7 @@ const projectsData = [
     shortTitle: 'News Classifier',
     description:
       'A Natural Language Processing system for automatically classifying news articles into categories, developed during academic internship with advanced text processing techniques.',
-    image: bannerImage,
+    image: newsImage,
     category: 'AI/ML',
     featured: false,
     period: 'HDLC Internship 2023',
@@ -260,46 +260,12 @@ const projectsData = [
     impact:
       'Demonstrated practical application of NLP in content categorization',
   },
-  {
-    id: 8,
-    title: 'Celebrity Image Classifier',
-    shortTitle: 'Celebrity Classifier',
-    description:
-      'A deep learning project for celebrity image classification using advanced computer vision techniques and neural network architectures.',
-    image: bannerImage,
-    category: 'AI/ML',
-    featured: false,
-    period: 'HDLC Internship 2023',
-    status: 'completed',
-    tags: [
-      'Deep Learning',
-      'Computer Vision',
-      'Python',
-      'Image Classification',
-    ],
-    achievements: [
-      'Implemented state-of-the-art deep learning techniques',
-      'High accuracy in celebrity recognition',
-      'Advanced image preprocessing pipeline',
-      'Practical application of computer vision',
-    ],
-    technologies: {
-      languages: ['Python'],
-      concepts: ['Deep Learning', 'Computer Vision', 'Image Classification'],
-      techniques: ['Neural Networks', 'Image Preprocessing'],
-      tools: ['Deep Learning Frameworks'],
-    },
-    liveDemo: '#',
-    githubRepo: '#',
-    impact:
-      'Advanced understanding of computer vision and deep learning applications',
-  },
 ];
 
 const filterCategories = ['All', 'AI/ML', 'Web Dev', 'IoT'];
 
-// ProjectCard and ProjectDetailsModal components remain the same as the previous correct version...
-const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
+// Simplified ProjectCard component without click functionality
+const ProjectCard = React.forwardRef(({ project }, ref) => {
   const handleImageError = (e) => {
     e.target.src = `https://placehold.co/600x400/1a0f23/f0e6f0?text=${encodeURIComponent(
       project.shortTitle
@@ -310,7 +276,6 @@ const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
     <div
       className={`projects-card ${project.featured ? 'featured' : ''}`}
       ref={ref}
-      onClick={onClick}
     >
       <div className="card-image-wrapper">
         {project.featured && <div className="featured-badge">Featured</div>}
@@ -326,14 +291,6 @@ const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
           onError={handleImageError}
           loading="lazy"
         />
-        <div className="image-overlay">
-          <button
-            className="details-btn"
-            aria-label={`View details for ${project.title}`}
-          >
-            View Details
-          </button>
-        </div>
       </div>
       <div className="card-content">
         <div className="card-header">
@@ -368,7 +325,6 @@ const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
               target="_blank"
               rel="noopener noreferrer"
               className="card-link primary"
-              onClick={(e) => e.stopPropagation()}
             >
               Live Demo <span>→</span>
             </a>
@@ -379,7 +335,6 @@ const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
               target="_blank"
               rel="noopener noreferrer"
               className="card-link secondary"
-              onClick={(e) => e.stopPropagation()}
             >
               GitHub <span>→</span>
             </a>
@@ -390,107 +345,17 @@ const ProjectCard = React.forwardRef(({ project, onClick }, ref) => {
   );
 });
 
-const ProjectDetailsModal = ({ project, onClose }) => {
-  useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleEsc);
-    document.body.style.overflow = 'hidden';
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'auto';
-    };
-  }, [onClose]);
-
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  return (
-    <div className="modal-overlay" onClick={handleOverlayClick}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} aria-label="Close modal">
-          ×
-        </button>
-        <div className="modal-header">
-          <h2>{project.title}</h2>
-          <div className="modal-meta">
-            <span className="category">{project.category}</span>
-            <span className="period">{project.period}</span>
-            <span className={`status ${project.status}`}>{project.status}</span>
-          </div>
-        </div>
-        <div className="modal-body">
-          <div className="project-description">
-            <h3>About This Project</h3>
-            <p>{project.description}</p>
-            {project.impact && (
-              <div className="impact-section">
-                <h4>Impact</h4>
-                <p>{project.impact}</p>
-              </div>
-            )}
-          </div>
-          {project.achievements && (
-            <div className="achievements-section">
-              <h3>Key Achievements</h3>
-              <ul>
-                {project.achievements.map((achievement, index) => (
-                  <li key={index}>{achievement}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <div className="technologies-section">
-            <h3>Technologies Used</h3>
-            <div className="tech-categories">
-              {Object.entries(project.technologies).map(([category, techs]) => (
-                <div key={category} className="tech-category">
-                  <h4>{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
-                  <div className="tech-list">
-                    {techs.map((tech, index) => (
-                      <span key={index} className="tech-item">{tech}</span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="project-links">
-            {project.liveDemo !== '#' && (
-              <a href={project.liveDemo} target="_blank" rel="noopener noreferrer" className="project-link primary">
-                View Live Demo
-              </a>
-            )}
-            {project.githubRepo !== '#' && (
-              <a href={project.githubRepo} target="_blank" rel="noopener noreferrer" className="project-link secondary">
-                View on GitHub
-              </a>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-
 // Main Projects Component
 const Projects = () => {
-  const [selectedProject, setSelectedProject] = useState(null);
   const [activeFilter, setActiveFilter] = useState('All');
   const [displayedProjects, setDisplayedProjects] = useState(projectsData);
   const [sortBy, setSortBy] = useState('featured');
   const setObservedElements = useIntersectionObserver({ threshold: 0.1 });
 
-  // *** FIX STARTS HERE ***
-  const gridRef = useRef(null); // This ref is for the grid container
-  const cardRefs = useRef([]); // This new ref is for the individual cards
+  const gridRef = useRef(null);
+  const cardRefs = useRef([]);
 
-  // Filter and sort certifications
+  // Filter and sort projects
   useEffect(() => {
     let filtered =
       activeFilter === 'All'
@@ -519,12 +384,11 @@ const Projects = () => {
     setDisplayedProjects(filtered);
   }, [activeFilter, sortBy]);
 
-  // Correctly handle observing card elements
+  // Handle observing card elements
   useEffect(() => {
     cardRefs.current = cardRefs.current.slice(0, displayedProjects.length);
     setObservedElements(cardRefs.current);
   }, [displayedProjects, setObservedElements]);
-  // *** FIX ENDS HERE ***
 
   const projectStats = {
     total: projectsData.length,
@@ -534,98 +398,88 @@ const Projects = () => {
   };
 
   return (
-    <>
-      <section id="projects" className="projects-section">
-        <div className="projects-container">
-          <div className="projects-header">
-            <h2>My Projects</h2>
-            <p>
-              A comprehensive showcase of my AI/ML, IoT, and Web Development
-              projects with real-world impact.
-            </p>
-            <div className="project-stats">
-              <div className="stat">
-                <span className="stat-number">{projectStats.total}</span>
-                <span className="stat-label">Total Projects</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">{projectStats.completed}</span>
-                <span className="stat-label">Completed</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">{projectStats.featured}</span>
-                <span className="stat-label">Featured</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">{projectStats.categories}</span>
-                <span className="stat-label">Categories</span>
-              </div>
+    <section id="projects" className="projects-section">
+      <div className="projects-container">
+        <div className="projects-header">
+          <h2>My Projects</h2>
+          <p>
+            A comprehensive showcase of my AI/ML, IoT, and Web Development
+            projects with real-world impact.
+          </p>
+          <div className="project-stats">
+            <div className="stat">
+              <span className="stat-number">{projectStats.total}</span>
+              <span className="stat-label">Total Projects</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{projectStats.completed}</span>
+              <span className="stat-label">Completed</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{projectStats.featured}</span>
+              <span className="stat-label">Featured</span>
+            </div>
+            <div className="stat">
+              <span className="stat-number">{projectStats.categories}</span>
+              <span className="stat-label">Categories</span>
             </div>
           </div>
+        </div>
 
-          <div className="projects-controls">
-            <div className="filter-buttons">
-              {filterCategories.map((category) => (
-                <button
-                  key={category}
-                  className={`filter-btn ${
-                    activeFilter === category ? 'active' : ''
-                  }`}
-                  onClick={() => setActiveFilter(category)}
-                >
-                  {category}
-                  <span className="count">
-                    (
-                    {category === 'All'
-                      ? projectsData.length
-                      : projectsData.filter((p) => p.category === category)
-                          .length}
-                    )
-                  </span>
-                </button>
-              ))}
-            </div>
-            <div className="sort-controls">
-              <label htmlFor="sort-select">Sort by:</label>
-              <select
-                id="sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="sort-select"
+        <div className="projects-controls">
+          <div className="filter-buttons">
+            {filterCategories.map((category) => (
+              <button
+                key={category}
+                className={`filter-btn ${
+                  activeFilter === category ? 'active' : ''
+                }`}
+                onClick={() => setActiveFilter(category)}
               >
-                <option value="featured">Featured First</option>
-                <option value="date">Latest First</option>
-                <option value="category">Category</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="projects-grid" ref={gridRef}>
-            {displayedProjects.map((project, index) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                onClick={() => setSelectedProject(project)}
-                ref={(el) => (cardRefs.current[index] = el)} // Use the correct ref here
-              />
+                {category}
+                <span className="count">
+                  (
+                  {category === 'All'
+                    ? projectsData.length
+                    : projectsData.filter((p) => p.category === category)
+                        .length}
+                  )
+                </span>
+              </button>
             ))}
           </div>
-
-          {displayedProjects.length === 0 && (
-            <div className="no-projects">
-              <p>No projects found for the selected filter.</p>
-            </div>
-          )}
+          <div className="sort-controls">
+            <label htmlFor="sort-select">Sort by:</label>
+            <select
+              id="sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
+            >
+              <option value="featured">Featured First</option>
+              <option value="date">Latest First</option>
+              <option value="category">Category</option>
+            </select>
+          </div>
         </div>
-      </section>
 
-      {selectedProject && (
-        <ProjectDetailsModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
-    </>
+        <div className="projects-grid" ref={gridRef}>
+          {displayedProjects.map((project, index) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              ref={(el) => (cardRefs.current[index] = el)}
+            />
+          ))}
+        </div>
+
+        {displayedProjects.length === 0 && (
+          <div className="no-projects">
+            <p>No projects found for the selected filter.</p>
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

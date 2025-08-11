@@ -2,13 +2,94 @@ import React, { useState, useEffect, useRef } from 'react';
 import './about.css';
 
 // Import all available images
-import fossUnitedImage from '../../assets/images/yukthi_team.jpeg';
-import talkImage from '../../assets/images/talk_1.jpeg';
-import talk2Image from '../../assets/images/talk_2.jpeg';
-import talk3Image from '../../assets/images/talk_3.jpeg';
-import classImage from '../../assets/images/class.jpeg';
-import graduationImage from '../../assets/images/graduation.jpeg';
-import withThemImage from '../../assets/images/with_them.jpeg';
+import fossUnitedImage from '../../assets/images/about/yukthi_team.webp';
+import talkImage from '../../assets/images/about/talk_1.webp';
+import talk2Image from '../../assets/images/about/talk_2.webp';
+import talk3Image from '../../assets/images/about/talk_3.webp';
+import classImage from '../../assets/images/about/class.webp';
+import graduationImage from '../../assets/images/about/graduation.webp';
+import withThemImage from '../../assets/images/about/with_them.webp';
+
+// Simple Image carousel component
+const ImageCarousel = ({ images, interval = 4000 }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (!images || images.length === 0) return;
+
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [images, interval]);
+
+  if (!images || images.length === 0) {
+    return (
+      <div className="image-carousel">
+        <div style={{
+          height: '300px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '12px',
+          color: 'var(--text-secondary)'
+        }}>
+          No images available
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="image-carousel">
+      {images.map((image, index) => (
+        <div
+          key={index}
+          className={`carousel-slide ${index === currentIndex ? 'active' : ''}`}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            opacity: index === currentIndex ? 1 : 0,
+            transition: 'opacity 0.5s ease-in-out'
+          }}
+        >
+          <img
+            src={image.src}
+            alt={image.alt}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: 'block'
+            }}
+            onError={(e) => {
+              console.error('Image failed to load:', e.target.src);
+            }}
+            onLoad={(e) => {
+              console.log('Image loaded:', e.target.src);
+            }}
+          />
+        </div>
+      ))}
+
+      <div className="carousel-indicators">
+        {images.map((_, index) => (
+          <button
+            key={index}
+            className={`indicator ${currentIndex === index ? 'active' : ''}`}
+            onClick={() => setCurrentIndex(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 // Custom hook for observing visibility
 const useElementOnScreen = (options) => {
@@ -124,6 +205,13 @@ const educationData = [
     graduation: 'September 2021',
     type: 'completed',
   },
+    {
+    degree: 'Secondary School',
+    institution: 'Christ Jyothi E.M School',
+    location: 'Gajulapalle, AP',
+    graduation: 'March 2019',
+    type: 'completed',
+  },
 ];
 
 // Internship data from CV
@@ -151,44 +239,6 @@ const internshipData = [
   },
 ];
 
-// Image carousel component
-const ImageCarousel = ({ images, interval = 4000 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [images.length, interval]);
-
-  return (
-    <div className="image-carousel">
-      <div
-        className="carousel-container"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {images.map((image, index) => (
-          <div key={index} className="carousel-slide">
-            <img src={image.src} alt={image.alt} />
-          </div>
-        ))}
-      </div>
-      <div className="carousel-indicators">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            className={`indicator ${currentIndex === index ? 'active' : ''}`}
-            onClick={() => setCurrentIndex(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
 // Main About Component
 const About = () => {
   const [containerRef, isVisible] = useElementOnScreen({
@@ -199,7 +249,7 @@ const About = () => {
 
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Image collections for carousel
+  // Create image arrays with different intervals for alternating effect
   const talkImages = [
     { src: talkImage, alt: 'Ganesh giving technical talk 1' },
     { src: talk2Image, alt: 'Ganesh giving technical talk 2' },
@@ -213,6 +263,13 @@ const About = () => {
     { src: withThemImage, alt: 'Community engagement' },
   ];
 
+  // Debug logging
+  useEffect(() => {
+    console.log('=== IMAGE DEBUG ===');
+    console.log('Talk Images:', talkImages.map(img => ({ src: img.src, hasImage: !!img.src })));
+    console.log('Community Images:', communityImages.map(img => ({ src: img.src, hasImage: !!img.src })));
+  }, []);
+
   return (
     <section
       id="about"
@@ -225,9 +282,7 @@ const About = () => {
           <p>
             Recent Computer Science graduate with strong foundational knowledge
             in AI/ML technologies and hands-on experience gained through
-            academic internships and research projects. Passionate about
-            leveraging AI to solve real-world problems and building vibrant tech
-            communities.
+            academic internships and research projects.
           </p>
         </div>
 
@@ -265,7 +320,7 @@ const About = () => {
             <div className="tab-panel">
               <div className="alternating-row">
                 <div className="alternating-visual">
-                  <ImageCarousel images={communityImages} />
+                  <ImageCarousel images={communityImages} interval={5000} />
                 </div>
                 <div className="alternating-text">
                   <h3>Community Builder & FOSS Advocate</h3>
@@ -278,21 +333,21 @@ const About = () => {
                     professionals to collaborate and innovate.
                   </p>
                   <div className="highlight-stats">
-                    <div className="stat">
-                      <span className="stat-number">500+</span>
-                      <span className="stat-label">Event Participants</span>
-                    </div>
-                    <div className="stat">
-                      <span className="stat-number">₹3.73L</span>
-                      <span className="stat-label">Sponsorship Secured</span>
-                    </div>
+                   <div className="stat-item">
+                    <h3>500+</h3>
+                    <p>Participants at Yukthi'25 TechFest</p>
+                  </div>
+                  <div className="stat-item">
+                    <h3>₹3.73L</h3>
+                    <p>Sponsorship Secured for Events</p>
+                  </div>
                   </div>
                 </div>
               </div>
 
               <div className="alternating-row reverse">
                 <div className="alternating-visual">
-                  <ImageCarousel images={talkImages} />
+                  <ImageCarousel images={talkImages} interval={4000} />
                 </div>
                 <div className="alternating-text">
                   <h3>Technical Expertise & Mentorship</h3>
@@ -412,14 +467,6 @@ const About = () => {
 
         {/* Enhanced Stats Grid */}
         <div className="stats-grid">
-          <div className="stat-item">
-            <h3>500+</h3>
-            <p>Participants at Yukthi'25 TechFest</p>
-          </div>
-          <div className="stat-item">
-            <h3>₹3.73L</h3>
-            <p>Sponsorship Secured for Events</p>
-          </div>
           <div className="stat-item">
             <h3>15+</h3>
             <p>Students onboarded to GitHub via MuLearn</p>

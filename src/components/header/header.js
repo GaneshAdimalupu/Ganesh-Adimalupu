@@ -50,17 +50,20 @@ const useOnClickOutside = (ref, handler) => {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScroll(50);
+
+  // Compact navigation items
   const navItems = [
     'home',
     'about',
     'projects',
     'certifications',
     'schedule',
-    'contact',
   ];
+
   const activeSection = useScrollSpy(navItems, {
     rootMargin: '-30% 0px -70% 0px',
   });
+
   const headerRef = useRef();
   useOnClickOutside(headerRef, () => setIsMenuOpen(false));
 
@@ -72,17 +75,32 @@ const Header = () => {
     }
   };
 
+  const downloadCV = () => {
+    const cvUrl = '/Ganesh-CV.pdf';
+    const link = document.createElement('a');
+    link.href = cvUrl;
+    link.download = 'Ganesh_Adimalupu_CV.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <nav className="nav-container" ref={headerRef}>
+        {/* Compact Logo */}
         <a
           href="#home"
           className="logo"
-          onClick={() => scrollToSection('home')}
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToSection('home');
+          }}
         >
           Ganesh <span>Adimalupu</span>
         </a>
 
+        {/* Mobile Menu Toggle */}
         <button
           className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -94,6 +112,7 @@ const Header = () => {
           <span></span>
         </button>
 
+        {/* Compact Navigation Menu */}
         <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
           {navItems.map((item) => (
             <li key={item}>
@@ -106,12 +125,16 @@ const Header = () => {
             </li>
           ))}
 
-          {/* --- ADDED RESUME BUTTON HERE --- */}
+          {/* Resume Button */}
           <li>
             <a
-              href="/Ganesh-Adimalupu-Resume.pdf"
+              href="/Ganesh-CV.pdf"
               className="resume-btn"
-              download="Ganesh Adimalupu - Resume.pdf"
+              download="Ganesh_Adimalupu_CV.pdf"
+              onClick={(e) => {
+                e.preventDefault();
+                downloadCV();
+              }}
             >
               Resume
             </a>

@@ -16,7 +16,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
   z-index: 1000;
   transition: background-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
   background-color: transparent;
@@ -24,10 +24,10 @@
 }
 
 .header.scrolled {
-  background-color: rgba(13, 13, 13, 0.85); /* --bg-black with opacity */
+  background-color: rgba(13, 13, 13, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding: 0.75rem 0;
+  padding: 0.5rem 0;
   border-bottom: 1px solid var(--border-color);
   box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
@@ -40,37 +40,46 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 2rem;
+  gap: 2rem;
 }
 
 /* --- Logo --- */
 .logo {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-primary);
   text-decoration: none;
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 0.3s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
+
 .logo:hover {
   color: var(--glow-magenta);
 }
+
 .logo span {
   font-weight: 400;
   color: var(--text-secondary);
   transition: color 0.3s ease;
 }
-.logo:hover span {
-    color: var(--text-primary);
-}
 
+.logo:hover span {
+  color: var(--text-primary);
+}
 
 /* --- Desktop Navigation --- */
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: 2rem;
+  gap: 0.5rem;
   margin: 0;
   padding: 0;
+  align-items: center;
+}
+
+.nav-menu li {
+  display: flex;
 }
 
 .nav-menu li button {
@@ -79,30 +88,34 @@
   color: var(--text-secondary);
   font-weight: 500;
   cursor: pointer;
-  font-size: 1rem;
-  transition: color 0.3s ease;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
   position: relative;
-  padding: 0.5rem 0;
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
+  white-space: nowrap;
 }
 
 .nav-menu li button::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
+  left: 50%;
   width: 0;
   height: 2px;
   background-color: var(--glow-magenta);
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .nav-menu li button:hover {
   color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-menu li button:hover::after,
 .nav-menu li button.active::after {
-  width: 100%;
+  width: 70%;
 }
 
 .nav-menu li button.active {
@@ -110,7 +123,35 @@
   font-weight: 600;
 }
 
-/* --- Mobile Menu Toggle (Hamburger) --- */
+/* --- Resume Button Styles --- */
+.resume-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--glow-purple);
+  color: white !important;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.resume-btn:hover {
+  background-color: var(--glow-magenta);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
+}
+
+.resume-btn:focus-visible {
+  outline: 2px solid var(--glow-cyan);
+  outline-offset: 2px;
+}
+
+/* --- Mobile Menu Toggle --- */
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -122,6 +163,7 @@
   cursor: pointer;
   padding: 0;
   z-index: 1001;
+  flex-shrink: 0;
 }
 
 .menu-toggle span {
@@ -143,21 +185,42 @@
 }
 
 /* --- Responsive Design --- */
+@media (max-width: 1024px) {
+  .nav-container {
+    padding: 0 1.5rem;
+    gap: 1rem;
+  }
+
+  .nav-menu {
+    gap: 0.25rem;
+  }
+
+  .nav-menu li button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .resume-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-container {
     padding: 0 1.5rem;
-    position: relative; /* Needed for menu positioning */
+    position: relative;
   }
 
-  /* Mobile Menu as a dropdown */
+  /* Mobile Menu */
   .nav-menu {
     position: absolute;
-    top: calc(100% + 15px); /* Position below the header */
+    top: calc(100% + 15px);
     right: 0;
-    width: 220px;
+    width: 250px;
     background-color: var(--bg-dark-purple);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     flex-direction: column;
     padding: 1rem;
@@ -178,88 +241,30 @@
   }
 
   .nav-menu li {
-      width: 100%;
+    width: 100%;
   }
 
   .nav-menu li button {
-    font-size: 1rem;
+    font-size: 0.9rem;
     width: 100%;
     text-align: left;
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: 8px;
   }
+
   .nav-menu li button::after {
-      display: none; /* No underline on mobile */
+    display: none;
   }
+
   .nav-menu li button:hover {
-      background-color: rgba(255,255,255,0.05);
-  }
-   .nav-menu li button.active {
-      background-color: var(--glow-magenta);
-      color: white;
+    background-color: rgba(255,255,255,0.1);
   }
 
-  .menu-toggle {
-    display: flex;
+  .nav-menu li button.active {
+    background-color: var(--glow-magenta);
+    color: white;
   }
-}
 
-/* --- Accessibility --- */
-@media (prefers-reduced-motion: reduce) {
-  .header, .nav-menu, .menu-toggle span, .logo, .nav-menu li button, .nav-menu li button::after {
-    transition: none !important;
-  }
-}
-
-/* ======================================= */
-/* === ADDITIONS FOR RESUME & FOCUS FIX === */
-/* ======================================= */
-
-/* --- 1. Accessibility & Focus Fix --- */
-.nav-menu li button:focus {
-  outline: none;
-  /* Removes the blue rectangle on click */
-}
-
-/* Provides a visible focus style for keyboard navigation (Tab key) */
-.nav-menu li button:focus-visible {
-  /* You can choose your preferred style. A background color works well here. */
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-}
-
-
-/* --- 2. Resume Button Styles --- */
-.resume-btn {
-  display: inline-block;
-  padding: 8px 18px;
-  background-color: var(--glow-purple);
-  color: white !important;
-  /* Use !important to override other link styles if needed */
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  /* Prevents the button from wrapping to two lines */
-}
-
-.resume-btn:hover {
-  background-color: var(--glow-magenta);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
-}
-
-/* Resume button focus style for accessibility */
-.resume-btn:focus-visible {
-  outline: 2px solid var(--glow-cyan);
-  outline-offset: 2px;
-}
-
-
-/* --- Resume Button Styles for Mobile --- */
-@media (max-width: 768px) {
   .nav-menu li .resume-btn {
     display: block;
     width: 100%;
@@ -267,13 +272,74 @@
     margin-top: 0.5rem;
     padding: 0.75rem 1rem;
     background-color: var(--glow-magenta);
-    /* Make it stand out on mobile too */
   }
 
   .nav-menu li .resume-btn:hover {
     background-color: var(--glow-purple);
     transform: none;
-    /* No lift effect on mobile */
     box-shadow: none;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .nav-menu {
+    width: calc(100vw - 2rem);
+    right: 1rem;
+  }
+}
+
+/* --- Accessibility --- */
+.nav-menu li button:focus {
+  outline: none;
+}
+
+.nav-menu li button:focus-visible {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .nav-menu,
+  .menu-toggle span,
+  .logo,
+  .nav-menu li button,
+  .nav-menu li button::after,
+  .resume-btn {
+    transition: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .header {
+    background: #000;
+    border-bottom-color: #fff;
+  }
+
+  .nav-menu li button {
+    color: #fff;
+  }
+
+  .nav-menu li button.active {
+    background: #fff;
+    color: #000;
+  }
+
+  .resume-btn {
+    background: #fff;
+    color: #000;
   }
 }

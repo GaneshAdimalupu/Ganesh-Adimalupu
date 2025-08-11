@@ -1,3 +1,75 @@
+/* FIXED Image Carousel Styles */
+.image-carousel {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.carousel-container {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s ease-in-out;
+  /* Width and transform will be set dynamically via inline styles */
+}
+
+.carousel-slide {
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  /* Width will be set dynamically via inline styles */
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block !important;
+  border-radius: 0;
+}
+
+.carousel-indicators {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator:hover {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.1);
+}
+
+.indicator.active {
+  background: var(--glow-cyan);
+  transform: scale(1.2);
+}
+
+/* Debug: Remove any conflicting styles */
+.alternating-visual .image-carousel .carousel-slide img {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Rest of your existing CSS remains the same */
 :root {
   /* Purple & Black Theme */
   --bg-black: #0D0D0D;
@@ -13,69 +85,32 @@
 
 /* Keyframe animations */
 @keyframes background-float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
 
 @keyframes gradient-pan {
-  to {
-    background-position: 200% center;
-  }
+  to { background-position: 200% center; }
 }
 
 @keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 
 /* Base Section */
@@ -90,10 +125,7 @@
 .about-section::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   background:
     radial-gradient(circle at 20% 80%, rgba(114, 9, 183, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 80% 20%, rgba(247, 37, 133, 0.08) 0%, transparent 40%);
@@ -176,61 +208,6 @@
 
 .tab-panel {
   animation: fade-in-up 0.5s ease-out;
-}
-
-/* Image Carousel */
-.image-carousel {
-  position: relative;
-  width: 100%;
-  height: 300px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color);
-}
-
-.carousel-container {
-  display: flex;
-  width: 400%;
-  /* 4 images */
-  height: 100%;
-  transition: transform 0.5s ease-in-out;
-}
-
-.carousel-slide {
-  width: 25%;
-  flex-shrink: 0;
-}
-
-.carousel-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.carousel-indicators {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.5rem;
-}
-
-.indicator {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(255, 255, 255, 0.4);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.indicator.active {
-  background: var(--glow-cyan);
-  transform: scale(1.2);
 }
 
 /* Alternating Layout */
@@ -334,8 +311,7 @@
   content: '';
   position: absolute;
   left: 2rem;
-  top: 0;
-  bottom: 0;
+  top: 0; bottom: 0;
   width: 2px;
   background: linear-gradient(to bottom, var(--glow-magenta), var(--glow-purple));
 }
@@ -482,9 +458,7 @@
 .leadership-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
 }
@@ -612,10 +586,8 @@
 .stat-item::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
+  top: 0; left: -100%;
+  width: 100%; height: 2px;
   background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
   transition: left 0.5s ease;
 }
@@ -741,7 +713,6 @@
 
 /* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-
   .about-section::before,
   .about-header h2,
   .carousel-container,
