@@ -1,23 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.ae1c3f76.css",
-    "main.js": "/static/js/main.c665c22f.js",
-    "static/media/yukthi_team.jpeg": "/static/media/yukthi_team.584312a62a741ce2f8a5.jpeg",
-    "static/media/banner.png": "/static/media/banner.d5bb9b3cf27142b8842e.png",
-    "static/media/with_them.jpeg": "/static/media/with_them.8e43bee5f678813a18a3.jpeg",
-    "static/media/talk_1.jpeg": "/static/media/talk_1.29fd1e264a1455f489b1.jpeg",
-    "static/media/best pap cer.jpg": "/static/media/best pap cer.fe321cf5c72030e7fddc.jpg",
-    "static/media/class.jpeg": "/static/media/class.e61e94d99fa3c2b835a4.jpeg",
-    "static/media/graduation.jpeg": "/static/media/graduation.100a95edd7a87f67d51b.jpeg",
-    "static/media/sneha deepa.png": "/static/media/sneha deepa.9dd8c0cea383b04cf0e3.png",
-    "static/media/talk_3.jpeg": "/static/media/talk_3.14759d8ea96821757a7d.jpeg",
-    "static/media/talk_2.jpeg": "/static/media/talk_2.4982e126da35a7e246eb.jpeg",
-    "static/media/portfolio.png": "/static/media/portfolio.c319da7532ef3f585e5b.png",
+    "main.css": "/static/css/main.7557f1d6.css",
+    "main.js": "/static/js/main.19d6b142.js",
+    "static/media/with_them.webp": "/static/media/with_them.307744249bf4adc11105.webp",
+    "static/media/talk_1.webp": "/static/media/talk_1.fbeffc5ba41e4c13978c.webp",
+    "static/media/best pap cer.webp": "/static/media/best pap cer.6bf4c702fcf500c09ccf.webp",
+    "static/media/class.webp": "/static/media/class.e4a609528ffe192f6f41.webp",
+    "static/media/lift.webp": "/static/media/lift.40c3fe3957eda68728dc.webp",
+    "static/media/graduation.webp": "/static/media/graduation.68f1d6a1edc19ac0433e.webp",
+    "static/media/yukthi_team.webp": "/static/media/yukthi_team.e240b30ba8b26a0f24c9.webp",
+    "static/media/talk_2.webp": "/static/media/talk_2.04708df21b81ec5fcc5e.webp",
+    "static/media/sneha deepa.webp": "/static/media/sneha deepa.a1a03d5413852a70a935.webp",
+    "static/media/talk_3.webp": "/static/media/talk_3.2f27927315416291608f.webp",
+    "static/media/news.webp": "/static/media/news.1f080f175ca6bb0deff0.webp",
     "static/media/profile.webp": "/static/media/profile.fb71b79b2b65fd8dcbc1.webp",
-    "index.html": "/index.html"
+    "static/media/portfolio.webp": "/static/media/portfolio.e3f39e94fad17b439368.webp",
+    "index.html": "/index.html",
+    "static/media/face recog.webp": "/static/media/face recog.1ae23b1acaae548e46fd.webp",
+    "static/media/digit.webp": "/static/media/digit.18062b8bb506bff6ed31.webp"
   },
   "entrypoints": [
-    "static/css/main.ae1c3f76.css",
-    "static/js/main.c665c22f.js"
+    "static/css/main.7557f1d6.css",
+    "static/js/main.19d6b142.js"
   ]
 }
