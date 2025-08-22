@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.57836271.css",
-    "main.js": "/static/js/main.d5d7c210.js",
+    "main.css": "/static/css/main.7dace99f.css",
+    "main.js": "/static/js/main.982d7c6f.js",
     "static/media/with_them.webp": "/static/media/with_them.307744249bf4adc11105.webp",
     "static/media/talk_1.webp": "/static/media/talk_1.fbeffc5ba41e4c13978c.webp",
     "static/media/best pap cer.webp": "/static/media/best pap cer.6bf4c702fcf500c09ccf.webp",
@@ -20,7 +20,7 @@
     "static/media/digit.webp": "/static/media/digit.18062b8bb506bff6ed31.webp"
   },
   "entrypoints": [
-    "static/css/main.57836271.css",
-    "static/js/main.d5d7c210.js"
+    "static/css/main.7dace99f.css",
+    "static/js/main.982d7c6f.js"
   ]
 }
