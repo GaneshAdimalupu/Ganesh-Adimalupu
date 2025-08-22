@@ -1,43 +1,30 @@
-/* src/components/schedule/schedule.css - COMPLETE VERSION WITHOUT DEBUG */
+/* src/components/schedule/schedule.css - UPDATED WITH AVAILABILITY INFO */
 
+/* --- Root Variables --- */
 :root {
-  /* Purple & Black Theme */
-  --bg-black: #0D0D0D;
-  --bg-dark-purple: #1a0f23;
-  --glow-magenta: #F72585;
-  --glow-purple: #7209B7;
-  --glow-cyan: #4CC9F0;
-  --text-primary: #f0e6f0;
-  --text-secondary: #a89db2;
-  --border-color: rgba(247, 37, 133, 0.2);
-  --border-hover-color: rgba(247, 37, 133, 0.5);
+  --glow-magenta: #f72585;
+  --glow-purple: #7209b7;
+  --glow-cyan: #4cc9f0;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --border-color: rgba(255, 255, 255, 0.1);
   --success-green: #28a745;
-  --warning-yellow: #ffc107;
   --error-red: #dc3545;
+  --warning-yellow: #ffc107;
 }
 
-/* --- Keyframe Animations --- */
-@keyframes background-float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
+/* --- Animations --- */
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
   }
 
   50% {
-    transform: translateY(-20px);
+    background-position: 100% 50%;
   }
-}
 
-@keyframes gradient-pan {
-  to {
-    background-position: 200% center;
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+  100% {
+    background-position: 0% 50%;
   }
 }
 
@@ -53,6 +40,20 @@
   }
 }
 
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.8);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 @keyframes pulse {
 
   0%,
@@ -61,48 +62,23 @@
   }
 
   50% {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 }
 
-@keyframes bounce-in {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  70% {
-    transform: scale(0.9);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* --- Base Section --- */
+/* --- Section Layout --- */
 .schedule-section {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(145deg, var(--bg-black) 0%, var(--bg-dark-purple) 100%);
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
   padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
-  min-height: 100vh;
 }
 
 .schedule-section::before {
@@ -110,32 +86,32 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background:
-    radial-gradient(circle at 5% 5%, rgba(114, 9, 183, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 95% 95%, rgba(247, 37, 133, 0.08) 0%, transparent 40%);
-  animation: background-float 12s ease-in-out infinite;
+    radial-gradient(circle at 20% 20%, var(--glow-magenta) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, var(--glow-purple) 0%, transparent 50%),
+    radial-gradient(circle at 40% 70%, var(--glow-cyan) 0%, transparent 50%);
+  opacity: 0.05;
+  pointer-events: none;
 }
 
 .schedule-container {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 }
 
-/* --- Section Header --- */
+/* --- Header Styles --- */
 .schedule-header {
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   animation: fade-in 0.8s ease-out;
 }
 
 .schedule-header h2 {
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: 3rem;
   background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
   background-size: 200% auto;
   -webkit-background-clip: text;
@@ -356,6 +332,23 @@
   font-weight: 600;
 }
 
+/* --- NEW: Availability Info Section --- */
+.availability-info {
+  background: rgba(76, 201, 240, 0.1);
+  border: 1px solid rgba(76, 201, 240, 0.3);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.availability-info p {
+  margin: 0;
+  color: var(--glow-cyan);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .time-slots-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -468,6 +461,23 @@ textarea.form-input {
   resize: vertical;
   min-height: 100px;
   line-height: 1.6;
+}
+
+/* --- Select Dropdown Styling --- */
+select.form-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.7)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 3rem;
+}
+
+select.form-input option {
+  background: #1a1a2e;
+  color: var(--text-primary);
+  padding: 0.5rem;
 }
 
 /* --- Enhanced Booking Summary --- */
@@ -653,13 +663,20 @@ textarea.form-input {
     bottom: 1px;
   }
 
+  /* MOBILE GRID LAYOUT FOR TIME SLOTS */
   .time-slots-grid {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 
   .time-slot-btn {
-    padding: 0.75rem;
+    padding: 1rem 0.5rem;
+    font-size: 0.9rem;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .booking-summary {
@@ -710,135 +727,19 @@ textarea.form-input {
     /* Hide on very small screens */
   }
 
-  .calendar-header button {
-    width: 35px;
-    height: 35px;
-    font-size: 1rem;
+  /* KEEP GRID LAYOUT ON SMALL MOBILE TOO */
+  .time-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
 
   .time-slot-btn {
-    padding: 0.625rem;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    padding: 0.875rem 0.25rem;
+    min-height: 45px;
   }
 
-  .booking-summary {
-    padding: 0.75rem;
+  .availability-info p {
+    font-size: 0.85rem;
   }
-
-  .form-group {
-    margin-bottom: 1rem;
-  }
-
-  .status-message {
-    padding: 0.875rem 1rem;
-    font-size: 0.9rem;
-  }
-}
-
-/* --- Focus Styles for Accessibility --- */
-.calendar-header button:focus,
-.day-btn:focus,
-.time-slot-btn:focus,
-.form-input:focus,
-.submit-btn:focus {
-  outline: 2px solid var(--glow-cyan);
-  outline-offset: 2px;
-}
-
-/* --- High Contrast Mode Support --- */
-@media (prefers-contrast: high) {
-  .day-btn {
-    border-color: #fff;
-  }
-
-  .day-btn.selected {
-    background: #fff;
-    color: #000;
-  }
-
-  .time-slot-btn.selected {
-    background: #fff;
-    color: #000;
-  }
-
-  .status-message {
-    border-width: 2px;
-  }
-}
-
-/* --- Reduced Motion Support --- */
-@media (prefers-reduced-motion: reduce) {
-
-  .schedule-section::before,
-  .day-btn,
-  .time-slot-btn,
-  .submit-btn,
-  .calendar-header button,
-  .booking-summary,
-  .status-message,
-  .date-time-picker,
-  .booking-details {
-    animation: none !important;
-    transition: none !important;
-  }
-
-  .schedule-header h2 {
-    animation: none;
-    background: var(--glow-magenta);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .submit-btn::before {
-    display: none;
-  }
-}
-
-/* --- Print Styles --- */
-@media print {
-  .schedule-section {
-    background: white;
-    color: black;
-    padding: 2rem;
-  }
-
-  .schedule-section::before {
-    display: none;
-  }
-
-  .scheduler-grid {
-    background: white;
-    border: 1px solid #ccc;
-    box-shadow: none;
-  }
-
-  .day-btn.today,
-  .day-btn.selected {
-    background: #000;
-    color: #fff;
-  }
-
-  .submit-btn {
-    background: #000;
-    color: #fff;
-  }
-}
-
-/* --- Custom Scrollbar --- */
-.schedule-section::-webkit-scrollbar {
-  width: 8px;
-}
-
-.schedule-section::-webkit-scrollbar-track {
-  background: var(--bg-dark-purple);
-}
-
-.schedule-section::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple));
-  border-radius: 4px;
-}
-
-.schedule-section::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--glow-purple), var(--glow-cyan));
 }

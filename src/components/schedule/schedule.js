@@ -1,12 +1,23 @@
-// src/components/schedule/schedule.js - VERSION WITHOUT DEBUG INFO
+// src/components/schedule/schedule.js - UPDATED WITH YOUR REQUIREMENTS
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import './schedule.css';
 
 // Helper Functions & Constants
 const API_BASE_URL =
   process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000';
-const TIME_SLOTS = [
-  '09:00 AM',
+
+// UPDATED TIME SLOTS BASED ON YOUR AVAILABILITY
+const WEEKDAY_TIME_SLOTS = [
+  '09:00 AM', // Morning slots
+  '10:00 AM',
+  '11:00 AM',
+  '05:00 PM', // Evening slots
+  '06:00 PM',
+  '07:00 PM',
+];
+
+const WEEKEND_TIME_SLOTS = [
+  '09:00 AM', // All day available on weekends
   '10:00 AM',
   '11:00 AM',
   '12:00 PM',
@@ -14,7 +25,36 @@ const TIME_SLOTS = [
   '03:00 PM',
   '04:00 PM',
   '05:00 PM',
+  '06:00 PM',
+  '07:00 PM',
 ];
+
+const SUNDAY_TIME_SLOTS = [
+  '11:00 AM', // Available after 11am on Sunday
+  '12:00 PM',
+  '02:00 PM',
+  '03:00 PM',
+  '04:00 PM',
+  '05:00 PM',
+  '06:00 PM',
+  '07:00 PM',
+];
+
+// MEETING SUBJECTS OPTIONS
+const MEETING_SUBJECTS = [
+  { value: 'consultation', label: 'Free Consultation', duration: 30 },
+  { value: 'project-discussion', label: 'Project Discussion', duration: 45 },
+  {
+    value: 'technical-review',
+    label: 'Technical Review/Code Review',
+    duration: 60,
+  },
+  { value: 'career-guidance', label: 'Career Guidance', duration: 30 },
+  { value: 'collaboration', label: 'Business Collaboration', duration: 45 },
+  { value: 'follow-up', label: 'Follow-up Meeting', duration: 15 },
+  { value: 'other', label: 'Other (Please specify in message)', duration: 30 },
+];
+
 const MONTH_NAMES = [
   'January',
   'February',
@@ -29,6 +69,23 @@ const MONTH_NAMES = [
   'November',
   'December',
 ];
+
+// Helper function to get available time slots based on day
+const getTimeSlots = (dateString) => {
+  const date = new Date(dateString);
+  const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+
+  if (dayOfWeek === 0) {
+    // Sunday
+    return SUNDAY_TIME_SLOTS;
+  } else if (dayOfWeek === 6) {
+    // Saturday
+    return WEEKEND_TIME_SLOTS;
+  } else {
+    // Weekdays (Monday-Friday)
+    return WEEKDAY_TIME_SLOTS;
+  }
+};
 
 // Calendar-specific date formatting
 const formatDateForCalendar = (year, month, day) => {
@@ -92,6 +149,7 @@ const Schedule = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState('consultation');
   const [bookedSlots, setBookedSlots] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -103,6 +161,20 @@ const Schedule = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  // Get current time slots based on selected date
+  const currentTimeSlots = useMemo(() => {
+    if (!selectedDate) return [];
+    return getTimeSlots(selectedDate);
+  }, [selectedDate]);
+
+  // Get selected meeting subject details
+  const selectedMeetingDetails = useMemo(() => {
+    return (
+      MEETING_SUBJECTS.find((subject) => subject.value === selectedSubject) ||
+      MEETING_SUBJECTS[0]
+    );
+  }, [selectedSubject]);
 
   // Fetch availability when a date is selected
   useEffect(() => {
@@ -137,7 +209,7 @@ const Schedule = () => {
     fetchAvailability();
   }, [selectedDate]);
 
-  // Calendar generation logic
+  // Calendar generation logic - UPDATED TO ALLOW WEEKENDS
   const calendarDays = useMemo(() => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
@@ -163,16 +235,17 @@ const Schedule = () => {
       const dayDate = new Date(year, month, day);
 
       const isPast = dayDate < today && dateString !== todayDateString;
-      const isWeekend = dayDate.getDay() === 0 || dayDate.getDay() === 6;
       const isToday = dateString === todayDateString;
+
+      // ALL DAYS ARE NOW AVAILABLE (weekends included)
+      const isAvailable = !isPast;
 
       days.push({
         key: day,
         day,
         dateString: dateString,
-        isAvailable: !isPast && !isWeekend,
+        isAvailable,
         isPast,
-        isWeekend,
         isToday,
       });
     }
@@ -193,6 +266,10 @@ const Schedule = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubjectChange = (e) => {
+    setSelectedSubject(e.target.value);
   };
 
   const navigateMonth = useCallback((direction) => {
@@ -220,7 +297,8 @@ const Schedule = () => {
       ...formData,
       date: apiFormattedDate,
       time: selectedTime,
-      meetingType: 'consultation',
+      meetingType: selectedSubject,
+      subject: selectedMeetingDetails.label,
       timezone: 'UTC+05:30',
     };
 
@@ -244,6 +322,7 @@ const Schedule = () => {
 
       setSelectedDate('');
       setSelectedTime('');
+      setSelectedSubject('consultation');
       setFormData({ name: '', email: '', message: '' });
     } catch (err) {
       setError(err.message);
@@ -257,7 +336,10 @@ const Schedule = () => {
       <div className="schedule-container">
         <div className="schedule-header">
           <h2>Schedule a Meeting</h2>
-          <p>Select a date and time to book a free 30-minute consultation.</p>
+          <p>
+            Choose your preferred time and let me know what you'd like to
+            discuss.
+          </p>
         </div>
 
         <StatusMessage type="error" message={error} />
@@ -310,8 +392,6 @@ const Schedule = () => {
                           ? `Select ${formatDateForDisplay(day.dateString)}`
                           : day.isPast
                           ? 'Past date'
-                          : day.isWeekend
-                          ? 'Weekend not available'
                           : 'Not available'
                       }
                     >
@@ -330,8 +410,20 @@ const Schedule = () => {
                 <h4>
                   Available Times for {formatDateForDisplay(selectedDate)}
                 </h4>
+                <div className="availability-info">
+                  <p>
+                    {(() => {
+                      const date = new Date(selectedDate);
+                      const dayOfWeek = date.getDay();
+                      if (dayOfWeek === 0)
+                        return 'Sunday: Available after 11:00 AM';
+                      if (dayOfWeek === 6) return 'Saturday: Available all day';
+                      return 'Weekday: Morning (9-11 AM) & Evening (5-7 PM) slots';
+                    })()}
+                  </p>
+                </div>
                 <div className="time-slots-grid">
-                  {TIME_SLOTS.map((time) => {
+                  {currentTimeSlots.map((time) => {
                     const isBooked = bookedSlots.includes(time);
                     return (
                       <button
@@ -366,6 +458,24 @@ const Schedule = () => {
           <div className="booking-details">
             <h3>2. Your Details</h3>
             <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="subject">Meeting Subject *</label>
+                <select
+                  id="subject"
+                  name="subject"
+                  value={selectedSubject}
+                  onChange={handleSubjectChange}
+                  required
+                  className="form-input"
+                >
+                  {MEETING_SUBJECTS.map((subject) => (
+                    <option key={subject.value} value={subject.value}>
+                      {subject.label} ({subject.duration} min)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="name">Name *</label>
                 <input
@@ -415,10 +525,11 @@ const Schedule = () => {
                     <strong>Time:</strong> {selectedTime} (UTC+05:30)
                   </p>
                   <p>
-                    <strong>Duration:</strong> 30 minutes
+                    <strong>Duration:</strong> {selectedMeetingDetails.duration}{' '}
+                    minutes
                   </p>
                   <p>
-                    <strong>Type:</strong> Free Consultation
+                    <strong>Subject:</strong> {selectedMeetingDetails.label}
                   </p>
                 </div>
               )}
@@ -431,7 +542,7 @@ const Schedule = () => {
                 {isSubmitting ? (
                   <>
                     <div className="spinner"></div>
-                    <span>Booking...</span>
+                    Scheduling Meeting...
                   </>
                 ) : (
                   'Schedule Meeting'

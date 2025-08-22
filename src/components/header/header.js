@@ -57,6 +57,7 @@ const Header = () => {
     'about',
     'projects',
     'certifications',
+    'foss-explorer',
     'schedule',
   ];
 
