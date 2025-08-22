@@ -220,3 +220,186 @@ textarea.form-input {
     padding: 4rem 1.5rem;
   }
 }
+
+/* ADD THESE IMPROVEMENTS TO THE END OF YOUR contact.css FILE */
+
+/* IMPROVED FORM INPUTS FOR BETTER MOBILE EXPERIENCE */
+.form-input {
+  width: 100%;
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-size: 1rem; /* PREVENT ZOOM ON iOS */
+  min-height: 44px; /* BETTER TOUCH TARGET */
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--glow-cyan);
+  box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+}
+
+.form-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit; /* ENSURE CONSISTENT FONT */
+}
+
+.submit-btn {
+  width: 100%;
+  background: var(--glow-magenta);
+  border: none;
+  color: white;
+  padding: 0.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  min-height: 48px; /* BETTER TOUCH TARGET */
+  font-size: 1rem; /* CONSISTENT SIZE */
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: var(--glow-purple);
+  transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* MOBILE SPECIFIC IMPROVEMENTS */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem; /* REDUCED gap for mobile */
+    padding: 1.5rem; /* REDUCED padding */
+  }
+
+  .form-input {
+    padding: 1rem; /* LARGER padding for easier touch */
+    font-size: 16px; /* PREVENT iOS ZOOM */
+    min-height: 48px;
+  }
+
+  textarea.form-input {
+    min-height: 100px; /* SMALLER on mobile */
+  }
+
+  .submit-btn {
+    padding: 1rem;
+    min-height: 52px; /* LARGER touch target */
+    font-size: 1.1rem; /* SLIGHTLY LARGER */
+  }
+
+  /* BETTER FORM ROW LAYOUT ON MOBILE */
+  .form-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .contact-info-item {
+    padding: 0.8rem 0; /* MORE SPACING */
+    min-height: 48px; /* BETTER TOUCH */
+    display: flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-section {
+    padding: 3rem 1rem; /* TIGHTER PADDING */
+  }
+
+  .contact-grid {
+    padding: 1rem; /* EVEN TIGHTER */
+  }
+
+  .form-input {
+    padding: 1.2rem; /* EVEN LARGER for very small screens */
+    min-height: 52px;
+  }
+
+  .submit-btn {
+    padding: 1.2rem;
+    min-height: 56px; /* LARGEST touch target */
+  }
+}
+
+/* LOADING SPINNER IMPROVEMENT */
+.spinner {
+  width: 20px; /* SLIGHTLY LARGER */
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* BETTER STATUS MESSAGES */
+.status-message {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  line-height: 1.5; /* BETTER READABILITY */
+  animation: fade-in-up 0.4s;
+}
+
+.status-message.success {
+  background-color: rgba(76, 201, 240, 0.1);
+  border: 1px solid var(--glow-cyan);
+  color: var(--success-color);
+}
+
+.status-message.error {
+  background-color: rgba(247, 37, 133, 0.1);
+  border: 1px solid var(--glow-magenta);
+  color: var(--error-color);
+}
+
+/* ACCESSIBILITY IMPROVEMENTS */
+.form-input:invalid {
+  border-color: var(--glow-magenta);
+}
+
+.form-input:valid {
+  border-color: var(--glow-cyan);
+}
+
+/* FOCUS WITHIN FOR BETTER UX */
+.form-group:focus-within .form-input {
+  border-color: var(--glow-cyan);
+  box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+}
+
+/* HIGH CONTRAST MODE SUPPORT */
+@media (prefers-contrast: high) {
+  .form-input {
+    border-color: #fff;
+    background: #000;
+  }
+
+  .submit-btn {
+    background: #fff;
+    color: #000;
+    border: 2px solid #fff;
+  }
+}

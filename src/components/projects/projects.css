@@ -13,21 +13,12 @@
 
 /* --- Keyframe Animations --- */
 @keyframes background-float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
 
 @keyframes gradient-pan {
-  to {
-    background-position: 200% center;
-  }
+  to { background-position: 200% center; }
 }
 
 @keyframes fade-in-up {
@@ -35,7 +26,6 @@
     opacity: 0;
     transform: translateY(40px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -163,6 +153,9 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
 }
 
 .filter-btn:hover {
@@ -203,6 +196,7 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-height: 44px;
 }
 
 .sort-select:focus {
@@ -443,6 +437,7 @@
   border: 1px solid var(--border-color);
   flex: 1;
   justify-content: center;
+  min-height: 44px;
 }
 
 .card-link.primary {
@@ -503,63 +498,78 @@
     padding: 4rem 1.5rem;
   }
 
-  /* MOBILE PROJECT STATS - 2x2 GRID LAYOUT */
+  /* IMPROVED MOBILE PROJECT STATS - 2x2 GRID LAYOUT */
   .project-stats {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 1rem !important;
-    margin: 1.5rem auto !important;
+    gap: 0.8rem !important;
+    margin: 1.2rem auto !important;
     max-width: 100% !important;
   }
 
   .stat {
-    padding: 1rem 0.75rem !important;
+    padding: 0.8rem 0.6rem !important;
+    min-height: 60px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
   }
 
   .stat-number {
-    font-size: 1.6rem !important;
+    font-size: 1.4rem !important;
+    margin-bottom: 0.2rem !important;
   }
 
   .stat-label {
-    font-size: 0.85rem !important;
-    line-height: 1.3 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+    text-align: center !important;
   }
 
-  /* MOBILE FILTER BUTTONS - 2x2 GRID LAYOUT */
+  /* IMPROVED MOBILE FILTER BUTTONS - BETTER TOUCH TARGETS */
   .projects-controls {
     flex-direction: column !important;
     align-items: center !important;
-    gap: 1.5rem !important;
+    gap: 1.2rem !important;
   }
 
   .filter-buttons {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr) !important;
-    gap: 0.75rem !important;
+    gap: 0.6rem !important;
     width: 100% !important;
-    max-width: 400px !important;
+    max-width: 350px !important;
     justify-content: center !important;
   }
 
   .filter-btn {
-    padding: 0.6rem 0.8rem !important;
-    font-size: 0.85rem !important;
+    padding: 0.8rem 0.6rem !important;
+    font-size: 0.8rem !important;
     justify-content: center !important;
     text-align: center !important;
     width: 100% !important;
     flex-direction: column !important;
-    gap: 0.1rem !important;
+    gap: 0.2rem !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
   }
 
   .filter-btn .count {
     display: block !important;
-    font-size: 0.75rem !important;
+    font-size: 0.7rem !important;
     margin-top: 0.1rem !important;
+    opacity: 0.8 !important;
   }
 
   .sort-controls {
     justify-content: center !important;
     width: 100% !important;
+  }
+
+  .sort-select {
+    min-height: 44px !important;
+    padding: 0.8rem 1rem !important;
   }
 
   .projects-grid {
@@ -575,58 +585,66 @@
   .card-links {
     flex-direction: column;
   }
+
+  .card-link {
+    min-height: 44px !important;
+    padding: 0.8rem 1rem !important;
+    justify-content: center !important;
+  }
 }
 
 @media (max-width: 480px) {
-
-  /* VERY SMALL MOBILE - TIGHTER SPACING */
+  /* VERY SMALL MOBILE - EVEN BETTER TOUCH TARGETS */
   .project-stats {
-    gap: 0.75rem !important;
+    gap: 0.6rem !important;
     margin: 1rem auto !important;
   }
 
   .stat {
-    padding: 0.75rem 0.5rem !important;
+    padding: 0.6rem 0.4rem !important;
+    min-height: 55px !important;
   }
 
   .stat-number {
-    font-size: 1.4rem !important;
+    font-size: 1.2rem !important;
   }
 
   .stat-label {
-    font-size: 0.8rem !important;
+    font-size: 0.75rem !important;
   }
 
   .filter-buttons {
-    gap: 0.5rem !important;
-    max-width: 350px !important;
+    gap: 0.4rem !important;
+    max-width: 320px !important;
   }
 
   .filter-btn {
-    padding: 0.5rem 0.6rem !important;
-    font-size: 0.8rem !important;
+    padding: 0.7rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    min-height: 46px !important;
   }
 
   .filter-btn .count {
-    font-size: 0.7rem !important;
+    font-size: 0.65rem !important;
   }
 }
 
 /* Extra small screens */
 @media (max-width: 360px) {
   .filter-buttons {
-    max-width: 300px !important;
+    grid-template-columns: 1fr !important;
+    max-width: 280px !important;
   }
 
   .filter-btn {
-    padding: 0.4rem 0.5rem !important;
-    font-size: 0.75rem !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    text-align: left !important;
   }
 }
 
 /* --- Accessibility --- */
 @media (prefers-reduced-motion: reduce) {
-
   .projects-section::before,
   .projects-card,
   .card-image {
@@ -651,6 +669,11 @@
   outline-offset: 2px;
 }
 
+.filter-btn:focus-visible {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: var(--glow-cyan);
+}
+
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .projects-card {
@@ -664,5 +687,38 @@
   .filter-btn.active {
     background: #fff;
     color: #000;
+  }
+
+  .card-link.primary {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .filter-btn,
+  .card-link,
+  .sort-select {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .filter-btn:hover {
+    transform: none;
+  }
+
+  .filter-btn:active {
+    transform: scale(0.98);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .card-link:active {
+    transform: scale(0.98);
+  }
+
+  .projects-card:hover {
+    transform: none;
   }
 }

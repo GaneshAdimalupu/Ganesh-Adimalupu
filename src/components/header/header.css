@@ -94,6 +94,11 @@
   padding: 0.6rem 1rem;
   border-radius: 20px;
   white-space: nowrap;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-menu li button::after {
@@ -138,6 +143,9 @@
   transition: all 0.3s ease;
   white-space: nowrap;
   flex-shrink: 0;
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
 }
 
 .resume-btn:hover {
@@ -164,10 +172,13 @@
   padding: 0;
   z-index: 1001;
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
 }
 
 .menu-toggle span {
-  width: 100%;
+  width: 24px;
   height: 2px;
   background-color: var(--text-primary);
   border-radius: 2px;
@@ -248,8 +259,12 @@
     font-size: 0.9rem;
     width: 100%;
     text-align: left;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
   }
 
   .nav-menu li button::after {
@@ -270,8 +285,12 @@
     width: 100%;
     text-align: center;
     margin-top: 0.5rem;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     background-color: var(--glow-magenta);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .nav-menu li .resume-btn:hover {
@@ -282,6 +301,9 @@
 
   .menu-toggle {
     display: flex;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
   }
 }
 
@@ -298,6 +320,53 @@
     width: calc(100vw - 2rem);
     right: 1rem;
   }
+
+  /* EVEN BETTER TOUCH TARGETS FOR VERY SMALL SCREENS */
+  .nav-menu li button {
+    padding: 1rem;
+    min-height: 52px;
+    font-size: 1rem;
+  }
+
+  .nav-menu li .resume-btn {
+    padding: 1rem;
+    min-height: 52px;
+    font-size: 1rem;
+  }
+
+  .menu-toggle {
+    min-width: 48px;
+    min-height: 48px;
+    padding: 10px;
+  }
+}
+
+/* IMPROVE TOUCH EXPERIENCE */
+@media (hover: none) and (pointer: coarse) {
+  .nav-menu li button,
+  .resume-btn,
+  .menu-toggle {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  .nav-menu li button {
+    padding: 1rem;
+  }
+
+  /* Remove hover effects on touch devices */
+  .nav-menu li button:hover {
+    background-color: transparent;
+  }
+
+  /* Only show hover on tap/click */
+  .nav-menu li button:active {
+    background-color: rgba(255,255,255,0.1);
+  }
+
+  .resume-btn:active {
+    transform: scale(0.98);
+  }
 }
 
 /* --- Accessibility --- */
@@ -308,6 +377,14 @@
 .nav-menu li button:focus-visible {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
+  outline: 2px solid var(--glow-cyan);
+  outline-offset: 2px;
+}
+
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--glow-cyan);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -318,6 +395,10 @@
   .nav-menu li button,
   .nav-menu li button::after,
   .resume-btn {
+    transition: none !important;
+  }
+
+  .menu-toggle span {
     transition: none !important;
   }
 }
@@ -341,5 +422,10 @@
   .resume-btn {
     background: #fff;
     color: #000;
+    border: 2px solid #fff;
+  }
+
+  .menu-toggle span {
+    background-color: #fff;
   }
 }

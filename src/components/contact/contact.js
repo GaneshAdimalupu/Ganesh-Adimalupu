@@ -273,32 +273,6 @@ const Contact = () => {
               ))}
             </div>
 
-            <div
-              className="additional-info"
-              style={{
-                marginTop: '2rem',
-                padding: '1.5rem',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: '8px',
-                border: '1px solid rgba(247, 37, 133, 0.2)',
-              }}
-            >
-              <h4 style={{ color: 'var(--glow-cyan)', marginBottom: '1rem' }}>
-                📧 What to Expect
-              </h4>
-              <ul
-                style={{
-                  color: 'var(--text-secondary)',
-                  lineHeight: '1.6',
-                  paddingLeft: '1rem',
-                }}
-              >
-                <li>Auto-reply confirmation within seconds</li>
-                <li>Personal response within 24-48 hours</li>
-                <li>Priority handling for project inquiries</li>
-                <li>Direct contact for urgent matters</li>
-              </ul>
-            </div>
           </div>
 
           <div className="contact-form">
@@ -502,54 +476,6 @@ const Contact = () => {
               🔒 Your information is secure and will only be used to respond to
               your inquiry. I respect your privacy and will never share your
               details with third parties.
-            </div>
-          </div>
-        </div>
-
-        {/* Status bar */}
-        <div
-          style={{
-            marginTop: '3rem',
-            padding: '1rem 2rem',
-            background: 'rgba(255,255,255,0.03)',
-            borderRadius: '10px',
-            border: '1px solid rgba(247, 37, 133, 0.2)',
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '2rem',
-          }}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', color: 'var(--glow-cyan)' }}>
-              🚀
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Backend: Enhanced
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', color: 'var(--glow-magenta)' }}>
-              📧
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Auto-Reply: Enabled
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', color: 'var(--glow-purple)' }}>
-              🛡️
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Spam Protection: Active
-            </div>
-          </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', color: 'var(--glow-cyan)' }}>
-              💾
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              Database: MongoDB
             </div>
           </div>
         </div>

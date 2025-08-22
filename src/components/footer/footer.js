@@ -34,9 +34,6 @@ const Footer = () => {
                 <div className="footer-grid">
                     <div className="footer-about">
                         <h3>Ganesh Adimalupu</h3>
-                        <p>
-                            A passionate developer from India, crafting intelligent solutions and beautiful digital experiences.
-                        </p>
                     </div>
                     <div className="footer-links">
                         <h4>Quick Links</h4>

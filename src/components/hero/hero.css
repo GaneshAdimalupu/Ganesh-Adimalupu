@@ -1,4 +1,4 @@
-/* hero.css - Mobile Optimized */
+/* hero.css - COMPLETE FILE WITH MUCH LARGER MOBILE IMAGE */
 :root {
   --bg-black: #0D0D0D;
   --bg-dark-purple: #1a0f23;
@@ -13,13 +13,10 @@
 
 /* --- Base Animations --- */
 @keyframes background-pulse {
-
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
     transform: scale(1);
   }
-
   50% {
     opacity: 0.7;
     transform: scale(1.05);
@@ -27,12 +24,9 @@
 }
 
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0px);
   }
-
   50% {
     transform: translateY(-20px);
   }
@@ -49,7 +43,6 @@
     opacity: 0;
     transform: translateX(-30px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -61,7 +54,6 @@
     opacity: 0;
     transform: translateX(30px);
   }
-
   to {
     opacity: 1;
     transform: translateX(0);
@@ -73,7 +65,6 @@
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -87,25 +78,18 @@
 }
 
 @keyframes wave {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: rotate(0deg);
   }
-
-  10%,
-  30% {
+  10%, 30% {
     transform: rotate(14deg);
   }
-
   20% {
     transform: rotate(-8deg);
   }
-
   40% {
     transform: rotate(10deg);
   }
-
   50% {
     transform: rotate(0deg);
   }
@@ -116,10 +100,20 @@
     opacity: 0;
     transform: scale(0.8);
   }
-
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -178,20 +172,21 @@
 .mobile-layout {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.2rem;
   text-align: center;
   opacity: 0;
   animation: fade-in-up 0.8s ease-out 0.2s forwards;
+  padding: 0 0.5rem;
 }
 
 .mobile-header {
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 }
 
 .profile-section {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.2rem;
   margin-bottom: 1rem;
 }
 
@@ -212,9 +207,9 @@
 }
 
 .greeting-badge.mobile {
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.8rem;
 }
 
 .greeting-badge:hover {
@@ -238,9 +233,9 @@
 }
 
 .hero-title.mobile {
-  font-size: clamp(1.8rem, 6vw, 2.5rem);
-  margin-bottom: 1rem;
-  line-height: 1.2;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  margin-bottom: 0.8rem;
+  line-height: 1.15;
 }
 
 .name-highlight {
@@ -262,9 +257,9 @@
 }
 
 .role.mobile {
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-  min-height: 1.5rem;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+  min-height: 1.2rem;
 }
 
 .cursor {
@@ -287,13 +282,15 @@
 }
 
 .hero-description.mobile {
-  font-size: 1rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
   max-width: 100%;
-  line-height: 1.6;
+  line-height: 1.5;
+  padding: 0 0.5rem;
+  color: #c5d2e0;
 }
 
-/* --- Images --- */
+/* --- Images --- MUCH LARGER MOBILE IMAGE */
 .image-wrapper {
   position: relative;
   width: clamp(280px, 100%, 400px);
@@ -301,8 +298,8 @@
 }
 
 .image-wrapper.mobile {
-  width: 80px;
-  height: 80px;
+  width: 140px;
+  height: 140px;
   flex-shrink: 0;
 }
 
@@ -315,17 +312,28 @@
   border: 4px solid var(--border-color);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
   transition: transform 0.4s ease;
+  loading: lazy;
 }
 
 .hero-image.mobile {
-  width: 80px;
-  height: 80px;
+  width: 140px;
+  height: 140px;
   border: 3px solid var(--border-color);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.4),
+    0 0 0 2px rgba(247, 37, 133, 0.08);
+  transition: all 0.3s ease;
 }
 
 .image-wrapper:hover .hero-image {
   transform: scale(1.05);
+}
+
+.hero-image.mobile:hover {
+  transform: scale(1.05);
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.5),
+    0 0 0 3px rgba(247, 37, 133, 0.15);
 }
 
 /* --- Background Blobs (Desktop Only) --- */
@@ -370,29 +378,26 @@
 }
 
 .achievements-mobile {
-  margin: 1rem 0;
+  margin: 0.3rem 0;
 }
 
 .achievements-title {
   color: var(--glow-cyan);
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.4rem;
   text-align: center;
 }
 
 .achievements-scroll-container {
   overflow-x: auto;
   scrollbar-width: none;
-  /* Firefox */
   -ms-overflow-style: none;
-  /* IE/Edge */
   padding-bottom: 0.5rem;
 }
 
 .achievements-scroll-container::-webkit-scrollbar {
   display: none;
-  /* Chrome/Safari */
 }
 
 .achievements-grid {
@@ -406,8 +411,8 @@
 }
 
 .achievements-grid.mobile {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
   display: grid;
 }
 
@@ -425,11 +430,11 @@
 }
 
 .achievement-card.mobile {
-  padding: 0.75rem;
-  gap: 0.5rem;
+  padding: 0.5rem;
+  gap: 0.3rem;
   flex-direction: column;
   text-align: center;
-  min-height: 100px;
+  min-height: 85px;
   justify-content: center;
 }
 
@@ -476,24 +481,26 @@
 
 /* Mobile achievement card adjustments */
 .achievement-card.mobile .achievement-icon {
-  font-size: 1.25rem;
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  margin-bottom: 0.1rem;
 }
 
 .achievement-card.mobile .achievement-content h4 {
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
+  line-height: 1.1;
 }
 
 .achievement-card.mobile .achievement-content p {
-  font-size: 0.7rem;
-  line-height: 1.3;
+  font-size: 0.55rem;
+  line-height: 1.2;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  color: #b8c5d1;
 }
 
 /* --- Buttons --- */
@@ -505,8 +512,8 @@
 
 .hero-buttons.mobile {
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1rem;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
 }
 
 .cta-btn {
@@ -521,13 +528,18 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .cta-btn.mobile {
   width: 100%;
-  padding: 0.875rem 1.5rem;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.2rem;
+  font-size: 0.85rem;
   justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(247, 37, 133, 0.3);
 }
 
 .cta-btn.primary {
@@ -545,6 +557,10 @@
   background: transparent;
   color: var(--text-primary);
   border: 2px solid var(--border-color);
+}
+
+.cta-btn.secondary.mobile {
+  border-width: 2px;
 }
 
 .cta-btn.secondary:hover {
@@ -574,7 +590,7 @@
     min-height: 100vh;
     padding: 1rem;
     align-items: flex-start;
-    padding-top: 8rem;
+    padding-top: 6rem;
   }
 
   .desktop-layout {
@@ -582,16 +598,56 @@
   }
 
   .profile-section {
-    flex-direction: row;
-    text-align: left;
+    flex-direction: column;
+    text-align: center;
     align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .intro-text {
+    text-align: center;
+  }
+
+  /* TABLET PORTRAIT - EVEN LARGER */
+  .image-wrapper.mobile {
+    width: 150px;
+    height: 150px;
+  }
+
+  .hero-image.mobile {
+    width: 150px;
+    height: 150px;
+    border: 4px solid var(--border-color);
+  }
+
+  .achievements-grid.mobile {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+  }
+
+  .achievement-card.mobile {
+    padding: 0.6rem;
+    min-height: 90px;
+  }
+
+  .achievement-card.mobile .achievement-icon {
+    font-size: 1rem;
+  }
+
+  .achievement-card.mobile .achievement-content h4 {
+    font-size: 0.7rem;
+  }
+
+  .achievement-card.mobile .achievement-content p {
+    font-size: 0.6rem;
   }
 }
 
 @media (max-width: 480px) {
   .hero {
     padding: 0.75rem;
-    padding-top: 7rem;
+    padding-top: 5.5rem;
   }
 
   .mobile-layout {
@@ -601,36 +657,102 @@
   .profile-section {
     flex-direction: column;
     text-align: center;
-    gap: 0.75rem;
+    gap: 1rem;
+    align-items: center;
   }
 
   .intro-text {
     text-align: center;
   }
 
+  /* STILL LARGE ON SMALL SCREENS */
+  .image-wrapper.mobile {
+    width: 120px;
+    height: 120px;
+  }
+
+  .hero-image.mobile {
+    width: 120px;
+    height: 120px;
+    border: 3px solid var(--border-color);
+  }
+
   .achievement-card.mobile {
-    padding: 0.6rem;
+    padding: 0.5rem;
     min-height: 85px;
   }
 
   .achievement-card.mobile .achievement-icon {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
   }
 
   .achievement-card.mobile .achievement-content h4 {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
   }
 
   .achievement-card.mobile .achievement-content p {
-    font-size: 0.65rem;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    font-size: 0.55rem;
   }
+}
+
+/* FALLBACK FOR VERY SMALL SCREENS */
+@media (max-width: 380px) {
+  .achievements-grid.mobile {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+  }
+
+  .achievement-card.mobile {
+    min-height: 75px;
+    padding: 0.4rem;
+  }
+
+  .achievement-card.mobile .achievement-content h4 {
+    font-size: 0.6rem;
+  }
+
+  .achievement-card.mobile .achievement-content p {
+    font-size: 0.5rem;
+  }
+}
+
+/* VERY SMALL SCREENS - STILL REASONABLY LARGE IMAGE */
+@media (max-width: 360px) {
+  .image-wrapper.mobile {
+    width: 110px;
+    height: 110px;
+  }
+
+  .hero-image.mobile {
+    width: 110px;
+    height: 110px;
+  }
+
+  .achievements-grid.mobile {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .achievement-card.mobile {
+    flex-direction: row;
+    text-align: left;
+    min-height: 60px;
+  }
+}
+
+/* ADD SUBTLE ANIMATIONS FOR MOBILE */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .achievement-card.mobile {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .achievement-card.mobile:nth-child(1) { animation-delay: 0.1s; }
+  .achievement-card.mobile:nth-child(2) { animation-delay: 0.2s; }
+  .achievement-card.mobile:nth-child(3) { animation-delay: 0.3s; }
 }
 
 /* --- Accessibility --- */
 @media (prefers-reduced-motion: reduce) {
-
   .hero-content,
   .hero-visual,
   .blob,
@@ -648,4 +770,12 @@
 .cta-btn:focus {
   outline: 2px solid var(--glow-cyan);
   outline-offset: 2px;
+}
+
+/* BETTER TOUCH TARGETS */
+@media (hover: none) and (pointer: coarse) {
+  .cta-btn, .filter-btn, .nav-menu button {
+    min-height: 48px;
+    min-width: 48px;
+  }
 }
