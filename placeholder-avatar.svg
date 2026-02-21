@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7209B7"/>
+      <stop offset="100%" style="stop-color:#F72585"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <text x="50%" y="50%" text-anchor="middle" dy=".35em" fill="white" font-size="120" font-family="system-ui, sans-serif" font-weight="700">GA</text>
+</svg>

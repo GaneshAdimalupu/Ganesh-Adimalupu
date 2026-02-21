@@ -1,7 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.7dace99f.css",
-    "main.js": "/static/js/main.982d7c6f.js",
+    "main.css": "/static/css/main.c8488bd0.css",
+    "main.js": "/static/js/main.0733e02f.js",
+    "static/media/profile.png": "/static/media/profile.034f44808d4bda26d4b9.png",
     "static/media/with_them.webp": "/static/media/with_them.307744249bf4adc11105.webp",
     "static/media/talk_1.webp": "/static/media/talk_1.fbeffc5ba41e4c13978c.webp",
     "static/media/best pap cer.webp": "/static/media/best pap cer.6bf4c702fcf500c09ccf.webp",
@@ -13,14 +14,13 @@
     "static/media/sneha deepa.webp": "/static/media/sneha deepa.a1a03d5413852a70a935.webp",
     "static/media/talk_3.webp": "/static/media/talk_3.2f27927315416291608f.webp",
     "static/media/news.webp": "/static/media/news.1f080f175ca6bb0deff0.webp",
-    "static/media/profile.webp": "/static/media/profile.fb71b79b2b65fd8dcbc1.webp",
     "static/media/portfolio.webp": "/static/media/portfolio.e3f39e94fad17b439368.webp",
     "index.html": "/index.html",
     "static/media/face recog.webp": "/static/media/face recog.1ae23b1acaae548e46fd.webp",
     "static/media/digit.webp": "/static/media/digit.18062b8bb506bff6ed31.webp"
   },
   "entrypoints": [
-    "static/css/main.7dace99f.css",
-    "static/js/main.982d7c6f.js"
+    "static/css/main.c8488bd0.css",
+    "static/js/main.0733e02f.js"
   ]
 }
