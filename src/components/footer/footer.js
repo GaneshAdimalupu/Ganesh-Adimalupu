@@ -14,7 +14,7 @@ const socialLinks = [
     { icon: icons.email, url: 'mailto:ganeshadimalupu@disroot.org', label: 'Email' },
     { icon: icons.linkedin, url: 'https://www.linkedin.com/in/GaneshAdimalupu/', label: 'LinkedIn' },
     { icon: icons.github, url: 'https://github.com/GaneshAdimalupu', label: 'GitHub' },
-    { icon: icons.twitter, url: 'https://x.com/John56247240', label: 'Twitter' }
+    { icon: icons.twitter, url: 'https://x.com/GaneshAdimalupu', label: 'Twitter' }
 ];
 
 const quickLinks = ['home', 'about', 'projects', 'contact'];

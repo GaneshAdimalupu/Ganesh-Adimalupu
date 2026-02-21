@@ -58,7 +58,8 @@ const Header = () => {
     'projects',
     'certifications',
     'foss-explorer',
-    'schedule',
+    // 'schedule', // not needed for now
+    'contact',
   ];
 
   const activeSection = useScrollSpy(navItems, {

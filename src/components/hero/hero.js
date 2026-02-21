@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './hero.css';
-import profileImage from '../../assets/images/profile.webp';
+import profileImage from '../../assets/images/profile.png';
 
 // FIXED: Custom hook for the typing effect
 const useTypingEffect = (text, duration = 100, isStarted = true) => {
@@ -49,19 +49,19 @@ const achievements = [
     icon: '🏆',
     title: 'Best Paper Award Winner',
     subtitle: "NCAISF'25 for AI-Powered Recipe Recommendation",
-    color: '#FFD700',
+    color: '#0D9488',
   },
   {
     icon: '🚀',
     title: 'FOSS Chapter Lead',
     subtitle: 'Founded 2nd FOSS United chapter in Kerala',
-    color: '#F72585',
+    color: '#0D9488',
   },
   {
     icon: '🎯',
     title: 'Event Organizer',
     subtitle: "Led Yukthi'25 TechFest with 500+ participants",
-    color: '#4CC9F0',
+    color: '#0D9488',
   },
 ];
 
@@ -74,8 +74,6 @@ const Hero = () => {
   // FIXED: Ensure the full text is used
   const fullRoleText = 'ML & Pipeline Builder';
   const [roleText, isTypingDone] = useTypingEffect(fullRoleText, 120, isMounted);
-
-  console.log('Typing Debug:', { fullRoleText, roleText, length: roleText.length, isDone: isTypingDone });
 
   // Detect mobile screen size
   useEffect(() => {
@@ -168,17 +166,13 @@ const Hero = () => {
                       left: '50%',
                       transform: 'translate(-50%, -50%)',
                       fontSize: '0.8rem',
-                      color: 'var(--text-secondary)'
+                      color: 'var(--text-muted)'
                     }}>
                       ...
                     </div>
                   )}
                 </div>
                 <div className="intro-text">
-                  <div className="greeting-badge mobile">
-                    <span className="wave">👋</span>
-                    <span>Hello, I'm Ganesh</span>
-                  </div>
                   <h1 className="hero-title mobile">
                     A Creative <span className="name-highlight">Engineer</span>
                     <span className="role mobile" style={{ minHeight: '1.5rem', display: 'block' }}>
@@ -244,11 +238,6 @@ const Hero = () => {
           /* Desktop Layout */
           <div className="desktop-layout">
             <div className="hero-content">
-              <div className="greeting-badge">
-                <span className="wave">👋</span>
-                <span>Hello, I'm Ganesh Adimalupu</span>
-              </div>
-
               <h1 className="hero-title">
                 A Creative <span className="name-highlight">Engineer</span> From
                 India
@@ -309,7 +298,7 @@ const Hero = () => {
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     fontSize: '1rem',
-                    color: 'var(--text-secondary)'
+                    color: 'var(--text-muted)'
                   }}>
                     Loading...
                   </div>

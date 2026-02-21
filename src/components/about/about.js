@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './about.css';
 
-// Import all available images
 import fossUnitedImage from '../../assets/images/about/yukthi_team.webp';
 import talkImage from '../../assets/images/about/talk_1.webp';
 import talk2Image from '../../assets/images/about/talk_2.webp';
@@ -68,10 +67,7 @@ const ImageCarousel = ({ images, interval = 4000 }) => {
               display: 'block'
             }}
             onError={(e) => {
-              console.error('Image failed to load:', e.target.src);
-            }}
-            onLoad={(e) => {
-              console.log('Image loaded:', e.target.src);
+              e.target.style.display = 'none';
             }}
           />
         </div>
@@ -95,26 +91,27 @@ const ImageCarousel = ({ images, interval = 4000 }) => {
 const useElementOnScreen = (options) => {
   const containerRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const observerRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
+    const el = containerRef.current;
+    if (!el) return;
+
+    observerRef.current = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
         setIsVisible(true);
-        observer.unobserve(entry.target);
+        if (observerRef.current) observerRef.current.unobserve(entry.target);
       }
     }, options);
 
-    const currentRef = containerRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
+    observerRef.current.observe(el);
     return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
+      if (observerRef.current && el) {
+        observerRef.current.unobserve(el);
       }
+      observerRef.current = null;
     };
-  }, [containerRef, options]);
+  }, [options?.threshold, options?.rootMargin]);
 
   return [containerRef, isVisible];
 };
@@ -249,7 +246,6 @@ const About = () => {
 
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Create image arrays with different intervals for alternating effect
   const talkImages = [
     { src: talkImage, alt: 'Ganesh giving technical talk 1' },
     { src: talk2Image, alt: 'Ganesh giving technical talk 2' },
@@ -262,13 +258,6 @@ const About = () => {
     { src: graduationImage, alt: 'Graduation ceremony' },
     { src: withThemImage, alt: 'Community engagement' },
   ];
-
-  // Debug logging
-  useEffect(() => {
-    console.log('=== IMAGE DEBUG ===');
-    console.log('Talk Images:', talkImages.map(img => ({ src: img.src, hasImage: !!img.src })));
-    console.log('Community Images:', communityImages.map(img => ({ src: img.src, hasImage: !!img.src })));
-  }, []);
 
   return (
     <section

@@ -6,7 +6,7 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
 }
 
 .carousel-container {
@@ -58,7 +58,7 @@
 }
 
 .indicator.active {
-  background: var(--glow-cyan);
+  background: var(--accent);
   transform: scale(1.2);
 }
 
@@ -70,18 +70,7 @@
 }
 
 /* Rest of your existing CSS remains the same */
-:root {
-  /* Purple & Black Theme */
-  --bg-black: #0D0D0D;
-  --bg-dark-purple: #1a0f23;
-  --glow-magenta: #F72585;
-  --glow-purple: #7209B7;
-  --glow-cyan: #4CC9F0;
-  --text-primary: #f0e6f0;
-  --text-secondary: #a89db2;
-  --border-color: rgba(247, 37, 133, 0.2);
-  --border-hover-color: rgba(247, 37, 133, 0.5);
-}
+/* uses global minimal palette */
 
 /* Keyframe animations */
 @keyframes background-float {
@@ -153,8 +142,8 @@
 /* Base Section */
 .about-section {
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(145deg, var(--bg-black) 0%, var(--bg-dark-purple) 100%);
-  padding: 6rem 2rem;
+  background: var(--bg);
+  padding: 4rem 2rem;
   position: relative;
   overflow: hidden;
 }
@@ -167,8 +156,7 @@
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(circle at 20% 80%, rgba(114, 9, 183, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(247, 37, 133, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 50% 50%, rgba(13, 148, 136, 0.04) 0%, transparent 50%);
   animation: background-float 12s ease-in-out infinite;
 }
 
@@ -189,7 +177,7 @@
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
+  background: var(--accent);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -200,7 +188,7 @@
 
 .about-header p {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.6;
@@ -217,8 +205,8 @@
 
 .tab-btn {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   padding: 0.75rem 1.5rem;
   border-radius: 25px;
   font-size: 0.95rem;
@@ -229,15 +217,15 @@
 }
 
 .tab-btn:hover {
-  color: var(--text-primary);
-  border-color: var(--border-hover-color);
+  color: var(--text);
+  border-color: var(--border-accent);
   transform: translateY(-2px);
 }
 
 .tab-btn.active {
-  background-color: var(--glow-magenta);
+  background-color: var(--accent);
   color: white;
-  border-color: var(--glow-magenta);
+  border-color: var(--accent);
   font-weight: 600;
 }
 
@@ -279,13 +267,13 @@
 .alternating-text h3 {
   font-size: 1.8rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 1rem;
 }
 
 .alternating-text p {
   font-size: 1.1rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.8;
   margin-bottom: 1.5rem;
 }
@@ -302,31 +290,31 @@
   background: rgba(255, 255, 255, 0.03);
   padding: 1.5rem 1rem;
   border-radius: 12px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   transition: all 0.3s ease;
   flex: 1;
 }
 
 .stat-item:hover {
   transform: translateY(-5px);
-  border-color: var(--border-hover-color);
+  border-color: var(--border-accent);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .stat-item h3 {
-  font-size: 2rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple));
+  background: var(--accent);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
   line-height: 1;
 }
 
 .stat-item p {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
   margin: 0;
   line-height: 1.3;
 }
@@ -338,14 +326,14 @@
 
 .stat-number {
   display: block;
-  font-size: 1.8rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: var(--glow-cyan);
+  color: var(--accent);
 }
 
 .stat-label {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 /* Internship Preview */
@@ -353,12 +341,12 @@
   background: rgba(255, 255, 255, 0.03);
   padding: 1rem;
   border-radius: 8px;
-  border-left: 3px solid var(--glow-magenta);
+  border-left: 3px solid var(--accent);
   margin-top: 1.5rem;
 }
 
 .internship-preview h4 {
-  color: var(--glow-cyan);
+  color: var(--accent);
   margin-bottom: 0.5rem;
   font-size: 1rem;
 }
@@ -370,7 +358,7 @@
 }
 
 .internship-preview li {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   margin-bottom: 0.25rem;
   font-size: 0.95rem;
 }
@@ -389,7 +377,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background: linear-gradient(to bottom, var(--glow-magenta), var(--glow-purple));
+  background: var(--accent);
 }
 
 .education-item {
@@ -404,30 +392,30 @@
   top: 0.5rem;
   width: 1.5rem;
   height: 1.5rem;
-  background: var(--glow-cyan);
+  background: var(--accent);
   border-radius: 50%;
-  border: 3px solid var(--bg-dark-purple);
+  border: 3px solid var(--bg);
 }
 
 .education-item.current .education-marker {
-  background: var(--glow-magenta);
+  background: var(--accent);
   animation: pulse 2s infinite;
 }
 
 .education-content h3 {
-  color: var(--text-primary);
+  color: var(--text);
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
 }
 
 .institution {
-  color: var(--glow-cyan);
+  color: var(--accent);
   font-weight: 500;
   margin: 0;
 }
 
 .location {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -435,7 +423,7 @@
 .graduation-date {
   display: inline-block;
   background: rgba(76, 201, 240, 0.1);
-  color: var(--glow-cyan);
+  color: var(--accent);
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
   font-size: 0.8rem;
@@ -445,7 +433,7 @@
 
 /* Internship Section */
 .internship-section h3 {
-  color: var(--text-primary);
+  color: var(--text);
   font-size: 1.5rem;
   margin-bottom: 2rem;
   text-align: center;
@@ -459,7 +447,7 @@
 
 .internship-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
@@ -467,19 +455,19 @@
 
 .internship-card:hover {
   transform: translateY(-5px);
-  border-color: var(--border-hover-color);
+  border-color: var(--border-accent);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .internship-header h4 {
-  color: var(--text-primary);
+  color: var(--text);
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
 
 .internship-type {
   display: inline-block;
-  background: var(--glow-purple);
+  background: var(--accent);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -488,7 +476,7 @@
 }
 
 .internship-period {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
@@ -499,7 +487,7 @@
 }
 
 .internship-achievements li {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   margin-bottom: 0.5rem;
   padding-left: 1.5rem;
   position: relative;
@@ -510,7 +498,7 @@
   content: '▶';
   position: absolute;
   left: 0;
-  color: var(--glow-cyan);
+  color: var(--accent);
   font-size: 0.8rem;
 }
 
@@ -523,7 +511,7 @@
 
 .leadership-card {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
   transition: all 0.3s ease;
@@ -538,29 +526,29 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
+  background: var(--accent);
 }
 
 .leadership-card:hover {
   transform: translateY(-8px);
-  border-color: var(--border-hover-color);
+  border-color: var(--border-accent);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
 .leadership-header h3 {
-  color: var(--text-primary);
+  color: var(--text);
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
 }
 
 .organization {
-  color: var(--glow-cyan);
+  color: var(--accent);
   font-weight: 500;
   margin: 0 0 0.5rem 0;
 }
 
 .period {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-size: 0.9rem;
   background: rgba(255, 255, 255, 0.05);
   padding: 0.25rem 0.75rem;
@@ -577,12 +565,12 @@
   align-items: flex-start;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   line-height: 1.5;
 }
 
 .achievement-icon {
-  color: var(--glow-cyan);
+  color: var(--accent);
   font-weight: bold;
   flex-shrink: 0;
   margin-top: 0.1rem;
@@ -597,23 +585,23 @@
 
 .skill-category {
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border);
   border-radius: 12px;
   padding: 1.5rem;
   transition: all 0.3s ease;
 }
 
 .skill-category:hover {
-  border-color: var(--border-hover-color);
+  border-color: var(--border-accent);
   transform: translateY(-3px);
 }
 
 .skill-category h3 {
-  color: var(--glow-cyan);
+  color: var(--accent);
   font-size: 1.1rem;
   margin-bottom: 1rem;
   text-transform: capitalize;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 0.5rem;
 }
 
@@ -625,8 +613,8 @@
 
 .skill-item {
   background: rgba(247, 37, 133, 0.1);
-  border: 1px solid var(--border-color);
-  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
   padding: 0.4rem 0.8rem;
   border-radius: 15px;
   font-size: 0.85rem;
@@ -636,9 +624,9 @@
 }
 
 .skill-item:hover {
-  background-color: var(--glow-magenta);
+  background-color: var(--accent);
   color: white;
-  border-color: var(--glow-magenta);
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
@@ -668,7 +656,7 @@
   left: -100%;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--glow-magenta), var(--glow-purple), var(--glow-cyan));
+  background: var(--accent);
   transition: left 0.5s ease;
 }
 
@@ -678,24 +666,24 @@
 
 .stat-item:hover {
   transform: translateY(-8px);
-  border-color: var(--border-color);
+  border-color: var(--border);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .stat-item h3 {
-  font-size: 2.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--glow-magenta), var(--glow-purple));
+  background: var(--accent);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.35rem 0;
   line-height: 1;
 }
 
 .stat-item p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
   margin: 0;
   line-height: 1.4;
 }
@@ -739,16 +727,24 @@
 
 @media (max-width: 768px) {
   .about-section {
-    padding: 4rem 1.5rem;
+    padding: 2.25rem max(0.75rem, env(safe-area-inset-left)) 2.25rem max(0.75rem, env(safe-area-inset-right));
+  }
+
+  .about-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .about-tabs {
-    gap: 0.5rem;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .tab-btn {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.85rem;
+    min-height: 44px;
   }
 
   .alternating-row {
@@ -763,87 +759,80 @@
   .highlight-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1.5rem;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
     align-items: stretch;
   }
 
   .highlight-stats .stat-item {
-    padding: 1.25rem 0.75rem;
+    padding: 0.6rem 0.5rem;
   }
 
   .highlight-stats .stat-item h3 {
-    font-size: 1.6rem;
+    font-size: 1.1rem;
   }
 
   .highlight-stats .stat-item p {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 
   .skills-categories {
     grid-template-columns: 1fr;
   }
 
-  /* MOBILE STATS GRID - NOW 2x2 INSTEAD OF SINGLE COLUMN */
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-top: 3rem;
-    /* Reduced top margin */
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
 
-  /* Reduce padding for mobile to save vertical space */
   .stat-item {
-    padding: 1.5rem 0.75rem;
+    padding: 0.75rem 0.5rem;
   }
 
   .stat-item h3 {
-    font-size: 2rem;
-    /* Slightly smaller on mobile */
+    font-size: 1.15rem;
   }
 
   .stat-item p {
-    font-size: 0.85rem;
-    /* Slightly smaller text */
-    line-height: 1.3;
+    font-size: 0.75rem;
+    line-height: 1.25;
   }
 }
 
 @media (max-width: 480px) {
 
-  /* For very small screens, still keep 2x2 but with tighter spacing */
   .stats-grid {
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 0.5rem;
+    margin-top: 1rem;
   }
 
   .stat-item {
-    padding: 1.25rem 0.5rem;
+    padding: 0.5rem 0.4rem;
   }
 
   .stat-item h3 {
-    font-size: 1.8rem;
+    font-size: 1.1rem;
   }
 
   .stat-item p {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
 
-  /* Highlight stats on very small screens */
   .highlight-stats {
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .highlight-stats .stat-item {
-    padding: 1rem 0.5rem;
+    padding: 0.6rem 0.4rem;
   }
 
   .highlight-stats .stat-item h3 {
-    font-size: 1.4rem;
+    font-size: 1.15rem;
   }
 
   .highlight-stats .stat-item p {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .tab-btn {
@@ -874,7 +863,7 @@
 /* Focus styles for accessibility */
 .tab-btn:focus,
 .indicator:focus {
-  outline: 2px solid var(--glow-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -886,12 +875,12 @@
 
 /* Enhanced hover effects */
 .alternating-text h3:hover {
-  color: var(--glow-cyan);
+  color: var(--accent);
   transition: color 0.3s ease;
 }
 
 .achievement-item:hover .achievement-icon {
-  color: var(--glow-magenta);
+  color: var(--accent);
   transform: scale(1.2);
   transition: all 0.3s ease;
 }

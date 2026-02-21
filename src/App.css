@@ -1,4 +1,4 @@
-/* App.css - Dark Theme with Gradients */
+/* App - minimal palette */
 * {
   margin: 0;
   padding: 0;
@@ -6,22 +6,21 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Raleway', -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
-  color: #ffffff;
+  color: var(--text);
   overflow-x: hidden;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  background: var(--bg);
   min-height: 100vh;
 }
 
 .App {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+  background: var(--bg);
 }
 
-/* Global Styles */
 .section {
-  padding: 5rem 2rem;
+  padding: 4rem 2rem;
   position: relative;
 }
 
@@ -32,7 +31,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(0, 205, 254, 0.02) 0%, rgba(0, 205, 254, 0.05) 50%, transparent 100%);
+  background: transparent;
   pointer-events: none;
 }
 
@@ -44,14 +43,10 @@ body {
 }
 
 .section h2 {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   text-align: center;
-  margin-bottom: 3rem;
-  color: #ffffff;
-  background: linear-gradient(135deg, #00CDFE 0%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  margin-bottom: 2rem;
+  color: var(--text);
   font-weight: 700;
 }
 
@@ -60,7 +55,7 @@ body {
   text-align: center;
   max-width: 600px;
   margin: 0 auto 2rem;
-  color: #b8c5d1;
+  color: var(--text-muted);
   line-height: 1.8;
 }
 
@@ -72,15 +67,13 @@ body {
 }
 
 .card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 205, 254, 0.2);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
   padding: 2rem;
   border-radius: 15px;
   text-align: center;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
 }
 
 .card::before {
@@ -90,24 +83,23 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #00CDFE 0%, #0099cc 100%);
+  background: var(--accent);
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0, 205, 254, 0.2);
-  border-color: rgba(0, 205, 254, 0.4);
+  transform: translateY(-4px);
+  border-color: var(--border-accent);
 }
 
 .card h3 {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: var(--text);
   font-weight: 600;
 }
 
 .card p {
-  color: #b8c5d1;
+  color: var(--text-muted);
   margin: 0;
   line-height: 1.6;
 }
@@ -115,7 +107,7 @@ body {
 .cta-button {
   display: inline-block;
   padding: 14px 35px;
-  background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
+  background: var(--accent);
   color: white;
   text-decoration: none;
   border-radius: 50px;
@@ -124,71 +116,42 @@ body {
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.cta-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s;
-}
-
-.cta-button:hover::before {
-  left: 100%;
 }
 
 .cta-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 205, 254, 0.4);
-  background: linear-gradient(135deg, #00CDFE 0%, #33d6ff 100%);
-}
-
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
+  transform: translateY(-2px);
+  background: #0f766e;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #00CDFE 0%, #0099cc 100%);
+  background: var(--accent);
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #33d6ff 0%, #00CDFE 100%);
-}
-
-/* Mobile Responsive */
 @media (max-width: 768px) {
   .section {
-    padding: 3rem 1rem;
+    padding: 2.25rem max(0.75rem, env(safe-area-inset-left)) 2.25rem max(0.75rem, env(safe-area-inset-right));
   }
-
   .section h2 {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
-
   .cards {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .section h2 {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
   }
 }
 
-/* Animation for page load */
 @keyframes fadeInUp {
   from {
     opacity: 0;

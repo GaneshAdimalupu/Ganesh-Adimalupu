@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './projects.css';
 
-// Import images
 import bestPaperCert from '../../assets/images/projects/best pap cer.webp';
 import portfolioImage from '../../assets/images/projects/portfolio.webp';
 import digit from '../../assets/images/projects/digit.webp';
@@ -11,9 +10,10 @@ import newsImage from '../../assets/images/projects/news.webp';
 import liftImage from '../../assets/images/projects/lift.webp';
 
 // Hook to track element visibility for animations
-const useIntersectionObserver = (options) => {
+const useIntersectionObserver = (options = { threshold: 0.1 }) => {
   const [elements, setElements] = useState([]);
   const observer = useRef(null);
+  const optsRef = useRef(options);
 
   useEffect(() => {
     if (observer.current) observer.current.disconnect();
@@ -22,21 +22,20 @@ const useIntersectionObserver = (options) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          observer.current.unobserve(entry.target);
+          if (observer.current) observer.current.unobserve(entry.target);
         }
       });
-    }, options);
+    }, optsRef.current);
 
+    const currentObserver = observer.current;
     elements.forEach((el) => {
-      if (el) observer.current.observe(el);
+      if (el && currentObserver) currentObserver.observe(el);
     });
 
     return () => {
-      if (observer.current) {
-        observer.current.disconnect();
-      }
+      if (observer.current) observer.current.disconnect();
     };
-  }, [elements, options]);
+  }, [elements]);
 
   return setElements;
 };

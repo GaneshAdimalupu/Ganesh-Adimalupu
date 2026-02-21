@@ -419,7 +419,7 @@ const Contact = () => {
                       border: '1px solid rgba(76, 201, 240, 0.2)',
                       borderRadius: '8px',
                       fontSize: '0.9rem',
-                      color: 'var(--text-secondary)',
+                      color: 'var(--text-muted)',
                     }}
                   >
                     <div
@@ -430,7 +430,7 @@ const Contact = () => {
                       }}
                     >
                       <span>📝 Form Status:</span>
-                      <span style={{ color: 'var(--glow-cyan)' }}>
+                      <span style={{ color: 'var(--accent)' }}>
                         {formData.name && formData.email && formData.message
                           ? '✅ Ready to send'
                           : '⚠️ Fill required fields'}
@@ -448,8 +448,8 @@ const Contact = () => {
                           style={{
                             color:
                               formData.message.length >= 10
-                                ? 'var(--glow-cyan)'
-                                : 'var(--glow-magenta)',
+                                ? 'var(--accent)'
+                                : 'var(--accent)',
                           }}
                         >
                           {formData.message.length} characters{' '}
@@ -469,7 +469,7 @@ const Contact = () => {
                 background: 'rgba(255,255,255,0.02)',
                 borderRadius: '8px',
                 fontSize: '0.8rem',
-                color: 'var(--text-secondary)',
+                color: 'var(--text-muted)',
                 textAlign: 'center',
               }}
             >

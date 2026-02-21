@@ -1,21 +1,9 @@
-:root {
-  /* Purple & Black Theme */
-  --bg-black: #0D0D0D;
-  --bg-dark-purple: #1a0f23;
-  --glow-magenta: #F72585;
-  --glow-purple: #7209B7;
-  --glow-cyan: #4CC9F0;
-  --text-primary: #f0e6f0;
-  --text-secondary: #a89db2;
-  --border-color: rgba(247, 37, 133, 0.2);
-}
+/* uses global minimal palette */
 
-/* --- Base Footer --- */
 .footer {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-black);
+  background-color: var(--bg);
   padding: 4rem 2rem 2rem 2rem;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
   position: relative;
 }
 
@@ -35,7 +23,7 @@
 .footer-about h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 1rem;
 }
 
@@ -48,7 +36,7 @@
 .footer-links h4 {
   font-size: 1.1rem;
   font-weight: 500;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 1rem;
 }
 
@@ -72,7 +60,7 @@
 }
 
 .footer-links button:hover {
-  color: var(--glow-magenta);
+  color: var(--accent);
   transform: translateX(5px);
 }
 
@@ -89,28 +77,57 @@
 }
 
 .social-link:hover {
-  color: var(--glow-magenta);
+  color: var(--accent);
   transform: translateY(-3px);
 }
 
 /* --- Footer Bottom --- */
 .footer-bottom {
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--border);
   padding-top: 2rem;
   text-align: center;
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
 }
 
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
+  .footer {
+    padding: 2rem max(0.75rem, env(safe-area-inset-left)) 1.5rem max(0.75rem, env(safe-area-inset-right));
+  }
+
   .footer-grid {
     text-align: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
   }
+
   .footer-links ul {
     align-items: center;
+    gap: 0.25rem;
   }
+
+  .footer-links button {
+    min-height: 40px;
+    padding: 0.35rem;
+    font-size: 0.9rem;
+  }
+
   .social-links {
     justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .social-link {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-bottom {
+    padding-top: 1.25rem;
+    font-size: 0.85rem;
   }
 }

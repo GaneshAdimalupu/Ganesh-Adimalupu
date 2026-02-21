@@ -1,15 +1,4 @@
-:root {
-  /* Purple & Black Theme */
-  --bg-black: #0D0D0D;
-  --bg-dark-purple: #1a0f23;
-  --glow-magenta: #F72585;
-  --glow-purple: #7209B7;
-  --glow-cyan: #4CC9F0;
-  --text-primary: #f0e6f0;
-  --text-secondary: #a89db2;
-  --border-color: rgba(247, 37, 133, 0.2);
-  --border-hover-color: rgba(247, 37, 133, 0.5);
-}
+/* uses global minimal palette from index.css */
 
 /* --- Base Header --- */
 .header {
@@ -24,12 +13,10 @@
 }
 
 .header.scrolled {
-  background-color: rgba(13, 13, 13, 0.95);
+  background-color: var(--bg);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  border-bottom: 1px solid var(--border);
 }
 
 /* --- Navigation Container --- */
@@ -47,7 +34,7 @@
 .logo {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text);
   text-decoration: none;
   transition: color 0.3s ease;
   white-space: nowrap;
@@ -55,17 +42,17 @@
 }
 
 .logo:hover {
-  color: var(--glow-magenta);
+  color: var(--accent);
 }
 
 .logo span {
   font-weight: 400;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   transition: color 0.3s ease;
 }
 
 .logo:hover span {
-  color: var(--text-primary);
+  color: var(--text);
 }
 
 /* --- Desktop Navigation --- */
@@ -85,7 +72,7 @@
 .nav-menu li button {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-weight: 500;
   cursor: pointer;
   font-size: 0.9rem;
@@ -108,13 +95,13 @@
   left: 50%;
   width: 0;
   height: 2px;
-  background-color: var(--glow-magenta);
+  background-color: var(--accent);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
 
 .nav-menu li button:hover {
-  color: var(--text-primary);
+  color: var(--text);
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -124,7 +111,7 @@
 }
 
 .nav-menu li button.active {
-  color: var(--glow-magenta);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -134,7 +121,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background-color: var(--glow-purple);
+  background-color: var(--accent);
   color: white !important;
   border-radius: 20px;
   text-decoration: none;
@@ -149,13 +136,12 @@
 }
 
 .resume-btn:hover {
-  background-color: var(--glow-magenta);
+  background: #0f766e;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(247, 37, 133, 0.4);
 }
 
 .resume-btn:focus-visible {
-  outline: 2px solid var(--glow-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -219,18 +205,20 @@
 
 @media (max-width: 768px) {
   .nav-container {
-    padding: 0 1.5rem;
+    padding: 0 max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
     position: relative;
   }
 
   /* Mobile Menu */
   .nav-menu {
     position: absolute;
-    top: calc(100% + 15px);
+    top: calc(100% + 10px);
     right: 0;
-    width: 250px;
-    background-color: var(--bg-dark-purple);
-    border: 1px solid var(--border-color);
+    width: min(280px, calc(100vw - 2rem));
+    max-height: min(80vh, 400px);
+    overflow-y: auto;
+    background-color: var(--bg-subtle);
+    border: 1px solid var(--border);
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     flex-direction: column;
@@ -276,7 +264,7 @@
   }
 
   .nav-menu li button.active {
-    background-color: var(--glow-magenta);
+    background-color: var(--accent);
     color: white;
   }
 
@@ -286,7 +274,7 @@
     text-align: center;
     margin-top: 0.5rem;
     padding: 0.8rem 1rem;
-    background-color: var(--glow-magenta);
+    background-color: var(--accent);
     min-height: 48px;
     display: flex;
     align-items: center;
@@ -294,7 +282,7 @@
   }
 
   .nav-menu li .resume-btn:hover {
-    background-color: var(--glow-purple);
+    background-color: var(--accent);
     transform: none;
     box-shadow: none;
   }
@@ -377,12 +365,12 @@
 .nav-menu li button:focus-visible {
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  outline: 2px solid var(--glow-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
 .menu-toggle:focus-visible {
-  outline: 2px solid var(--glow-cyan);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: 4px;
 }

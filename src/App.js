@@ -3,7 +3,7 @@ import React from 'react';
 import Header from './components/header/header';
 import Hero from './components/hero/hero';
 import About from './components/about/about';
-import Schedule from './components/schedule/schedule';
+// import Schedule from './components/schedule/schedule'; // not needed for now
 import Contact from './components/contact/contact';
 import Footer from './components/footer/footer';
 import Projects from './components/projects/projects';
@@ -20,7 +20,7 @@ function App() {
       <Projects />
       <Certifications />
       <FossExplorer />
-      <Schedule />
+      {/* <Schedule /> - not needed for now */}
       <Contact />
       <Footer />
     </div>
