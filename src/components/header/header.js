@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './header.css';
 
 // --- Custom Hooks ---
@@ -50,15 +51,16 @@ const useOnClickOutside = (ref, handler) => {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScroll(50);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isFossPage = location.pathname === '/foss-explorer';
 
-  // Compact navigation items
+  // Portfolio nav items (foss-explorer is a separate page, not in nav)
   const navItems = [
     'home',
     'about',
     'projects',
     'certifications',
-    'foss-explorer',
-    // 'schedule', // not needed for now
     'contact',
   ];
 
@@ -70,11 +72,17 @@ const Header = () => {
   useOnClickOutside(headerRef, () => setIsMenuOpen(false));
 
   const scrollToSection = (sectionId) => {
+    if (isFossPage) return;
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
       setIsMenuOpen(false);
     }
+  };
+
+  const goHome = () => {
+    navigate('/');
+    setIsMenuOpen(false);
   };
 
   const downloadCV = () => {
@@ -91,16 +99,13 @@ const Header = () => {
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <nav className="nav-container" ref={headerRef}>
         {/* Compact Logo */}
-        <a
-          href="#home"
-          className="logo"
-          onClick={(e) => {
-            e.preventDefault();
-            scrollToSection('home');
-          }}
+        <button
+          type="button"
+          className="logo logo-btn"
+          onClick={() => (isFossPage ? goHome() : scrollToSection('home'))}
         >
           Ganesh <span>Adimalupu</span>
-        </a>
+        </button>
 
         {/* Mobile Menu Toggle */}
         <button
@@ -116,16 +121,25 @@ const Header = () => {
 
         {/* Compact Navigation Menu */}
         <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-          {navItems.map((item) => (
-            <li key={item}>
-              <button
-                className={activeSection === item ? 'active' : ''}
-                onClick={() => scrollToSection(item)}
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
+          {isFossPage ? (
+            <li>
+              <button type="button" onClick={goHome}>
+                Home
               </button>
             </li>
-          ))}
+          ) : (
+            navItems.map((item) => (
+              <li key={item}>
+                <button
+                  type="button"
+                  className={activeSection === item ? 'active' : ''}
+                  onClick={() => scrollToSection(item)}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </button>
+              </li>
+            ))
+          )}
 
           {/* Resume Button */}
           <li>

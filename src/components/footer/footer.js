@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './footer.css';
 
 // --- SVG Icons ---
@@ -17,7 +18,7 @@ const socialLinks = [
     { icon: icons.twitter, url: 'https://x.com/GaneshAdimalupu', label: 'Twitter' }
 ];
 
-const quickLinks = ['home', 'about', 'projects', 'contact'];
+const quickLinks = ['home', 'about', 'projects', 'contact', 'foss-explorer'];
 
 // --- Main Footer Component ---
 const Footer = () => {
@@ -40,9 +41,15 @@ const Footer = () => {
                         <ul>
                             {quickLinks.map((link) => (
                                 <li key={link}>
-                                    <button onClick={() => scrollToSection(link)}>
-                                        {link.charAt(0).toUpperCase() + link.slice(1)}
-                                    </button>
+                                    {link === 'foss-explorer' ? (
+                                        <Link to="/foss-explorer" className="footer-link">
+                                            FOSS Explorer
+                                        </Link>
+                                    ) : (
+                                        <button type="button" onClick={() => scrollToSection(link)}>
+                                            {link.charAt(0).toUpperCase() + link.slice(1)}
+                                        </button>
+                                    )}
                                 </li>
                             ))}
                         </ul>

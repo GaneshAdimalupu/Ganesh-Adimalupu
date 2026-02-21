@@ -64,6 +64,18 @@
   transform: translateX(5px);
 }
 
+.footer-links .footer-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.footer-links .footer-link:hover {
+  color: var(--accent);
+  transform: translateX(5px);
+}
+
 /* --- Social Links --- */
 .social-links {
   display: flex;
@@ -107,10 +119,16 @@
     gap: 0.25rem;
   }
 
-  .footer-links button {
+  .footer-links button,
+  .footer-links .footer-link {
     min-height: 40px;
     padding: 0.35rem;
     font-size: 0.9rem;
+  }
+
+  .footer-links .footer-link {
+    display: inline-flex;
+    align-items: center;
   }
 
   .social-links {

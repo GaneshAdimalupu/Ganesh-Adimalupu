@@ -58,3 +58,4 @@ api/.env
 src/assets/client_secret.json
 
 src1
+.env*.local

@@ -31,7 +31,8 @@
 }
 
 /* --- Logo --- */
-.logo {
+.logo,
+.logo.logo-btn {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--text);
@@ -39,6 +40,14 @@
   transition: color 0.3s ease;
   white-space: nowrap;
   flex-shrink: 0;
+}
+
+.logo.logo-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 .logo:hover {
