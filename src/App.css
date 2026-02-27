@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: 'Raleway', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   line-height: 1.6;
   color: var(--text);
   overflow-x: hidden;
@@ -17,6 +17,24 @@ body {
 .App {
   min-height: 100vh;
   background: var(--bg);
+}
+
+.page-content {
+  padding-top: 0;
+  min-height: calc(100vh - 120px);
+}
+
+.section-page {
+  padding: 6rem 2rem 4rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 140px);
+}
+
+@media (max-width: 768px) {
+  .section-page {
+    padding: 5rem 1rem 3rem;
+  }
 }
 
 .section {

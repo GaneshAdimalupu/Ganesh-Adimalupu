@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './header.css';
-
-// --- Custom Hooks ---
 
 const useScroll = (threshold = 10) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -12,23 +10,6 @@ const useScroll = (threshold = 10) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [threshold]);
   return isScrolled;
-};
-
-const useScrollSpy = (sectionIds, options) => {
-  const [activeSection, setActiveSection] = useState(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) setActiveSection(entry.target.id);
-      });
-    }, options);
-    sectionIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) observer.observe(element);
-    });
-    return () => observer.disconnect();
-  }, [sectionIds, options]);
-  return activeSection;
 };
 
 const useOnClickOutside = (ref, handler) => {
@@ -51,44 +32,21 @@ const useOnClickOutside = (ref, handler) => {
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScroll(50);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const isFossPage = location.pathname === '/foss-explorer';
-
-  // Portfolio nav items (foss-explorer is a separate page, not in nav)
-  const navItems = [
-    'home',
-    'about',
-    'projects',
-    'certifications',
-    'contact',
-  ];
-
-  const activeSection = useScrollSpy(navItems, {
-    rootMargin: '-30% 0px -70% 0px',
-  });
-
   const headerRef = useRef();
   useOnClickOutside(headerRef, () => setIsMenuOpen(false));
 
-  const scrollToSection = (sectionId) => {
-    if (isFossPage) return;
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setIsMenuOpen(false);
-    }
-  };
+  const navLinks = [
+    { path: '/', label: 'Home', end: true },
+    { path: '/about', label: 'About' },
+    { path: '/projects', label: 'Projects' },
+    { path: '/certifications', label: 'Certifications' },
+    { path: '/contact', label: 'Contact' },
+  ];
 
-  const goHome = () => {
-    navigate('/');
-    setIsMenuOpen(false);
-  };
-
-  const downloadCV = () => {
-    const cvUrl = '/Ganesh-CV.pdf';
+  const downloadCV = (e) => {
+    e.preventDefault();
     const link = document.createElement('a');
-    link.href = cvUrl;
+    link.href = '/Ganesh-CV.pdf';
     link.download = 'Ganesh_Adimalupu_CV.pdf';
     document.body.appendChild(link);
     link.click();
@@ -98,16 +56,14 @@ const Header = () => {
   return (
     <header className={`header ${isScrolled ? 'scrolled' : ''}`}>
       <nav className="nav-container" ref={headerRef}>
-        {/* Compact Logo */}
-        <button
-          type="button"
-          className="logo logo-btn"
-          onClick={() => (isFossPage ? goHome() : scrollToSection('home'))}
+        <NavLink
+          to="/"
+          className={({ isActive }) => `logo logo-link ${isActive ? 'active' : ''}`}
+          onClick={() => setIsMenuOpen(false)}
         >
           Ganesh <span>Adimalupu</span>
-        </button>
+        </NavLink>
 
-        {/* Mobile Menu Toggle */}
         <button
           className={`menu-toggle ${isMenuOpen ? 'active' : ''}`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -119,39 +75,21 @@ const Header = () => {
           <span></span>
         </button>
 
-        {/* Compact Navigation Menu */}
         <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-          {isFossPage ? (
-            <li>
-              <button type="button" onClick={goHome}>
-                Home
-              </button>
+          {navLinks.map(({ path, label, end }) => (
+            <li key={path}>
+              <NavLink
+                to={path}
+                end={end}
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {label}
+              </NavLink>
             </li>
-          ) : (
-            navItems.map((item) => (
-              <li key={item}>
-                <button
-                  type="button"
-                  className={activeSection === item ? 'active' : ''}
-                  onClick={() => scrollToSection(item)}
-                >
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
-                </button>
-              </li>
-            ))
-          )}
-
-          {/* Resume Button */}
+          ))}
           <li>
-            <a
-              href="/Ganesh-CV.pdf"
-              className="resume-btn"
-              download="Ganesh_Adimalupu_CV.pdf"
-              onClick={(e) => {
-                e.preventDefault();
-                downloadCV();
-              }}
-            >
+            <a href="/Ganesh-CV.pdf" className="resume-btn" download="Ganesh_Adimalupu_CV.pdf" onClick={downloadCV}>
               Resume
             </a>
           </li>

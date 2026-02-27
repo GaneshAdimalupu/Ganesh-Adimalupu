@@ -30,9 +30,8 @@
   gap: 2rem;
 }
 
-/* --- Logo --- */
-.logo,
-.logo.logo-btn {
+.logo.logo-btn,
+.logo.logo-link {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--text);
@@ -40,27 +39,34 @@
   transition: color 0.3s ease;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-.logo.logo-btn {
   background: none;
   border: none;
   padding: 0;
-  font: inherit;
   cursor: pointer;
 }
 
-.logo:hover {
+.logo.logo-link {
+  display: inline-block;
+}
+
+.logo.logo-link:hover,
+.logo.logo-btn:hover {
   color: var(--accent);
 }
 
+.logo.logo-link span,
 .logo span {
   font-weight: 400;
   color: var(--text-muted);
   transition: color 0.3s ease;
 }
 
+.logo.logo-link:hover span,
 .logo:hover span {
+  color: var(--text);
+}
+
+.logo.logo-link.active span {
   color: var(--text);
 }
 
@@ -78,6 +84,7 @@
   display: flex;
 }
 
+.nav-menu li .nav-link,
 .nav-menu li button {
   background: none;
   border: none;
@@ -95,8 +102,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+  font-family: inherit;
 }
 
+.nav-menu li .nav-link::after,
 .nav-menu li button::after {
   content: '';
   position: absolute;
@@ -109,16 +119,20 @@
   transform: translateX(-50%);
 }
 
+.nav-menu li .nav-link:hover,
 .nav-menu li button:hover {
   color: var(--text);
   background: rgba(255, 255, 255, 0.05);
 }
 
+.nav-menu li .nav-link:hover::after,
+.nav-menu li .nav-link.active::after,
 .nav-menu li button:hover::after,
 .nav-menu li button.active::after {
   width: 70%;
 }
 
+.nav-menu li .nav-link.active,
 .nav-menu li button.active {
   color: var(--accent);
   font-weight: 600;
@@ -252,6 +266,7 @@
     width: 100%;
   }
 
+  .nav-menu li .nav-link,
   .nav-menu li button {
     font-size: 0.9rem;
     width: 100%;
@@ -264,14 +279,17 @@
     transition: all 0.3s ease;
   }
 
-  .nav-menu li button::after {
+  .nav-menu li button::after,
+  .nav-menu li .nav-link::after {
     display: none;
   }
 
+  .nav-menu li .nav-link:hover,
   .nav-menu li button:hover {
     background-color: rgba(255,255,255,0.1);
   }
 
+  .nav-menu li .nav-link.active,
   .nav-menu li button.active {
     background-color: var(--accent);
     color: white;
@@ -319,6 +337,7 @@
   }
 
   /* EVEN BETTER TOUCH TARGETS FOR VERY SMALL SCREENS */
+  .nav-menu li .nav-link,
   .nav-menu li button {
     padding: 1rem;
     min-height: 52px;
@@ -340,6 +359,7 @@
 
 /* IMPROVE TOUCH EXPERIENCE */
 @media (hover: none) and (pointer: coarse) {
+  .nav-menu li .nav-link,
   .nav-menu li button,
   .resume-btn,
   .menu-toggle {
@@ -347,16 +367,19 @@
     min-width: 48px;
   }
 
+  .nav-menu li .nav-link,
   .nav-menu li button {
     padding: 1rem;
   }
 
   /* Remove hover effects on touch devices */
+  .nav-menu li .nav-link:hover,
   .nav-menu li button:hover {
     background-color: transparent;
   }
 
   /* Only show hover on tap/click */
+  .nav-menu li .nav-link:active,
   .nav-menu li button:active {
     background-color: rgba(255,255,255,0.1);
   }
@@ -411,6 +434,7 @@
     color: #fff;
   }
 
+  .nav-menu li .nav-link.active,
   .nav-menu li button.active {
     background: #fff;
     color: #000;

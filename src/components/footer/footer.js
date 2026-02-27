@@ -18,17 +18,16 @@ const socialLinks = [
     { icon: icons.twitter, url: 'https://x.com/GaneshAdimalupu', label: 'Twitter' }
 ];
 
-const quickLinks = ['home', 'about', 'projects', 'contact', 'foss-explorer'];
+const quickLinks = [
+    { path: '/', label: 'Home' },
+    { path: '/about', label: 'About' },
+    { path: '/projects', label: 'Projects' },
+    { path: '/contact', label: 'Contact' },
+    { path: '/foss-explorer', label: 'FOSS Explorer' },
+];
 
 // --- Main Footer Component ---
 const Footer = () => {
-    const scrollToSection = (sectionId) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
-
     return (
         <footer className="footer">
             <div className="footer-container">
@@ -39,17 +38,11 @@ const Footer = () => {
                     <div className="footer-links">
                         <h4>Quick Links</h4>
                         <ul>
-                            {quickLinks.map((link) => (
-                                <li key={link}>
-                                    {link === 'foss-explorer' ? (
-                                        <Link to="/foss-explorer" className="footer-link">
-                                            FOSS Explorer
-                                        </Link>
-                                    ) : (
-                                        <button type="button" onClick={() => scrollToSection(link)}>
-                                            {link.charAt(0).toUpperCase() + link.slice(1)}
-                                        </button>
-                                    )}
+                            {quickLinks.map(({ path, label }) => (
+                                <li key={path}>
+                                    <Link to={path} className="footer-link">
+                                        {label}
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

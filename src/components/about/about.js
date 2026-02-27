@@ -137,8 +137,8 @@ const technicalSkills = {
     'Streamlit',
     'npm',
   ],
-  cloud: ['Firebase', 'AWS Amplify', 'Vercel'],
-  databases: ['Firebase', 'SQL', 'MongoDB'],
+  cloud: ['Firebase', 'AWS Amplify', 'Vercel', 'GCP'],
+  databases: ['Firebase', 'SQL', 'PostgreSQL', 'MongoDB'],
   concepts: [
     'Machine Learning',
     'Deep Learning',
@@ -152,6 +152,16 @@ const technicalSkills = {
 
 // Leadership achievements from CV
 const leadershipData = [
+  {
+    role: 'Committee Member - FOSS United',
+    organization: 'FOSS United',
+    period: 'Present',
+    achievements: [
+      'Elected to FOSS United committee at the organization level',
+      'Engaging with FOSS clubs across the community and supporting their activities',
+      'Dealing with events and resources to strengthen the FOSS ecosystem',
+    ],
+  },
   {
     role: 'Chapter Lead - FOSS United STIST',
     organization: 'FOSS United',
@@ -213,6 +223,16 @@ const educationData = [
 
 // Internship data from CV
 const internshipData = [
+  {
+    company: 'Levich',
+    period: '2025 – Present',
+    type: 'Industry Internship',
+    achievements: [
+      'Contributing to product @levich/ufco',
+      'Backend development for @levich/lectora-be',
+      'Developed the About page for Levich company website (@levich/website)',
+    ],
+  },
   {
     company: 'HDLC Info Technologies',
     period: 'May 2023 - June 2023',
@@ -316,7 +336,10 @@ const About = () => {
                   <p>
                     As the founder and Chapter Lead of the second FOSS United
                     chapter in Kerala, I am dedicated to fostering a vibrant
-                    culture of open-source contribution. Successfully organized{' '}
+                    culture of open-source contribution. I have been elected as a{' '}
+                    <strong>FOSS United Committee Member</strong>, with the role
+                    of engaging with FOSS clubs and handling events and
+                    resources across the community. Successfully organized{' '}
                     <strong>FOSS Hack Localhost 2024</strong>, an officially
                     recognized national node, bringing together students and
                     professionals to collaborate and innovate.
@@ -351,6 +374,10 @@ const About = () => {
                   <div className="internship-preview">
                     <h4>Recent Internships:</h4>
                     <ul>
+                      <li>
+                        <strong>Levich</strong> – Product & web development
+                        (2025 – Present)
+                      </li>
                       <li>
                         <strong>HDLC Info Technologies</strong> - Data Science &
                         ML (2023)
@@ -465,8 +492,8 @@ const About = () => {
             <p>FOSS United College Chapter Founded in Kerala</p>
           </div>
           <div className="stat-item">
-            <h3>2</h3>
-            <p>Academic Internships Completed</p>
+            <h3>3</h3>
+            <p>Internships & Programs Completed</p>
           </div>
           <div className="stat-item">
             <h3>3+</h3>

@@ -43,6 +43,33 @@ const useIntersectionObserver = (options = { threshold: 0.1 }) => {
 // Data for projects
 const projectsData = [
   {
+    id: 8,
+    title: 'Levich – Internship: UFCO, Lectora BE & Company Website',
+    shortTitle: 'Levich Internship',
+    description:
+      'Industry internship at Levich contributing to product development and web. Working on @levich/ufco, backend for @levich/lectora-be, and developed the About page for the Levich company website (@levich/website).',
+    image: '/image.png',
+    category: 'Web Dev',
+    featured: true,
+    period: '2025 – Present',
+    status: 'ongoing',
+    tags: ['React', 'Node.js', 'Backend', 'Product', 'Web'],
+    achievements: [
+      'Product contributions to @levich/ufco',
+      'Backend development for @levich/lectora-be',
+      'Built and own the About page of Levich company website',
+    ],
+    technologies: {
+      frontend: ['React', 'Web'],
+      backend: ['Node.js', 'APIs'],
+      product: ['UFCO', 'Lectora'],
+    },
+    liveDemo: '#',
+    githubRepo: '#',
+    impact:
+      'Contributing to production products and company web presence at Levich.',
+  },
+  {
     id: 1,
     title: 'Be My Chef AI - AI-Powered Recipe Recommendation System',
     shortTitle: 'Be My Chef AI',

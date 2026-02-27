@@ -11,27 +11,49 @@ import Certifications from './components/certifications/certifications';
 import FossExplorer from './components/foss_explorer/foss-explorer';
 import './App.css';
 
-function PortfolioPage() {
+function Layout({ children }) {
   return (
     <>
       <Header />
-      <Hero />
-      <About />
-      <Projects />
-      <Certifications />
-      <Contact />
+      <main className="page-content">{children}</main>
       <Footer />
     </>
   );
 }
 
-function FossExplorerPage() {
+function HomePage() {
+  return <Hero />;
+}
+
+function AboutPage() {
   return (
-    <>
-      <Header />
-      <FossExplorer />
-      <Footer />
-    </>
+    <section id="about" className="section-page">
+      <About />
+    </section>
+  );
+}
+
+function ProjectsPage() {
+  return (
+    <section id="projects" className="section-page">
+      <Projects />
+    </section>
+  );
+}
+
+function CertificationsPage() {
+  return (
+    <section id="certifications" className="section-page">
+      <Certifications />
+    </section>
+  );
+}
+
+function ContactPage() {
+  return (
+    <section id="contact" className="section-page">
+      <Contact />
+    </section>
   );
 }
 
@@ -39,8 +61,12 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<PortfolioPage />} />
-        <Route path="/foss-explorer" element={<FossExplorerPage />} />
+        <Route path="/" element={<Layout><HomePage /></Layout>} />
+        <Route path="/about" element={<Layout><AboutPage /></Layout>} />
+        <Route path="/projects" element={<Layout><ProjectsPage /></Layout>} />
+        <Route path="/certifications" element={<Layout><CertificationsPage /></Layout>} />
+        <Route path="/contact" element={<Layout><ContactPage /></Layout>} />
+        <Route path="/foss-explorer" element={<Layout><FossExplorer /></Layout>} />
       </Routes>
     </div>
   );

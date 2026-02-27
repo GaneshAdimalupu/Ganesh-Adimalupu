@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './hero.css';
 import profileImage from '../../assets/images/profile.png';
 
@@ -66,6 +67,7 @@ const achievements = [
 ];
 
 const Hero = () => {
+  const navigate = useNavigate();
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -92,12 +94,7 @@ const Hero = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+  const goToProjects = () => navigate('/projects');
 
   const handleImageError = (e) => {
     console.error('Profile image failed to load:', e.target.src);
@@ -220,7 +217,7 @@ const Hero = () => {
             <div className="hero-buttons mobile">
               <button
                 className="cta-btn primary mobile"
-                onClick={() => scrollToSection('projects')}
+                onClick={goToProjects}
                 aria-label="View my portfolio projects"
               >
                 View Work
@@ -257,7 +254,7 @@ const Hero = () => {
               <div className="hero-buttons">
                 <button
                   className="cta-btn primary"
-                  onClick={() => scrollToSection('projects')}
+                  onClick={goToProjects}
                   aria-label="View my portfolio projects"
                 >
                   <span>View My Work</span>
